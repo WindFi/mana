@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">mana</string>
+    <string name="action_settings">设置</string>
+    <string name="pref_header_data_sync">同步</string>
+    <string name="pref_ringtone_silent">静音</string>
+    <string name="pref_header_notifications" translatable="false">通知</string>
+    <string name="pref_header_general">通用</string>
+    <string name="title_activity_settings">设置</string>
+    <string name="title_nav_account">账户</string>
+    <string name="title_nav_history">历史</string>
+    <string name="title_nav_logout">登出</string>
+    <string name="title_nav_settings"></string>
+    <string name="hint_fragment_login_username">用户名</string>
+    <string name="hint_fragment_login_password">密码</string>
+    <string name="title_fragment_login_button">登录</string>
+</resources>

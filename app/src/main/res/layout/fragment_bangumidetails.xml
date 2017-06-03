@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="8dp"
+        tools:context="me.sunzheng.mana.BangumiDetailsActivity">
+
+        <ImageView
+            android:id="@+id/bangumidetails_banner_imageview"
+            android:layout_width="0dp"
+            android:layout_height="120dp"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="8dp" />
+
+        <ImageView
+            android:id="@+id/bangumidetails_ablum_imageview"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@mipmap/ic_launcher"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bangumidetails_banner_imageview"
+            tools:layout_editor_absoluteX="0dp" />
+
+        <TextView
+            android:id="@+id/bangumidetails_name_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Title"
+            app:layout_constraintStart_toEndOf="@id/bangumidetails_ablum_imageview"
+            app:layout_constraintTop_toTopOf="@+id/bangumidetails_ablum_imageview"
+            tools:layout_editor_absoluteX="48dp"
+            tools:text="name" />
+
+        <TextView
+            android:id="@+id/bangumidetails_originname_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Widget.TextView.SpinnerItem"
+            app:layout_constraintStart_toEndOf="@id/bangumidetails_ablum_imageview"
+            app:layout_constraintTop_toBottomOf="@+id/bangumidetails_name_textview"
+            tools:layout_editor_absoluteX="48dp"
+            tools:text="name" />
+
+        <TextView
+            android:id="@+id/bangumidetails_summary_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bangumidetails_ablum_imageview"
+            tools:layout_editor_absoluteX="0dp"
+            tools:text="content" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/bangumidetails_recyclerview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bangumidetails_summary_textview"
+            tools:layout_editor_absoluteX="0dp" />
+    </android.support.constraint.ConstraintLayout>
+</android.support.v4.widget.NestedScrollView>

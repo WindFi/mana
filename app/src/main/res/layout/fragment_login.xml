@@ -1,0 +1,61 @@
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="me.sunzheng.mana.account.LoginFragment">
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/username_form"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
+        tools:layout_editor_absoluteX="20dp">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/login_username_textinputedittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="16"
+            android:hint="@string/hint_fragment_login_username"
+            android:maxLines="1" />
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/password_form"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/username_form"
+        app:layout_constraintEnd_toStartOf="parent"
+        tools:layout_editor_absoluteX="20dp">
+
+        <android.support.design.widget.TextInputEditText
+            android:id="@+id/login_passowrd_textinputedittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="16"
+            android:hint="@string/hint_fragment_login_password"
+            android:inputType="textPassword"
+            android:maxLines="1" />
+    </android.support.design.widget.TextInputLayout>
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/text_fragment_remember"
+        app:layout_constraintStart_toStartOf="@+id/password_form"
+        app:layout_constraintTop_toBottomOf="@+id/password_form"/>
+    <Button
+        android:id="@android:id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/checkbox"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="parent"
+        android:text="@string/title_fragment_login_button"
+        android:ems="40"
+         />
+</android.support.constraint.ConstraintLayout>
