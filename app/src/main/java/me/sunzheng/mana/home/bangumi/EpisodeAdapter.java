@@ -38,7 +38,9 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        Glide.with(holder.itemView.getContext()).load(mValue.get(position).getThumbnail()).into(holder.mAblumImageView);
+        SharedPreferences sp = holder.itemView.getContext().getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
+        final String host = sp.getString(PreferenceManager.Global.STR_KEY_HOST, "");
+        Glide.with(holder.itemView.getContext()).load(host + "/" + mValue.get(position).getThumbnail()).into(holder.mAblumImageView);
         holder.mEpisodeNoTextView.setText(mValue.get(position).getEpisodeNo() + "");
         holder.mTitleTextView.setText(mValue.get(position).getNameCn());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -47,9 +49,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
                 // TODO: 2017/5/29  goto play activity
                 Intent intent = new Intent(v.getContext(), VideoPlayerActivity.class);
                 Bundle extras = new Bundle();
-                SharedPreferences sp = v.getContext().getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
-                String uri = sp.getString(PreferenceManager.Global.STR_KEY_HOST, "");
-                uri += "/play/"+mValue.get(position).getId();
+                String uri = host + "/play/" + mValue.get(position).getId();
                 extras.putString(VideoPlayerActivity.ARGS_URI_STR, uri);
                 intent.putExtras(extras);
                 v.getContext().startActivity(intent);

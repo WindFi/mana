@@ -12,6 +12,7 @@ import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
 import me.sunzheng.mana.home.bangumi.wrapper.Data;
+import me.sunzheng.mana.home.bangumi.wrapper.Episode;
 
 /**
  * Created by Sun on 2017/5/27.

@@ -31,11 +31,15 @@ public class BangumiDetailsActivity extends AppCompatActivity {
         mBannerImageView=(ImageView) findViewById(R.id.banner_imageview);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        fragment = BangumiDetailsFragment.newInstance(getIntent().getExtras());
+        if(savedInstanceState==null)
+            savedInstanceState=getIntent().getExtras();
+        if(savedInstanceState==null)
+            finish();
+        fragment = BangumiDetailsFragment.newInstance(savedInstanceState);
         fragment.setPresenter(new BangumiDetailsPresenterImpl(fragment, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Bangumi.class)));
         // TODO: 2017/5/27  setPresenter
         getSupportFragmentManager().beginTransaction().replace(R.id.contentview, fragment).commit();
-        // TODO: 2017/6/4 default banner 
+        // TODO: 2017/6/4 default banner
         Glide.with(this).load(savedInstanceState.getString(ARGS_ABLUM_URL_STR)).into(mBannerImageView);
     }
 
