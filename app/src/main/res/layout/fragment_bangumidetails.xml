@@ -12,22 +12,12 @@
         tools:context="me.sunzheng.mana.BangumiDetailsActivity">
 
         <ImageView
-            android:id="@+id/bangumidetails_banner_imageview"
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:src="@mipmap/ic_launcher"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="8dp" />
-
-        <ImageView
             android:id="@+id/bangumidetails_ablum_imageview"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:src="@mipmap/ic_launcher"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bangumidetails_banner_imageview"
+            app:layout_constraintTop_toTopOf="parent"
             tools:layout_editor_absoluteX="0dp" />
 
         <TextView

@@ -62,12 +62,11 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         mCNTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_name_textview);
         mOriginTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_originname_textview);
         mSummaryTextView = (TextView) view.findViewById(R.id.bangumidetails_summary_textview);
-        mRecyclerView=(RecyclerView) view.findViewById(R.id.bangumidetails_recyclerview);
-        // TODO: 2017/5/27  test code
-        Glide.with(this).load(getArguments().getString("imageurl")).into(mImageView);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.bangumidetails_recyclerview);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            mImageView.setTransitionName("image");
+            mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
+        Glide.with(this).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mImageView);
         mPresenter.load(getArguments().getString(BangumiDetailsActivity.ARGS_ID_STR));
     }
 

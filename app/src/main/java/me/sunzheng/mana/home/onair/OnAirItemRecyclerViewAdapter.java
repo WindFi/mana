@@ -48,7 +48,7 @@ public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItem
                 extras.putString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR, mValues.get(position).getImage());
                 extras.putString(BangumiDetailsActivity.ARGS_ID_STR,mValues.get(position).getId());
                 intent.putExtras(extras);
-                Pair<View, String> pair = Pair.create((View) holder.mImageView, "image");
+                Pair<View, String> pair = Pair.create((View) holder.mImageView,BangumiDetailsActivity.PAIR_IMAGE_STR);
                 ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) v.getContext(), pair);
                 v.getContext().startActivity(intent, optionsCompat.toBundle());
             }
