@@ -151,7 +151,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     private void onBindViewHolder(ViewHolder holder, Episode item) {
         holder.mTextView.setText(item.getNameCn());
         String host=sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST,"");
-        Glide.with(this).load(host+"/"+item.getThumbnail()).into(holder.mImageView);
+        Glide.with(this).load(host+item.getThumbnail()).into(holder.mImageView);
     }
 
     private static final class ViewHolder {

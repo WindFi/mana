@@ -48,7 +48,6 @@
             app:layout_constraintTop_toBottomOf="@+id/bangumidetails_ablum_imageview"
             tools:layout_editor_absoluteX="0dp"
             tools:text="content" />
-
         <android.support.v7.widget.LinearLayoutCompat
             android:id="@+id/bangumidetails_episode_linearlayout"
             android:layout_width="wrap_content"
@@ -56,6 +55,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bangumidetails_summary_textview"
             app:layout_constraintBottom_toBottomOf="parent"
+            android:orientation="vertical"
             tools:layout_editor_absoluteX="0dp" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>
