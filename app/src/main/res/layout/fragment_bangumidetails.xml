@@ -49,8 +49,8 @@
             tools:layout_editor_absoluteX="0dp"
             tools:text="content" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/bangumidetails_recyclerview"
+        <android.support.v7.widget.LinearLayoutCompat
+            android:id="@+id/bangumidetails_episode_linearlayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="parent"

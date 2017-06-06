@@ -2,8 +2,11 @@ package me.sunzheng.mana.home;
 
 import android.support.v7.widget.RecyclerView;
 
+import java.util.List;
+
 import me.sunzheng.mana.IPresenter;
 import me.sunzheng.mana.IView;
+import me.sunzheng.mana.home.bangumi.wrapper.Episode;
 
 /**
  * Created by Sun on 2017/5/23.
@@ -33,7 +36,7 @@ public interface HomeContract {
 
             void setOriginName(CharSequence originName);
 
-            void setAdapter(RecyclerView.Adapter adapter);
+            void setEpisodes(List<Episode> episodeList);
 
             void setFaviorStatus(long status);
 

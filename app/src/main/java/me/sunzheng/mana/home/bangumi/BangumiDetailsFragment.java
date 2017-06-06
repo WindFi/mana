@@ -1,22 +1,27 @@
 package me.sunzheng.mana.home.bangumi;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
+import java.util.List;
+
 import me.sunzheng.mana.BangumiDetailsActivity;
+import me.sunzheng.mana.PreferenceManager;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.home.HomeContract;
+import me.sunzheng.mana.home.bangumi.wrapper.Episode;
 
 /**
  * Created by Sun on 2017/5/27.
@@ -31,10 +36,10 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     TextView mAirDateTextView;
     TextView mWeekDayTextView;
 
-    RecyclerView mRecyclerView;
+    LinearLayoutCompat mEpisodeLinearLayout;
 
     HomeContract.Bangumi.Presenter mPresenter;
-
+    SharedPreferences sharedPreferences;
     public BangumiDetailsFragment() {
     }
 
@@ -47,6 +52,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        sharedPreferences=getActivity().getSharedPreferences(PreferenceManager.Global.STR_SP_NAME,Context.MODE_PRIVATE);
     }
 
     @Nullable
@@ -62,7 +68,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         mCNTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_name_textview);
         mOriginTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_originname_textview);
         mSummaryTextView = (TextView) view.findViewById(R.id.bangumidetails_summary_textview);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.bangumidetails_recyclerview);
+        mEpisodeLinearLayout = (LinearLayoutCompat) view.findViewById(R.id.bangumidetails_episode_linearlayout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
@@ -115,17 +121,6 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     }
 
     @Override
-    public void setAdapter(RecyclerView.Adapter adapter) {
-        if (mRecyclerView == null)
-            return;
-        if (mRecyclerView.getAdapter() == null)
-            mRecyclerView.setAdapter(adapter);
-        // TODO: 2017/5/27  test code
-        if (mRecyclerView.getLayoutManager() == null)
-            mRecyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 2));
-    }
-
-    @Override
     public void setFaviorStatus(long status) {
         // TODO: 2017/5/27 favior status
     }
@@ -135,5 +130,39 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         if (mCNTitleTextView == null)
             return;
         mCNTitleTextView.setText(name);
+    }
+
+    @Override
+    public void setEpisodes(List<Episode> episodeList) {
+        if (episodeList == null || episodeList.isEmpty()) {
+//            episode is null
+        } else {
+            for (Episode item : episodeList)
+                onBindViewHolder(onCreateViewHolder(mEpisodeLinearLayout), item);
+        }
+    }
+
+    private ViewHolder onCreateViewHolder(ViewGroup parent) {
+        View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_onairfragment, null);
+        parent.addView(view);
+        return new ViewHolder(view);
+    }
+
+    private void onBindViewHolder(ViewHolder holder, Episode item) {
+        holder.mTextView.setText(item.getNameCn());
+        String host=sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST,"");
+        Glide.with(this).load(host+"/"+item.getThumbnail()).into(holder.mImageView);
+    }
+
+    private static final class ViewHolder {
+        final View itemView;
+        final ImageView mImageView;
+        final TextView mTextView;
+
+        public ViewHolder(View view) {
+            itemView = view;
+            mTextView = (TextView) view.findViewById(R.id.item_descript);
+            mImageView = (ImageView) view.findViewById(R.id.item_album);
+        }
     }
 }

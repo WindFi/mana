@@ -1,9 +1,11 @@
 package me.sunzheng.mana;
 
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
@@ -18,9 +20,11 @@ import me.sunzheng.mana.home.bangumi.BangumiDetailsPresenterImpl;
 public class BangumiDetailsActivity extends AppCompatActivity {
     public static final String ARGS_ID_STR = "id";
     public static final String ARGS_ABLUM_URL_STR = "imageurl";
+    public static final String ARGS_TITLE_STR="title";
     public static final String PAIR_IMAGE_STR="pair_image";
     BangumiDetailsFragment fragment;
     ImageView mBannerImageView;
+    CollapsingToolbarLayout mHeaderCollapsingToolbarLayout;
     Toolbar mToolbar;
 
     @Override
@@ -29,12 +33,14 @@ public class BangumiDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_episode_details);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mBannerImageView=(ImageView) findViewById(R.id.banner_imageview);
+        mHeaderCollapsingToolbarLayout=(CollapsingToolbarLayout) findViewById(R.id.header_collaspingtoolbarlayout);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if(savedInstanceState==null)
             savedInstanceState=getIntent().getExtras();
         if(savedInstanceState==null)
             finish();
+        getSupportActionBar().setTitle(savedInstanceState.getString(ARGS_TITLE_STR));
         fragment = BangumiDetailsFragment.newInstance(savedInstanceState);
         fragment.setPresenter(new BangumiDetailsPresenterImpl(fragment, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Bangumi.class)));
         // TODO: 2017/5/27  setPresenter

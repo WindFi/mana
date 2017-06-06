@@ -1,6 +1,10 @@
 package me.sunzheng.mana.home.bangumi;
 
+import android.support.v7.view.menu.MenuView;
 import android.util.Log;
+
+import java.util.Collections;
+import java.util.Comparator;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -53,7 +57,14 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                         mView.setOriginName(mData.getName());
                         mView.setFaviorStatus(mData.getFavoriteStatus());
                         mView.setOriginName(mData.getNameCn());
-                        mView.setAdapter(new EpisodeAdapter(mData.getEpisodes()));
+
+                        Collections.sort(mData.getEpisodes(), new Comparator<Episode>() {
+                            @Override
+                            public int compare(Episode o1, Episode o2) {
+                                return (int) (o2.getEpisodeNo() - o1.getEpisodeNo());
+                            }
+                        });
+                        mView.setEpisodes(mData.getEpisodes());
                     }
                 }, new Consumer<Throwable>() {
                     @Override
