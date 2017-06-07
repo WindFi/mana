@@ -59,13 +59,19 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                         mView.setOriginName(mData.getName());
                         mView.setFaviorStatus(mData.getFavoriteStatus());
                         mView.setOriginName(mData.getNameCn());
-                        //filter for unavailable
-                        List<Episode> _list = new ArrayList<>();
+                        List<Episode> _list = new ArrayList<Episode>();
                         for(Episode item:mData.getEpisodes()){
                             if(item.getStatus()!=0L)
                                 _list.add(item);
                         }
                         mData.setEpisodes(_list);
+                        // TODO: 2017/6/7 后期做筛选
+//                        Flowable.fromIterable(mData.getEpisodes()).filter(new Predicate<Episode>() {
+//                            @Override
+//                            public boolean test(Episode episode) throws Exception {
+//                                return episode.getStatus() != 0L;
+//                            }
+//                        });
                         Collections.sort(mData.getEpisodes(), new Comparator<Episode>() {
                             @Override
                             public int compare(Episode o1, Episode o2) {
