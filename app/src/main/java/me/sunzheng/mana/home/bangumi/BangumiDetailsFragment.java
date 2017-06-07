@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -158,6 +159,17 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     private void onBindViewHolder(ViewHolder holder, Episode item) {
         holder.mTextView.setText(item.getNameCn());
         String host=sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST,"");
+        if(item.getStatus()==2L){
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(getActivity(), "clicked", Toast.LENGTH_SHORT).show();
+                }
+            });
+            holder.itemView.setClickable(true);
+        }else{
+            holder.itemView.setClickable(false);
+        }
         Glide.with(this).load(host+item.getThumbnail()).into(holder.mImageView);
     }
 

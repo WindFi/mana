@@ -18,7 +18,8 @@
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="146dp" />
 
         <ImageView
             android:id="@+id/bangumidetails_ablum_imageview"
@@ -58,15 +59,23 @@
             tools:layout_editor_absoluteX="0dp"
             tools:text="content" />
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/title_episode_textview"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bangumidetails_summary_textview"
+            tools:layout_editor_absoluteX="0dp" />
+
         <android.support.v7.widget.LinearLayoutCompat
             android:id="@+id/bangumidetails_episode_linearlayout"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:orientation="vertical"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bangumidetails_summary_textview"
-            app:layout_constraintEnd_toEndOf="parent"
-            tools:layout_editor_absoluteX="0dp" />
+            tools:layout_editor_absoluteX="8dp" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>

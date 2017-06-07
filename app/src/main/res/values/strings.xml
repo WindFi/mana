@@ -102,4 +102,5 @@
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="title_anim_catalog_tablayout" translatable="false">Anim</string>
     <string name="title_dram_catalog_tablayout" translatable="false">Dram</string>
+    <string name="title_episode_textview">Episode</string>
 </resources>

@@ -14,4 +14,5 @@
     <string name="hint_fragment_login_username">用户名</string>
     <string name="hint_fragment_login_password">密码</string>
     <string name="title_fragment_login_button">登录</string>
+    <string name="title_episode_textview">剧集</string>
 </resources>
