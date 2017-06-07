@@ -39,5 +39,6 @@ ext {
     espressoVersion='2.2.2'
     guavaVersion='21.0'
     daggerVersion='2.10'
+    exoplayerVersion='r2.4.0'
 }
 
