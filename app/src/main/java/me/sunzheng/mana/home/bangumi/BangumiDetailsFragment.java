@@ -1,6 +1,7 @@
 package me.sunzheng.mana.home.bangumi;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 
@@ -22,6 +22,7 @@ import java.util.List;
 import me.sunzheng.mana.BangumiDetailsActivity;
 import me.sunzheng.mana.PreferenceManager;
 import me.sunzheng.mana.R;
+import me.sunzheng.mana.VideoPlayerActivity;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.bangumi.wrapper.Episode;
 
@@ -42,6 +43,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     HomeContract.Bangumi.Presenter mPresenter;
     SharedPreferences sharedPreferences;
+
     public BangumiDetailsFragment() {
     }
 
@@ -54,7 +56,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        sharedPreferences=getActivity().getSharedPreferences(PreferenceManager.Global.STR_SP_NAME,Context.MODE_PRIVATE);
+        sharedPreferences = getActivity().getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
     }
 
     @Nullable
@@ -71,7 +73,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         mOriginTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_originname_textview);
         mSummaryTextView = (TextView) view.findViewById(R.id.bangumidetails_summary_textview);
         mEpisodeLinearLayout = (LinearLayoutCompat) view.findViewById(R.id.bangumidetails_episode_linearlayout);
-        mContentLoadingProgressBar=(ContentLoadingProgressBar)view.findViewById(R.id.bangumidetails_proggressbar);
+        mContentLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_proggressbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
@@ -82,15 +84,15 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(mContentLoadingProgressBar!=null)
-        mContentLoadingProgressBar.onAttachedToWindow();
+        if (mContentLoadingProgressBar != null)
+            mContentLoadingProgressBar.onAttachedToWindow();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        if(mContentLoadingProgressBar!=null)
-        mContentLoadingProgressBar.onDetachedFromWindow();
+        if (mContentLoadingProgressBar != null)
+            mContentLoadingProgressBar.onDetachedFromWindow();
     }
 
     @Override
@@ -156,21 +158,26 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         return new ViewHolder(view);
     }
 
-    private void onBindViewHolder(ViewHolder holder, Episode item) {
+    private void onBindViewHolder(ViewHolder holder, final Episode item) {
         holder.mTextView.setText(item.getNameCn());
-        String host=sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST,"");
-        if(item.getStatus()==2L){
+        final String host = sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "");
+        if (item.getStatus() == 2L) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Toast.makeText(getActivity(), "clicked", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(v.getContext(), VideoPlayerActivity.class);
+                    Bundle extras = new Bundle();
+                    String uri = host + "/play/" + item.getId();
+                    extras.putString(VideoPlayerActivity.ARGS_URI_STR, uri);
+                    intent.putExtras(extras);
+                    v.getContext().startActivity(intent);
                 }
             });
             holder.itemView.setClickable(true);
-        }else{
+        } else {
             holder.itemView.setClickable(false);
         }
-        Glide.with(this).load(host+item.getThumbnail()).into(holder.mImageView);
+        Glide.with(this).load(host + item.getThumbnail()).into(holder.mImageView);
     }
 
     private static final class ViewHolder {
@@ -187,7 +194,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     @Override
     public void showProgressIntractor(boolean active) {
-        if(active)
+        if (active)
             mContentLoadingProgressBar.show();
         else
             mContentLoadingProgressBar.hide();
