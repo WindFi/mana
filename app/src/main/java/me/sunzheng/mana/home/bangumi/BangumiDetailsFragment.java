@@ -6,6 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +36,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     TextView mSummaryTextView;
     TextView mAirDateTextView;
     TextView mWeekDayTextView;
-
+    ContentLoadingProgressBar mContentLoadingProgressBar;
     LinearLayoutCompat mEpisodeLinearLayout;
 
     HomeContract.Bangumi.Presenter mPresenter;
@@ -69,6 +70,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         mOriginTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_originname_textview);
         mSummaryTextView = (TextView) view.findViewById(R.id.bangumidetails_summary_textview);
         mEpisodeLinearLayout = (LinearLayoutCompat) view.findViewById(R.id.bangumidetails_episode_linearlayout);
+        mContentLoadingProgressBar=(ContentLoadingProgressBar)view.findViewById(R.id.bangumidetails_proggressbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
@@ -79,11 +81,15 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if(mContentLoadingProgressBar!=null)
+        mContentLoadingProgressBar.onAttachedToWindow();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        if(mContentLoadingProgressBar!=null)
+        mContentLoadingProgressBar.onDetachedFromWindow();
     }
 
     @Override
@@ -144,6 +150,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     private ViewHolder onCreateViewHolder(ViewGroup parent) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_onairfragment, null);
+        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         parent.addView(view);
         return new ViewHolder(view);
     }
@@ -164,5 +171,13 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
             mTextView = (TextView) view.findViewById(R.id.item_descript);
             mImageView = (ImageView) view.findViewById(R.id.item_album);
         }
+    }
+
+    @Override
+    public void showProgressIntractor(boolean active) {
+        if(active)
+            mContentLoadingProgressBar.show();
+        else
+            mContentLoadingProgressBar.hide();
     }
 }

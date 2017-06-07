@@ -28,6 +28,8 @@ public interface HomeContract {
     interface Bangumi {
 
         interface View extends IView<Presenter> {
+            void showProgressIntractor(boolean active);
+
             void setWeekDay(long updateDate);
 
             void setAirDate(String startDate);

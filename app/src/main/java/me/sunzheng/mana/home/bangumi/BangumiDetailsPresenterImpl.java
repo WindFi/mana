@@ -45,6 +45,7 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
 
     @Override
     public void load(String id) {
+        mView.showProgressIntractor(true);
         Disposable disposable = apiServices.getBangumiDetail(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -74,7 +75,7 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                 }, new Action() {
                     @Override
                     public void run() throws Exception {
-
+                        mView.showProgressIntractor(false);
                     }
                 });
         completable.add(disposable);

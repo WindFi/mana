@@ -11,6 +11,15 @@
         android:layout_margin="8dp"
         tools:context="me.sunzheng.mana.BangumiDetailsActivity">
 
+        <android.support.v4.widget.ContentLoadingProgressBar
+            android:id="@+id/bangumidetails_proggressbar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <ImageView
             android:id="@+id/bangumidetails_ablum_imageview"
             android:layout_width="48dp"
@@ -48,14 +57,16 @@
             app:layout_constraintTop_toBottomOf="@+id/bangumidetails_ablum_imageview"
             tools:layout_editor_absoluteX="0dp"
             tools:text="content" />
+
         <android.support.v7.widget.LinearLayoutCompat
             android:id="@+id/bangumidetails_episode_linearlayout"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/bangumidetails_summary_textview"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:layout_editor_absoluteX="0dp" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v4.widget.NestedScrollView>
