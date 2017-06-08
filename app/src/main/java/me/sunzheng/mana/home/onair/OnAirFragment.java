@@ -55,9 +55,9 @@ public class OnAirFragment extends android.support.v4.app.Fragment implements Ho
                                           Bundle savedInstanceState) {
         android.view.View view = inflater.inflate(R.layout.fragment_item_list, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
-        swipeRefreshLayout=(SwipeRefreshLayout)view.findViewById(R.id.swiprefreshlayout);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiprefreshlayout);
         return view;
-}
+    }
 
     @Override
     public void onViewCreated(android.view.View view, @Nullable Bundle savedInstanceState) {
@@ -74,7 +74,6 @@ public class OnAirFragment extends android.support.v4.app.Fragment implements Ho
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        mPresenter.subscribe();
     }
 
     @Override
@@ -85,7 +84,6 @@ public class OnAirFragment extends android.support.v4.app.Fragment implements Ho
     @Override
     public void onDetach() {
         super.onDetach();
-//        mPresenter.unsubscribe();
     }
 
     @Override

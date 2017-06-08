@@ -160,15 +160,14 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     private void onBindViewHolder(ViewHolder holder, final Episode item) {
         holder.mTextView.setText(item.getNameCn());
-        final String host = sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "");
+        String host = sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "");
         if (item.getStatus() == 2L) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), VideoPlayerActivity.class);
                     Bundle extras = new Bundle();
-                    String uri = host + "/play/" + item.getId();
-                    extras.putString(VideoPlayerActivity.ARGS_URI_STR, uri);
+                    extras.putString(VideoPlayerActivity.ARGS_URI_STR, item.getId());
                     intent.putExtras(extras);
                     v.getContext().startActivity(intent);
                 }

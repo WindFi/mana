@@ -2,6 +2,7 @@ package me.sunzheng.mana.home;
 
 import io.reactivex.Observable;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
+import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
 import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -75,7 +76,7 @@ public interface HomeApiService {
          * @return
          */
         @GET(PATH + "/{id}")
-        Observable<String> getEpisode(@Path("id") String id);
+        Observable<EpisodeWrapper> getEpisode(@Path("id") String id);
     }
 
 }
