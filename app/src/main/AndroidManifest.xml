@@ -50,8 +50,10 @@
         <activity
             android:name=".VideoPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:screenOrientation="landscape"
             android:launchMode="singleInstance"
+            android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+        <activity android:name=".SearchResultActivity"></activity>
     </application>
+
 </manifest>
