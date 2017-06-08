@@ -44,6 +44,17 @@ public class Episode {
     @SerializedName("id")
     @Expose
     private String id;
+    @SerializedName("watch_progress")
+    @Expose
+    private WatchProgress watchProgress;
+
+    public WatchProgress getWatchProgress() {
+        return watchProgress;
+    }
+
+    public void setWatchProgress(WatchProgress watchProgress) {
+        this.watchProgress = watchProgress;
+    }
 
     public Long getStatus() {
         return status;
