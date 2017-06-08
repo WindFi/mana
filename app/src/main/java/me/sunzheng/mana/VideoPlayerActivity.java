@@ -98,7 +98,7 @@ public class VideoPlayerActivity extends Activity {
 
     @Override
     protected void onStop() {
-        player.stop();
+        player.setPlayWhenReady(false);
         super.onStop();
     }
 
