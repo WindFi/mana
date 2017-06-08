@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity
 //        see https://stackoverflow.com/questions/27378981/how-to-use-searchview-in-toolbar-android
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchManager searchManager = (SearchManager) MainActivity.this.getSystemService(Context.SEARCH_SERVICE);
+        SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
         SearchView searchView = null;
 
@@ -106,7 +106,7 @@ public class MainActivity extends AppCompatActivity
             searchView = (SearchView) searchItem.getActionView();
         }
         if (searchView != null) {
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(MainActivity.this.getComponentName()));
+            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         }
         return super.onCreateOptionsMenu(menu);
     }

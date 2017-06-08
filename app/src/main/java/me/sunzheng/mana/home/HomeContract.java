@@ -49,4 +49,20 @@ public interface HomeContract {
             void load(String id);
         }
     }
+
+    interface Search {
+        interface View extends IView<Presenter> {
+            void empty(String message);
+
+            void setAdapter(RecyclerView.Adapter adapter);
+
+            void notifyDataSetChanged();
+        }
+
+        interface Presenter extends IPresenter {
+            void search(String key);
+
+            void loadMore();
+        }
+    }
 }
