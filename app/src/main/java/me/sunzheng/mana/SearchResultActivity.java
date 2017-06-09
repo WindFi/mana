@@ -9,6 +9,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 public class SearchResultActivity extends AppCompatActivity {
+    
+    public static final String ARGS_SEARCHNAME_STR = "name";
+
     // TODO: 2017/6/8  implements it
     @Override
     protected void onCreate(Bundle savedInstanceState) {

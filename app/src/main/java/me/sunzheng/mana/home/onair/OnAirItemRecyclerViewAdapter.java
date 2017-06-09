@@ -1,12 +1,8 @@
 package me.sunzheng.mana.home.onair;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -43,15 +39,7 @@ public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItem
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(v.getContext(), BangumiDetailsActivity.class);
-                Bundle extras = new Bundle();
-                extras.putString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR, mValues.get(position).getImage());
-                extras.putString(BangumiDetailsActivity.ARGS_ID_STR,mValues.get(position).getId());
-                extras.putString(BangumiDetailsActivity.ARGS_TITLE_STR,mValues.get(position).getNameCn());
-                intent.putExtras(extras);
-                Pair<View, String> pair = Pair.create((View) holder.mImageView,BangumiDetailsActivity.PAIR_IMAGE_STR);
-                ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation((Activity) v.getContext(), pair);
-                v.getContext().startActivity(intent, optionsCompat.toBundle());
+                BangumiDetailsActivity.newInstance((Activity) v.getContext(), mValues.get(position).getId(), mValues.get(position).getImage(), mValues.get(position).getNameCn(), holder.mImageView);
             }
         });
         Glide.with(holder.itemView.getContext())
