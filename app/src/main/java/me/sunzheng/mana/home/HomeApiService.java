@@ -4,6 +4,7 @@ import io.reactivex.Observable;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
 import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
+import me.sunzheng.mana.home.search.wrapper.SearchResultWrapper;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
@@ -54,7 +55,7 @@ public interface HomeApiService {
          * @return
          */
         @GET(PATH)
-        Observable<String> listAll(@Query("page") int page, @Query("count") int count, @Query("sort_field") String field, @Query("sort_order") String order, @Query("name") String name);
+        Observable<SearchResultWrapper> listAll(@Query("page") int page, @Query("count") int count, @Query("sort_field") String field, @Query("sort_order") String order, @Query("name") String name);
 
         /**
          * Get the episode by specific id
