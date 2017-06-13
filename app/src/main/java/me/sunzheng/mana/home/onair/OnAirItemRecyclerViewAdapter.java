@@ -46,7 +46,9 @@ public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItem
                 .load(mValues.get(position).getImage())
                 .placeholder(new ColorDrawable(Color.parseColor(mValues.get(position).getCover_color())))
                 .into(holder.mImageView);
-        holder.mIdView.setText(mValues.get(position).getNameCn());
+        holder.mTitleTextView.setText(mValues.get(position).getNameCn());
+        holder.mSummaryTextView.setText(mValues.get(position).getSummary());
+        holder.mEtcTextView.setText(mValues.get(position).getAirDate());
     }
 
     @Override
@@ -56,14 +58,16 @@ public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItem
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         public final CardView mView;
-        public final TextView mIdView;
+        public final TextView mTitleTextView, mSummaryTextView, mEtcTextView;
         public final ImageView mImageView;
 
         public ViewHolder(View view) {
             super(view);
             mView = (CardView) view;
-            mIdView = (TextView) view.findViewById(R.id.item_descript);
+            mTitleTextView = (TextView) view.findViewById(R.id.item_title_textview);
             mImageView = (ImageView) view.findViewById(R.id.item_album);
+            mSummaryTextView = (TextView) view.findViewById(R.id.item_subtitle_textview);
+            mEtcTextView = (TextView) view.findViewById(R.id.item_etc_textview);
         }
     }
 }

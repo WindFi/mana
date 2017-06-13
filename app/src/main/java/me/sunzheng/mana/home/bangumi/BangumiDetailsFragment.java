@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -93,6 +94,8 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         super.onDetach();
         if (mContentLoadingProgressBar != null)
             mContentLoadingProgressBar.onDetachedFromWindow();
+        if (mPresenter != null)
+            mPresenter.unsubscribe();
     }
 
     @Override
@@ -159,7 +162,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     }
 
     private void onBindViewHolder(ViewHolder holder, final Episode item) {
-        holder.mTextView.setText(item.getNameCn());
+        holder.mTitleTextView.setText(item.getNameCn());
         String host = sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "");
         if (item.getStatus() == 2L) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -176,19 +179,10 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         } else {
             holder.itemView.setClickable(false);
         }
-        Glide.with(this).load(host + item.getThumbnail()).into(holder.mImageView);
-    }
-
-    private static final class ViewHolder {
-        final View itemView;
-        final ImageView mImageView;
-        final TextView mTextView;
-
-        public ViewHolder(View view) {
-            itemView = view;
-            mTextView = (TextView) view.findViewById(R.id.item_descript);
-            mImageView = (ImageView) view.findViewById(R.id.item_album);
-        }
+        Glide.with(this).load(item.getThumbnail()).into(holder.mImageView);
+        holder.mEpisodeNoTextView.setText(getString(R.string.episode_template, item.getEpisodeNo() + ""));
+        holder.mTitleTextView.setText(TextUtils.isEmpty(item.getNameCn()) ? item.getName() : item.getNameCn());
+        holder.mUpdateDateTextView.setText(item.getAirdate());
     }
 
     @Override
@@ -197,5 +191,19 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
             mContentLoadingProgressBar.show();
         else
             mContentLoadingProgressBar.hide();
+    }
+
+    private static final class ViewHolder {
+        final View itemView;
+        final TextView mTitleTextView, mUpdateDateTextView, mEpisodeNoTextView;
+        final ImageView mImageView;
+
+        public ViewHolder(View view) {
+            itemView = view;
+            mEpisodeNoTextView = (TextView) view.findViewById(R.id.item_title_textview);
+            mTitleTextView = (TextView) view.findViewById(R.id.item_subtitle_textview);
+            mUpdateDateTextView = (TextView) view.findViewById(R.id.item_etc_textview);
+            mImageView = (ImageView) view.findViewById(R.id.item_album);
+        }
     }
 }
