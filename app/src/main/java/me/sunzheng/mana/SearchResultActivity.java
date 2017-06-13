@@ -4,6 +4,8 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -17,6 +19,7 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
     public static final String ARGS_SEARCHNAME_STR = "name";
     RecyclerView mRecyclerView;
     HomeContract.Search.Presenter mPresenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,7 +75,14 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
 
     @Override
     public void setAdapter(RecyclerView.Adapter adapter) {
-
+        if (mRecyclerView.getLayoutManager() == null) {
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
+        }
+        if (mRecyclerView.getAdapter() == null)
+            mRecyclerView.setAdapter(adapter);
+        else
+            mRecyclerView.swapAdapter(adapter, false);
     }
 
     @Override
