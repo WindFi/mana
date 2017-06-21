@@ -2,7 +2,6 @@ package me.sunzheng.mana;
 
 import android.app.ActionBar;
 import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -73,14 +72,13 @@ public class VideoPlayerActivity extends Activity {
         player = ExoPlayerFactory.newSimpleInstance(this, trackSelector);
         playerView.setPlayer(player);
         HomeApiService.Episode service = ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Episode.class);
-        final String host = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE).getString(PreferenceManager.Global.STR_KEY_HOST, "");
         service.getEpisode(savedInstanceState.getString(ARGS_URI_STR))
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<EpisodeWrapper>() {
                     @Override
                     public void accept(EpisodeWrapper episodeWrapper) throws Exception {
-                        Uri uri = Uri.parse(host + episodeWrapper.getVideoFiles().get(0).getUrl());
+                        Uri uri = Uri.parse(episodeWrapper.getVideoFiles().get(0).getUrl());
                         DefaultBandwidthMeter mDefaultBandwidthMeter = new DefaultBandwidthMeter();
                         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(VideoPlayerActivity.this, Util.getUserAgent(VideoPlayerActivity.this, getPackageName()), mDefaultBandwidthMeter);
                         ExtractorsFactory extractorFactory = new DefaultExtractorsFactory();
