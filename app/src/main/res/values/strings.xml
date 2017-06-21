@@ -104,4 +104,5 @@
     <string name="title_dram_catalog_tablayout" translatable="false">Dram</string>
     <string name="title_episode_textview">Episode</string>
     <string name="episode_template">Episode: %1$s</string>
+    <string name="hint_search">Name</string>
 </resources>

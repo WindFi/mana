@@ -4,7 +4,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -17,7 +16,6 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.SearchEvent;
 import android.view.View;
 
 import me.sunzheng.mana.home.HomeApiService;
@@ -109,16 +107,6 @@ public class MainActivity extends AppCompatActivity
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         }
         return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onSearchRequested() {
-        return super.onSearchRequested();
-    }
-
-    @Override
-    public boolean onSearchRequested(@Nullable SearchEvent searchEvent) {
-        return super.onSearchRequested(searchEvent);
     }
 
     @Override

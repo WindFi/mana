@@ -47,11 +47,11 @@ public interface HomeApiService {
         /**
          * List all bangumi base on the given query criteria.
          *
-         * @param page
-         * @param count
-         * @param field
-         * @param order
-         * @param name
+         * @param page  the page number start from 1. Default: 1.
+         * @param count count per page, by provide count = -1, client can obtain all data. Default: 10.
+         * @param field the field name used for sort by. Default: air_date.
+         * @param order the sort order which can be only two value: desc and asc. Default: desc.
+         * @param name  the search term for filtering result. this string will be matched by name_cn, name and summary.
          * @return
          */
         @GET(PATH)

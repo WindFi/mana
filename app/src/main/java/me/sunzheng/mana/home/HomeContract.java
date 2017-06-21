@@ -52,6 +52,8 @@ public interface HomeContract {
 
     interface Search {
         interface View extends IView<Presenter> {
+            void showProgressIntractor(boolean active);
+
             void empty(String message);
 
             void setAdapter(RecyclerView.Adapter adapter);
@@ -60,7 +62,7 @@ public interface HomeContract {
         }
 
         interface Presenter extends IPresenter {
-            void search(String key);
+            void query(String key);
 
             void loadMore();
         }

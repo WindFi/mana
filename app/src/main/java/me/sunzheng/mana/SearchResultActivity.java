@@ -2,7 +2,9 @@ package me.sunzheng.mana;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -12,13 +14,15 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
+import me.sunzheng.mana.home.search.SearchPresenterImpl;
 
 public class SearchResultActivity extends AppCompatActivity implements HomeContract.Search.View {
 
-    public static final String ARGS_SEARCHNAME_STR = "name";
     RecyclerView mRecyclerView;
     HomeContract.Search.Presenter mPresenter;
+    ContentLoadingProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,11 +32,29 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+        progressBar = (ContentLoadingProgressBar) findViewById(R.id.progressbar);
+
+        mPresenter = new SearchPresenterImpl(this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Bangumi.class));
+        setPresenter(mPresenter);
+        handleIntent(getIntent());
     }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleIntent(intent);
+    }
+
+    private void handleIntent(Intent intent) {
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String key = intent.getStringExtra(SearchManager.QUERY);
+            mPresenter.query(key);
+        }
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -59,11 +81,6 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
     }
 
     @Override
-    public boolean onSearchRequested() {
-        return super.onSearchRequested();
-    }
-
-    @Override
     public void setPresenter(HomeContract.Search.Presenter presenter) {
         this.mPresenter = presenter;
     }
@@ -82,11 +99,19 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
         if (mRecyclerView.getAdapter() == null)
             mRecyclerView.setAdapter(adapter);
         else
-            mRecyclerView.swapAdapter(adapter, false);
+            mRecyclerView.swapAdapter(adapter, true);
     }
 
     @Override
     public void notifyDataSetChanged() {
 
+    }
+
+    @Override
+    public void showProgressIntractor(boolean active) {
+        if (active)
+            progressBar.show();
+        else
+            progressBar.hide();
     }
 }
