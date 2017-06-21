@@ -54,13 +54,10 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         getMenuInflater().inflate(R.menu.main, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-
         SearchView searchView = null;
-
         if (searchItem != null) {
             searchView = (SearchView) searchItem.getActionView();
         }
