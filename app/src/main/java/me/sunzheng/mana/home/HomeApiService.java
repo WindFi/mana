@@ -4,7 +4,7 @@ import io.reactivex.Observable;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
 import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
-import me.sunzheng.mana.home.search.wrapper.SearchResultWrapper;
+import me.sunzheng.mana.home.search.SearchResultWrapper;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import retrofit2.http.Query;

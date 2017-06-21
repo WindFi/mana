@@ -10,7 +10,6 @@ import io.reactivex.schedulers.Schedulers;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.search.wrapper.SearchResultAdapter;
-import me.sunzheng.mana.home.search.wrapper.SearchResultWrapper;
 
 /**
  * Created by Sun on 2017/6/15.

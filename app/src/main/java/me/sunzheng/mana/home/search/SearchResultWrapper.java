@@ -1,10 +1,12 @@
 
-package me.sunzheng.mana.home.search.wrapper;
+package me.sunzheng.mana.home.search;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+
+import me.sunzheng.mana.home.search.wrapper.Datum;
 
 public class SearchResultWrapper {
 
