@@ -1,6 +1,4 @@
-package me.sunzheng.mana;
-
-import io.reactivex.disposables.Disposable;
+package me.sunzheng.mana.utils;
 
 /**
  * Created by Sun on 2017/5/22.

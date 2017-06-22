@@ -50,5 +50,6 @@ dependencies {
     compile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
     compile "com.android.support.constraint:constraint-layout:$rootProject.constraintlayoutVersion"
     compile "com.google.android.exoplayer:exoplayer:$rootProject.exoplayerVersion"
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
 }

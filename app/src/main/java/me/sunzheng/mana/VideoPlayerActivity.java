@@ -32,6 +32,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
+import me.sunzheng.mana.utils.App;
 
 // TODO: 2017/6/1  VideoPlayer
 public class VideoPlayerActivity extends Activity {

@@ -21,6 +21,7 @@ import android.view.View;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.onair.OnAirFragment;
 import me.sunzheng.mana.home.onair.OnAirPresenterImpl;
+import me.sunzheng.mana.utils.App;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {

@@ -16,8 +16,8 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import me.sunzheng.mana.MainActivity;
-import me.sunzheng.mana.PreferenceManager;
 import me.sunzheng.mana.R;
+import me.sunzheng.mana.utils.PreferenceManager;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -28,13 +28,12 @@ import me.sunzheng.mana.R;
  * create an instance of this fragment.
  */
 public class LoginFragment extends Fragment implements LoginContract.LoginView {
+    SharedPreferences sharedPreferences;
     private LoginContract.LoginPresenter mPresenter;
     private OnFragmentInteractionListener mListener;
-
     private TextInputEditText loginUserNameEditText;
     private TextInputEditText loginPassWordEditText;
     private Button mButton;
-    SharedPreferences sharedPreferences;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -106,21 +105,6 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
-    }
-
     @Override
     public void setPresenter(LoginContract.LoginPresenter presenter) {
         mPresenter = presenter;
@@ -144,5 +128,20 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView {
         Intent intent = new Intent(getActivity(), MainActivity.class);
         startActivity(intent);
         getActivity().finish();
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
     }
 }

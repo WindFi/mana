@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.search.SearchPresenterImpl;
+import me.sunzheng.mana.utils.App;
 
 public class SearchResultActivity extends AppCompatActivity implements HomeContract.Search.View {
 

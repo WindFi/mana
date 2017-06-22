@@ -1,4 +1,4 @@
-package me.sunzheng.mana;
+package me.sunzheng.mana.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;

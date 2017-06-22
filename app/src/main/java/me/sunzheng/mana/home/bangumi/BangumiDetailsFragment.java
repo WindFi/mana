@@ -21,11 +21,11 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import me.sunzheng.mana.BangumiDetailsActivity;
-import me.sunzheng.mana.PreferenceManager;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.VideoPlayerActivity;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.bangumi.wrapper.Episode;
+import me.sunzheng.mana.utils.PreferenceManager;
 
 /**
  * Created by Sun on 2017/5/27.

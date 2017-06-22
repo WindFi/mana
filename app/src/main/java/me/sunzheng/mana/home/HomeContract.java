@@ -4,9 +4,9 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.List;
 
-import me.sunzheng.mana.IPresenter;
-import me.sunzheng.mana.IView;
 import me.sunzheng.mana.home.bangumi.wrapper.Episode;
+import me.sunzheng.mana.utils.IPresenter;
+import me.sunzheng.mana.utils.IView;
 
 /**
  * Created by Sun on 2017/5/23.

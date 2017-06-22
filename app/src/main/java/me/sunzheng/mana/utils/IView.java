@@ -1,4 +1,4 @@
-package me.sunzheng.mana;
+package me.sunzheng.mana.utils;
 
 /**
  * Created by Sun on 2017/5/22.

@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.bangumi.BangumiDetailsFragment;
 import me.sunzheng.mana.home.bangumi.BangumiDetailsPresenterImpl;
+import me.sunzheng.mana.utils.App;
 
 /**
  * I wannt passed the image from anothers
