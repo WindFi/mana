@@ -45,6 +45,8 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     HomeContract.Bangumi.Presenter mPresenter;
     SharedPreferences sharedPreferences;
 
+    private boolean unloaded = true;
+
     public BangumiDetailsFragment() {
     }
 
