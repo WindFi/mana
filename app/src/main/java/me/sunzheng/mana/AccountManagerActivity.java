@@ -1,9 +1,7 @@
-package me.sunzheng.mana.account;
+package me.sunzheng.mana;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
-import me.sunzheng.mana.R;
+import android.support.v7.app.AppCompatActivity;
 
 public class AccountManagerActivity extends AppCompatActivity {
 
