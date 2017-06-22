@@ -137,12 +137,12 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         } else if (id == R.id.nav_history) {
             // TODO: 2017/5/22 history
-
+            Intent intent = new Intent(this, MyFavioursActivity.class);
+            startActivity(intent);
         } else if (id == R.id.account) {
             // TODO: 2017/5/22 account change to account page
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
-
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

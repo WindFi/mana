@@ -67,4 +67,16 @@ public interface HomeContract {
             void loadMore();
         }
     }
+
+    interface MyBangumi {
+        interface View extends IView<Presenter> {
+            void showProgressIntractor(boolean active);
+
+            void setAdapter(RecyclerView.Adapter adapter);
+        }
+
+        interface Presenter extends IPresenter {
+            void load();
+        }
+    }
 }

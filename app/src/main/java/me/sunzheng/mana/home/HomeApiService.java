@@ -3,6 +3,7 @@ package me.sunzheng.mana.home;
 import io.reactivex.Observable;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
+import me.sunzheng.mana.home.mybangumi.wrapper.FaviourWrapper;
 import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
 import me.sunzheng.mana.home.search.SearchResultWrapper;
 import retrofit2.http.GET;
@@ -25,7 +26,7 @@ public interface HomeApiService {
          * @return
          */
         @GET(PATH)
-        Observable<String> listMyBangumi();
+        Observable<FaviourWrapper> listMyBangumi();
     }
 
     interface OnAir {
