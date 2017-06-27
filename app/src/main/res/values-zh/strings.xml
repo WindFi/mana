@@ -16,4 +16,5 @@
     <string name="title_fragment_login_button">登录</string>
     <string name="title_episode_textview">剧集</string>
     <string name="episode_template">第 %1$s 话</string>
+    <string name="title_activity_faviours">收藏</string>
 </resources>

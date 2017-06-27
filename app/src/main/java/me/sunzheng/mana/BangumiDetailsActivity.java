@@ -63,7 +63,7 @@ public class BangumiDetailsActivity extends AppCompatActivity {
         fragment = BangumiDetailsFragment.newInstance(savedInstanceState);
         fragment.setPresenter(new BangumiDetailsPresenterImpl(fragment, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Bangumi.class)));
         // TODO: 2017/5/27  setPresenter
-        getSupportFragmentManager().beginTransaction().replace(R.id.contentview, fragment).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.contentPanel, fragment).commit();
         // TODO: 2017/6/4 default banner
         Glide.with(this).load(savedInstanceState.getString(ARGS_ABLUM_URL_STR)).into(mBannerImageView);
     }

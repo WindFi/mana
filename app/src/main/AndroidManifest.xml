@@ -73,7 +73,10 @@
             android:name="android.app.default_searchable"
             android:value=".SearchResultActivity" />
 
-        <activity android:name=".MyFavioursActivity"></activity>
+        <activity
+            android:name=".MyFavioursActivity"
+            android:label="@string/title_activity_faviours"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
