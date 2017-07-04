@@ -65,7 +65,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     @Nullable
     @Override
     public android.view.View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_bangumidetails, null);
+        return inflater.inflate(R.layout.fragment_bangumidetails, container, false);
     }
 
     @Override
@@ -76,7 +76,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         mOriginTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_originname_textview);
         mSummaryTextView = (TextView) view.findViewById(R.id.bangumidetails_summary_textview);
         mEpisodeLinearLayout = (LinearLayoutCompat) view.findViewById(R.id.bangumidetails_episode_linearlayout);
-        mContentLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_proggressbar);
+//        mContentLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_proggressbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
@@ -145,7 +145,6 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
             return;
         mCNTitleTextView.setText(name);
     }
-
     @Override
     public void setEpisodes(List<Episode> episodeList) {
         if (episodeList == null || episodeList.isEmpty()) {
@@ -165,7 +164,6 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     private void onBindViewHolder(ViewHolder holder, final Episode item) {
         holder.mTitleTextView.setText(item.getNameCn());
-        String host = sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "");
         if (item.getStatus() == 2L) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -189,10 +187,10 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     @Override
     public void showProgressIntractor(boolean active) {
-        if (active)
-            mContentLoadingProgressBar.show();
-        else
-            mContentLoadingProgressBar.hide();
+//        if (active)
+//            mContentLoadingProgressBar.show();
+//        else
+//            mContentLoadingProgressBar.hide();
     }
 
     private static final class ViewHolder {
