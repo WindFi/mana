@@ -17,4 +17,11 @@
     <string name="title_episode_textview">剧集</string>
     <string name="episode_template">第 %1$s 话</string>
     <string name="title_activity_faviours">收藏</string>
+
+    <string name="title_uncollection_status">未收藏</string>
+    <string name="title_wish_status">想看</string>
+    <string name="title_watched_status">看过</string>
+    <string name="title_watching_status">在看</string>
+    <string name="title_pause_status">搁置</string>
+    <string name="title_abanoned_status">抛弃</string>
 </resources>

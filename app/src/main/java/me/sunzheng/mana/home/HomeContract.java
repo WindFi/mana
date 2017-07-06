@@ -47,6 +47,8 @@ public interface HomeContract {
 
         interface Presenter extends IPresenter {
             void load(String id);
+
+            void changeBangumiFavoriteState(String id, int status);
         }
     }
 

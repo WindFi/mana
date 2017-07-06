@@ -13,6 +13,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import me.sunzheng.mana.home.FavoriteStatusRequest;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
@@ -24,6 +25,7 @@ import me.sunzheng.mana.home.bangumi.wrapper.Episode;
  */
 
 public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Presenter {
+    final String TAG = getClass().getSimpleName();
     CompositeDisposable completable;
     HomeContract.Bangumi.View mView;
     HomeApiService.Bangumi apiServices;
@@ -59,8 +61,8 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                         mView.setFaviorStatus(mData.getFavoriteStatus());
                         mView.setOriginName(mData.getNameCn());
                         List<Episode> _list = new ArrayList<Episode>();
-                        for(Episode item:mData.getEpisodes()){
-                            if(item.getStatus()!=0L)
+                        for (Episode item : mData.getEpisodes()) {
+                            if (item.getStatus() != 0L)
                                 _list.add(item);
                         }
                         mData.setEpisodes(_list);
@@ -92,4 +94,30 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                 });
         completable.add(disposable);
     }
+
+    @Override
+    public void changeBangumiFavoriteState(String id, final int status) {
+        FavoriteStatusRequest request = new FavoriteStatusRequest();
+        request.status = status;
+        Disposable disposable = apiServices.changeBangumiFavoriteStatus(id, request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Response>() {
+                    @Override
+                    public void accept(Response response) throws Exception {
+                        if (response.status == 0) {
+                            mView.setFaviorStatus(status);
+                        } else {
+                            Log.i(TAG, response.message);
+                        }
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.e(TAG, throwable.getLocalizedMessage());
+                    }
+                });
+        completable.add(disposable);
+    }
+
 }

@@ -9,8 +9,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.widget.PopupMenu;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -39,6 +42,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     TextView mSummaryTextView;
     TextView mAirDateTextView;
     TextView mWeekDayTextView;
+    TextView mFaviorteStatusTextView;
     ContentLoadingProgressBar mContentLoadingProgressBar;
     LinearLayoutCompat mEpisodeLinearLayout;
 
@@ -76,12 +80,45 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         mOriginTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_originname_textview);
         mSummaryTextView = (TextView) view.findViewById(R.id.bangumidetails_summary_textview);
         mEpisodeLinearLayout = (LinearLayoutCompat) view.findViewById(R.id.bangumidetails_episode_linearlayout);
+        mFaviorteStatusTextView = (TextView) view.findViewById(R.id.bangumidetails_faviortestatus_textview);
 //        mContentLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_proggressbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
         Glide.with(this).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mImageView);
         mPresenter.load(getArguments().getString(BangumiDetailsActivity.ARGS_ID_STR));
+        mFaviorteStatusTextView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                PopupMenu popupMenu = new PopupMenu(getContext(), mFaviorteStatusTextView);
+                popupMenu.inflate(R.menu.favorite);
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (item.getTitle().equals(mFaviorteStatusTextView.getText()))
+                            return false;
+                        int status = 0;
+                        if (item.getItemId() == R.id.pop_uncollection) {
+                            status = 0;
+                        } else if (item.getItemId() == R.id.pop_wish) {
+                            status = 1;
+                        } else if (item.getItemId() == R.id.pop_watched) {
+                            status = 2;
+                        } else if (item.getItemId() == R.id.pop_watching) {
+                            status = 3;
+                        } else if (item.getItemId() == R.id.pop_pause) {
+                            status = 4;
+                        } else if (item.getItemId() == R.id.pop_abanoned) {
+                            status = 5;
+                        }
+                        mPresenter.changeBangumiFavoriteState(getArguments().getString(BangumiDetailsActivity.ARGS_ID_STR), status);
+                        return false;
+                    }
+                });
+                popupMenu.show();
+                return false;
+            }
+        });
     }
 
     @Override
@@ -137,6 +174,20 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     @Override
     public void setFaviorStatus(long status) {
         // TODO: 2017/5/27 favior status
+        String statusString = getResources().getStringArray(R.array.favorite_status_values)[(int) status];
+        switch ((int) status) {
+            case 1:
+                break;
+            case 2:
+                break;
+            case 3:
+                break;
+            case 4:
+                break;
+            default:
+                break;
+        }
+        mFaviorteStatusTextView.setText(statusString);
     }
 
     @Override
@@ -145,6 +196,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
             return;
         mCNTitleTextView.setText(name);
     }
+
     @Override
     public void setEpisodes(List<Episode> episodeList) {
         if (episodeList == null || episodeList.isEmpty()) {

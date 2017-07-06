@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/pop_uncollection"
+        android:title="@string/title_uncollection_status" />
+    <item
+        android:id="@+id/pop_wish"
+        android:title="@string/title_wish_status" />
+    <item
+        android:id="@+id/pop_watched"
+        android:title="@string/title_watched_status" />
+    <item
+        android:id="@+id/pop_watching"
+        android:title="@string/title_watching_status" />
+    <item
+        android:id="@+id/pop_pause"
+        android:title="@string/title_pause_status" />
+    <item
+        android:id="@+id/pop_abanoned"
+        android:title="@string/title_abanoned_status" />
+</menu>

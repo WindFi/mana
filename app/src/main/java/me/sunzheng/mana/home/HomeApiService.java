@@ -1,12 +1,15 @@
 package me.sunzheng.mana.home;
 
 import io.reactivex.Observable;
+import me.sunzheng.mana.home.bangumi.Response;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
 import me.sunzheng.mana.home.mybangumi.wrapper.FaviourWrapper;
 import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
 import me.sunzheng.mana.home.search.SearchResultWrapper;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -66,6 +69,14 @@ public interface HomeApiService {
          */
         @GET(PATH + "/{id}")
         Observable<BangumiDetailWrapper> getBangumiDetail(@Path("id") String id);
+
+        /**
+         * @param id
+         * @param request
+         * @return
+         */
+        @POST("/api/watch/favorite/bangumi/{id}")
+        Observable<Response> changeBangumiFavoriteStatus(@Path("id") String id, @Body FavoriteStatusRequest request);
     }
 
     interface Episode {

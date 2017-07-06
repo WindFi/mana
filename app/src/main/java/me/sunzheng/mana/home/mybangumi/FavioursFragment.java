@@ -42,7 +42,7 @@ public class FavioursFragment extends Fragment implements HomeContract.MyBangumi
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return super.onCreateView(inflater, container, savedInstanceState);
+        return inflater.inflate(R.layout.fragment_myfaviours, container, false);
     }
 
     @Override
@@ -74,7 +74,12 @@ public class FavioursFragment extends Fragment implements HomeContract.MyBangumi
 
     @Override
     public void showProgressIntractor(boolean active) {
-
+        if (mProgressBar == null)
+            return;
+        if (active)
+            mProgressBar.show();
+        else
+            mProgressBar.hide();
     }
 
     @Override
