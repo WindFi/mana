@@ -49,7 +49,7 @@ public class BangumiDetailsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_episode_details);
+        setContentView(R.layout.activity_bangumi_details);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mBannerImageView = (ImageView) findViewById(R.id.banner_imageview);
         mHeaderCollapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.header_collaspingtoolbarlayout);
