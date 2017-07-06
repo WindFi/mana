@@ -58,7 +58,7 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                         mView.setAirDate(mData.getAirDate());
                         mView.setSummary(mData.getSummary());
                         mView.setOriginName(mData.getName());
-                        mView.setFaviorStatus(mData.getFavoriteStatus());
+                        mView.setFavouriteStatus(mData.getFavoriteStatus());
                         mView.setOriginName(mData.getNameCn());
                         List<Episode> _list = new ArrayList<Episode>();
                         for (Episode item : mData.getEpisodes()) {
@@ -106,7 +106,7 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                     @Override
                     public void accept(Response response) throws Exception {
                         if (response.status == 0) {
-                            mView.setFaviorStatus(status);
+                            mView.setFavouriteStatus(status);
                         } else {
                             Log.i(TAG, response.message);
                         }

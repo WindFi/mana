@@ -18,18 +18,18 @@ import me.sunzheng.mana.home.HomeContract;
  * Created by Sun on 2017/6/22.
  */
 
-public class FavioursFragment extends Fragment implements HomeContract.MyBangumi.View {
+public class FavoriteFragment extends Fragment implements HomeContract.MyBangumi.View {
     ContentLoadingProgressBar mProgressBar;
 
     RecyclerView mRecyclerView;
 
     HomeContract.MyBangumi.Presenter mPresenter;
 
-    public FavioursFragment() {
+    public FavoriteFragment() {
     }
 
-    public static FavioursFragment newInstance() {
-        FavioursFragment fragment = new FavioursFragment();
+    public static FavoriteFragment newInstance() {
+        FavoriteFragment fragment = new FavoriteFragment();
 
         return fragment;
     }
@@ -42,7 +42,7 @@ public class FavioursFragment extends Fragment implements HomeContract.MyBangumi
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_myfaviours, container, false);
+        return inflater.inflate(R.layout.fragment_myfavorites, container, false);
     }
 
     @Override

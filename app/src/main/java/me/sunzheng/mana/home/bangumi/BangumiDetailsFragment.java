@@ -24,6 +24,7 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import me.sunzheng.mana.BangumiDetailsActivity;
+import me.sunzheng.mana.FavoriteCompact;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.VideoPlayerActivity;
 import me.sunzheng.mana.home.HomeContract;
@@ -42,7 +43,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     TextView mSummaryTextView;
     TextView mAirDateTextView;
     TextView mWeekDayTextView;
-    TextView mFaviorteStatusTextView;
+    TextView mFavoriteStatusTextView;
     ContentLoadingProgressBar mContentLoadingProgressBar;
     LinearLayoutCompat mEpisodeLinearLayout;
 
@@ -80,22 +81,22 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         mOriginTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_originname_textview);
         mSummaryTextView = (TextView) view.findViewById(R.id.bangumidetails_summary_textview);
         mEpisodeLinearLayout = (LinearLayoutCompat) view.findViewById(R.id.bangumidetails_episode_linearlayout);
-        mFaviorteStatusTextView = (TextView) view.findViewById(R.id.bangumidetails_faviortestatus_textview);
+        mFavoriteStatusTextView = (TextView) view.findViewById(R.id.bangumidetails_faviortestatus_textview);
 //        mContentLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_proggressbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
         Glide.with(this).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mImageView);
         mPresenter.load(getArguments().getString(BangumiDetailsActivity.ARGS_ID_STR));
-        mFaviorteStatusTextView.setOnTouchListener(new View.OnTouchListener() {
+        mFavoriteStatusTextView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                PopupMenu popupMenu = new PopupMenu(getContext(), mFaviorteStatusTextView);
+                PopupMenu popupMenu = new PopupMenu(getContext(), mFavoriteStatusTextView);
                 popupMenu.inflate(R.menu.favorite);
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getTitle().equals(mFaviorteStatusTextView.getText()))
+                        if (item.getTitle().equals(mFavoriteStatusTextView.getText()))
                             return false;
                         int status = 0;
                         if (item.getItemId() == R.id.pop_uncollection) {
@@ -172,22 +173,8 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     }
 
     @Override
-    public void setFaviorStatus(long status) {
-        // TODO: 2017/5/27 favior status
-        String statusString = getResources().getStringArray(R.array.favorite_status_values)[(int) status];
-        switch ((int) status) {
-            case 1:
-                break;
-            case 2:
-                break;
-            case 3:
-                break;
-            case 4:
-                break;
-            default:
-                break;
-        }
-        mFaviorteStatusTextView.setText(statusString);
+    public void setFavouriteStatus(long status) {
+        FavoriteCompact.setFavorite(status, mFavoriteStatusTextView);
     }
 
     @Override

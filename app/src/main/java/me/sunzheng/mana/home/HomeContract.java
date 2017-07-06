@@ -40,7 +40,7 @@ public interface HomeContract {
 
             void setEpisodes(List<Episode> episodeList);
 
-            void setFaviorStatus(long status);
+            void setFavouriteStatus(long status);
 
             void setName(CharSequence name);
         }
