@@ -39,8 +39,7 @@ public class App extends MultiDexApplication {
     }
     private String getHost(){
         SharedPreferences sharedPreferences=getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
-        sharedPreferences.edit().putString(PreferenceManager.Global.STR_KEY_HOST,"https://suki.moe").commit();
-        return sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST,"https://suki.moe");
+        return sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "");
     }
     private Retrofit defaultRetrofit() {
         return new Retrofit.Builder()

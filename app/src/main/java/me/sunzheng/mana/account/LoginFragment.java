@@ -33,6 +33,7 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView {
     private OnFragmentInteractionListener mListener;
     private TextInputEditText loginUserNameEditText;
     private TextInputEditText loginPassWordEditText;
+    private TextInputEditText loginHostEditText;
     private Button mButton;
 
     public LoginFragment() {
@@ -66,10 +67,14 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView {
         ((Button) view.findViewById(android.R.id.button1)).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mPresenter.login(loginUserNameEditText.getText().toString(), loginPassWordEditText.getText().toString());
+                try {
+                    mPresenter.login(loginUserNameEditText.getText().toString(), loginPassWordEditText.getText().toString());
+                } catch (IllegalArgumentException e) {
+                    showToast(e.getLocalizedMessage());
+                }
             }
         });
-        ((CheckBox)view.findViewById(R.id.checkbox)).setChecked(sharedPreferences.getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD,false));
+        ((CheckBox) view.findViewById(R.id.checkbox)).setChecked(sharedPreferences.getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false));
         return view;
     }
 
