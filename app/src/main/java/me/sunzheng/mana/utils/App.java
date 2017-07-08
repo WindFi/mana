@@ -26,6 +26,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class App extends MultiDexApplication {
     Retrofit mRetrofit;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -34,14 +35,20 @@ public class App extends MultiDexApplication {
 
     public Retrofit getRetrofit() {
         if (mRetrofit == null)
-            mRetrofit = defaultRetrofit();
+            try {
+                mRetrofit = defaultRetrofit();
+            } catch (IllegalArgumentException e) {
+
+            }
         return mRetrofit;
     }
-    private String getHost(){
-        SharedPreferences sharedPreferences=getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
+
+    private String getHost() {
+        SharedPreferences sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "");
     }
-    private Retrofit defaultRetrofit() {
+
+    private Retrofit defaultRetrofit() throws IllegalArgumentException {
         return new Retrofit.Builder()
                 .baseUrl(getHost())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -59,10 +66,7 @@ public class App extends MultiDexApplication {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
 //                        Request request=chain.request().newBuilder().addHeader("Accept","application/json,text/plain,*/*")
-//                                .addHeader("Accept-Encoding","gzip, deflate, br")
-//                                .addHeader("Accept-Language","en-US,zh-CN;q=0.8,zh;q=0.6,ja-JP;q=0.4,ja;q=0.2,en;q=0.2")
-//                                .addHeader("User-Agent","Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36").build();
-                        Response result=chain.proceed(chain.request());
+                        Response result = chain.proceed(chain.request());
                         return result;
                     }
                 })

@@ -22,7 +22,6 @@ import me.sunzheng.mana.utils.PreferenceManager;
 public class HostDialogFragment extends DialogFragment {
     SharedPreferences sharedPreferences;
     TextInputEditText mTextInputEidtText;
-    OnPreferenceSavedListener listener;
 
     @NonNull
     @Override
@@ -40,8 +39,6 @@ public class HostDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 // on success
                 sharedPreferences.edit().putString(PreferenceManager.Global.STR_KEY_HOST, mTextInputEidtText.getText().toString()).commit();
-                if (listener != null)
-                    listener.onSuccess();
             }
         });
         builder.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
@@ -57,18 +54,10 @@ public class HostDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof OnPreferenceSavedListener)
-            listener = (OnPreferenceSavedListener) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
-        if (listener != null)
-            listener = null;
-    }
-
-    public interface OnPreferenceSavedListener {
-        void onSuccess();
     }
 }
