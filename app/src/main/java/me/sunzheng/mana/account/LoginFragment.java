@@ -33,8 +33,6 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView {
     private OnFragmentInteractionListener mListener;
     private TextInputEditText loginUserNameEditText;
     private TextInputEditText loginPassWordEditText;
-    private TextInputEditText loginHostEditText;
-    private Button mButton;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -129,6 +127,8 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView {
     public void onLoginSuccess() {
         sharedPreferences.edit()
                 .putBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, ((CheckBox) getView().findViewById(R.id.checkbox)).isChecked())
+                .putString(PreferenceManager.Global.STR_USERNAME, loginUserNameEditText.getText().toString())
+                .putString(PreferenceManager.Global.STR_PASSWORD, loginPassWordEditText.getText().toString())
                 .commit();
         Intent intent = new Intent(getActivity(), MainActivity.class);
         startActivity(intent);

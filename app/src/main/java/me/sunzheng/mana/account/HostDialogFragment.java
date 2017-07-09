@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
@@ -20,8 +21,10 @@ import me.sunzheng.mana.utils.PreferenceManager;
  */
 
 public class HostDialogFragment extends DialogFragment {
+    private final static String TAG = HostDialogFragment.class.getSimpleName();
     SharedPreferences sharedPreferences;
     TextInputEditText mTextInputEidtText;
+    OnButtonClickListener listener;
 
     @NonNull
     @Override
@@ -37,14 +40,19 @@ public class HostDialogFragment extends DialogFragment {
         builder.setPositiveButton("Save", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                String key = mTextInputEidtText.getText().toString();
                 // on success
-                sharedPreferences.edit().putString(PreferenceManager.Global.STR_KEY_HOST, mTextInputEidtText.getText().toString()).commit();
+                Log.i(TAG, key);
+                sharedPreferences.edit().putString(PreferenceManager.Global.STR_KEY_HOST, key).commit();
+                if (listener != null)
+                    listener.onSave();
             }
         });
         builder.setNegativeButton("Exit", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                getActivity().finish();
+                if (listener != null)
+                    listener.onCancel();
             }
         });
 
@@ -54,10 +62,20 @@ public class HostDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (context instanceof OnButtonClickListener)
+            listener = (OnButtonClickListener) context;
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        if (listener != null)
+            listener = null;
+    }
+
+    public interface OnButtonClickListener {
+        void onSave();
+
+        void onCancel();
     }
 }

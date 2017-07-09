@@ -3,8 +3,6 @@ package me.sunzheng.mana;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,22 +17,14 @@ import me.sunzheng.mana.account.LoginContract;
 import me.sunzheng.mana.account.LoginFragment;
 import me.sunzheng.mana.account.LoginPresenterImpl;
 import me.sunzheng.mana.utils.App;
-import me.sunzheng.mana.utils.PreferenceManager;
 
 /**
  * A login screen that offers login via email/password.
  */
-public class LoginActivity extends AppCompatActivity implements LoginFragment.OnFragmentInteractionListener {
+public class LoginActivity extends AppCompatActivity implements LoginFragment.OnFragmentInteractionListener, HostDialogFragment.OnButtonClickListener {
     private final static String TAG = LoginActivity.class.getSimpleName();
     LoginFragment loginFragment;
     LoginContract.LoginPresenter presenter;
-    SharedPreferences sharedPreferences;
-    SharedPreferences.OnSharedPreferenceChangeListener preferenceListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-        @Override
-        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-            attatchFragment();
-        }
-    };
     private View mProgressView;
     private View mLoginFormView;
 
@@ -46,22 +36,15 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-        sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceListener);
         showDialog();
+        loginFragment = LoginFragment.newInstance();
+        getSupportFragmentManager().beginTransaction().replace(R.id.login_form, loginFragment).commit();
     }
 
     private void showDialog() {
         DialogFragment dialogFragment = new HostDialogFragment();
         dialogFragment.setCancelable(false);
         dialogFragment.show(getSupportFragmentManager(), "dialog");
-    }
-
-    public void attatchFragment() {
-        loginFragment = LoginFragment.newInstance();
-        presenter = new LoginPresenterImpl(loginFragment, ((App) getApplication()).getRetrofit().create(AccountApiService.Login.class));
-        loginFragment.setPresenter(presenter);
-        getSupportFragmentManager().beginTransaction().replace(R.id.login_form, loginFragment).commit();
     }
 
 //    @Override
@@ -121,13 +104,22 @@ public class LoginActivity extends AppCompatActivity implements LoginFragment.On
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if (sharedPreferences != null && preferenceListener != null)
-            sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceListener);
     }
 
     @Override
     public void onFragmentInteraction(Uri uri) {
         Log.i(TAG, uri.getQuery());
+    }
+
+    @Override
+    public void onSave() {
+        presenter = new LoginPresenterImpl(loginFragment, ((App) getApplication()).getRetrofit().create(AccountApiService.Login.class));
+        loginFragment.setPresenter(presenter);
+    }
+
+    @Override
+    public void onCancel() {
+        finish();
     }
 }
 

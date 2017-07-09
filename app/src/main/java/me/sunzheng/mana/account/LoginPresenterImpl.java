@@ -54,6 +54,7 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
                     public void accept(Throwable throwable) throws Exception {
                         if (throwable != null)
                             Log.e("login e", throwable.getLocalizedMessage());
+                        mView.showToast(throwable.getLocalizedMessage());
                     }
                 }, new Action() {
                     @Override
