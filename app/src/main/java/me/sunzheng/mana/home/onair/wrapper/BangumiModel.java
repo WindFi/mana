@@ -1,12 +1,27 @@
 
 package me.sunzheng.mana.home.onair.wrapper;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class Datum {
+public class BangumiModel implements Parcelable {
 
+    public static final Creator<BangumiModel> CREATOR = new Creator<BangumiModel>() {
+        @Override
+        public BangumiModel createFromParcel(Parcel in) {
+            return new BangumiModel(in);
+        }
+
+        @Override
+        public BangumiModel[] newArray(int size) {
+            return new BangumiModel[size];
+        }
+    };
     @SerializedName("id")
     @Expose
     private String id;
@@ -79,6 +94,56 @@ public class Datum {
     @SerializedName("favorite_status")
     @Expose
     private Integer favoriteStatus;
+
+    protected BangumiModel(Parcel in) {
+        id = in.readString();
+        name = in.readString();
+        nameCn = in.readString();
+        summary = in.readString();
+        image = in.readString();
+        cover = in.readString();
+        cover_color = in.readString();
+        createTime = in.readLong();
+        updateTime = in.readLong();
+        epsNoOffset = in.readLong();
+        bangumiMoe = in.readString();
+        libykSo = in.readString();
+        dmhy = in.readString();
+        airDate = in.readString();
+        airWeekday = in.readLong();
+        deleteMark = in.readLong();
+        acgRip = in.readString();
+        rss = in.readString();
+        epsRegex = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(name);
+        dest.writeString(nameCn);
+        dest.writeString(summary);
+        dest.writeString(image);
+        dest.writeString(cover);
+        dest.writeString(cover_color);
+        dest.writeLong(createTime);
+        dest.writeLong(updateTime);
+        dest.writeLong(epsNoOffset);
+        dest.writeString(bangumiMoe);
+        dest.writeString(libykSo);
+        dest.writeString(dmhy);
+        dest.writeString(airDate);
+        dest.writeLong(airWeekday);
+        dest.writeLong(deleteMark);
+        dest.writeString(acgRip);
+        dest.writeString(rss);
+        dest.writeString(epsRegex);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     public String getId() {
         return id;

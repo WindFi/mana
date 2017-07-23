@@ -49,6 +49,7 @@ public class FavoriteFragment extends Fragment implements HomeContract.MyBangumi
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mPresenter.load();
     }
 
     @Override

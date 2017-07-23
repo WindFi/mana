@@ -6,6 +6,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
+
 public class FaviourWrapper {
 
     @SerializedName("status")
@@ -13,7 +15,7 @@ public class FaviourWrapper {
     private Long status;
     @SerializedName("data")
     @Expose
-    private List<Datum> data = null;
+    private List<BangumiModel> data = null;
 
     public Long getStatus() {
         return status;
@@ -23,11 +25,11 @@ public class FaviourWrapper {
         this.status = status;
     }
 
-    public List<Datum> getData() {
+    public List<BangumiModel> getData() {
         return data;
     }
 
-    public void setData(List<Datum> data) {
+    public void setData(List<BangumiModel> data) {
         this.data = data;
     }
 

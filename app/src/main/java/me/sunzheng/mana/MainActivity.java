@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity
             startActivity(intent);
         } else if (id == R.id.nav_history) {
             // TODO: 2017/5/22 history
-            Intent intent = new Intent(this, MyFavioursActivity.class);
+            Intent intent = new Intent(this, MyFavouritesActivity.class);
             startActivity(intent);
         } else if (id == R.id.account) {
             // TODO: 2017/5/22 account change to account page

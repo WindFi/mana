@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-import me.sunzheng.mana.home.search.wrapper.Datum;
+import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
 
 public class SearchResultWrapper {
 
@@ -15,7 +15,7 @@ public class SearchResultWrapper {
     private Long total;
     @SerializedName("data")
     @Expose
-    private List<Datum> data = null;
+    private List<BangumiModel> data = null;
 
     public Long getTotal() {
         return total;
@@ -25,11 +25,11 @@ public class SearchResultWrapper {
         this.total = total;
     }
 
-    public List<Datum> getData() {
+    public List<BangumiModel> getData() {
         return data;
     }
 
-    public void setData(List<Datum> data) {
+    public void setData(List<BangumiModel> data) {
         this.data = data;
     }
 

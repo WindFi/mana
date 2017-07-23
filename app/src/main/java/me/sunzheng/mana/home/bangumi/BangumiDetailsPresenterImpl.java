@@ -1,17 +1,20 @@
 package me.sunzheng.mana.home.bangumi;
 
+import android.text.TextUtils;
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import io.reactivex.Observable;
+import io.reactivex.SingleObserver;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
 import me.sunzheng.mana.home.FavoriteStatusRequest;
 import me.sunzheng.mana.home.HomeApiService;
@@ -38,7 +41,6 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
 
     @Override
     public void subscribe() {
-
     }
 
     @Override
@@ -49,37 +51,44 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
     @Override
     public void load(String id) {
         Disposable disposable = apiServices.getBangumiDetail(id)
+                .delay(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<BangumiDetailWrapper>() {
                     @Override
                     public void accept(BangumiDetailWrapper bangumiDetailWrapper) throws Exception {
-                        Data mData = bangumiDetailWrapper.getData();
+                        final Data mData = bangumiDetailWrapper.getData();
                         mView.setAirDate(mData.getAirDate());
                         mView.setSummary(mData.getSummary());
-                        mView.setOriginName(mData.getName());
                         mView.setFavouriteStatus(mData.getFavoriteStatus());
-                        mView.setOriginName(mData.getNameCn());
-                        List<Episode> _list = new ArrayList<Episode>();
-                        for (Episode item : mData.getEpisodes()) {
-                            if (item.getStatus() != 0L)
-                                _list.add(item);
-                        }
-                        mData.setEpisodes(_list);
-                        // TODO: 2017/6/7 后期做筛选
-//                        Flowable.fromIterable(mData.getEpisodes()).filter(new Predicate<Episode>() {
-//                            @Override
-//                            public boolean test(Episode episode) throws Exception {
-//                                return episode.getStatus() != 0L;
-//                            }
-//                        });
-                        Collections.sort(mData.getEpisodes(), new Comparator<Episode>() {
+                        mView.setOriginName(TextUtils.isEmpty(mData.getName()) ? mData.getNameCn() : mData.getName());
+                        Observable.fromIterable(mData.getEpisodes()).filter(new Predicate<Episode>() {
+                            @Override
+                            public boolean test(Episode episode) throws Exception {
+                                return episode.getStatus() != 0L;
+                            }
+                        }).toSortedList(new Comparator<Episode>() {
                             @Override
                             public int compare(Episode o1, Episode o2) {
                                 return (int) (o2.getEpisodeNo() - o1.getEpisodeNo());
                             }
+                        }).subscribe(new SingleObserver<List<Episode>>() {
+                            @Override
+                            public void onSubscribe(Disposable d) {
+
+                            }
+
+                            @Override
+                            public void onSuccess(List<Episode> value) {
+                                mView.setEpisode(value.size(), mData.getEps());
+                                mView.setAdapter(new EpisodeAdapter(value));
+                            }
+
+                            @Override
+                            public void onError(Throwable e) {
+
+                            }
                         });
-                        mView.setEpisodes(mData.getEpisodes());
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -92,6 +101,7 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                         mView.showProgressIntractor(false);
                     }
                 });
+        mView.showProgressIntractor(true);
         completable.add(disposable);
     }
 

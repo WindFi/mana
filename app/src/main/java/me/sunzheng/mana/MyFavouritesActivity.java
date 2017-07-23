@@ -5,15 +5,20 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
+import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.mybangumi.FavoriteFragment;
+import me.sunzheng.mana.home.mybangumi.MyFavouritePresenter;
+import me.sunzheng.mana.utils.App;
 
 /**
  * MyFaviours activity
  * for list the faviours
  * and click any item goto {@link BangumiDetailsActivity}
  */
-public class MyFavioursActivity extends AppCompatActivity {
+public class MyFavouritesActivity extends AppCompatActivity {
+    HomeApiService.MyBangumi apiService;
     FavoriteFragment fragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -22,7 +27,7 @@ public class MyFavioursActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         fragment = FavoriteFragment.newInstance();
         // TODO: 2017/7/4  setPresenter
-        fragment.setPresenter(null);
+        fragment.setPresenter(new MyFavouritePresenter(fragment, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.MyBangumi.class)));
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPanel, fragment).commit();
     }
 

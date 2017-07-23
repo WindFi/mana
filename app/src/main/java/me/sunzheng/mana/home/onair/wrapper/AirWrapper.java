@@ -1,22 +1,24 @@
 
 package me.sunzheng.mana.home.onair.wrapper;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
 import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import java.util.List;
 
 public class AirWrapper {
 
     @SerializedName("data")
     @Expose
-    private List<Datum> data = null;
+    private List<BangumiModel> data = null;
 
-    public List<Datum> getData() {
+    public List<BangumiModel> getData() {
         return data;
     }
 
-    public void setData(List<Datum> data) {
+    public void setData(List<BangumiModel> data) {
         this.data = data;
     }
 

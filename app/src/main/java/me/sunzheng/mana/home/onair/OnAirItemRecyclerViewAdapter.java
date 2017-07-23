@@ -3,8 +3,10 @@ package me.sunzheng.mana.home.onair;
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.v7.util.SortedList;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.util.SortedListAdapterCallback;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,14 +19,30 @@ import java.util.List;
 
 import me.sunzheng.mana.BangumiDetailsActivity;
 import me.sunzheng.mana.R;
-import me.sunzheng.mana.home.onair.wrapper.Datum;
+import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
 
 public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<Datum> mValues;
+    private final SortedList<BangumiModel> mValues;
 
-    public OnAirItemRecyclerViewAdapter(List<Datum> items) {
-        mValues = items;
+    public OnAirItemRecyclerViewAdapter(List<BangumiModel> items) {
+        mValues = new SortedList<BangumiModel>(BangumiModel.class, new SortedListAdapterCallback<BangumiModel>(this) {
+            @Override
+            public int compare(BangumiModel o1, BangumiModel o2) {
+                return 0;
+            }
+
+            @Override
+            public boolean areContentsTheSame(BangumiModel oldItem, BangumiModel newItem) {
+                return oldItem.getId().equals(newItem.getId());
+            }
+
+            @Override
+            public boolean areItemsTheSame(BangumiModel item1, BangumiModel item2) {
+                return item1.getId().equals(item2.getId());
+            }
+        });
+        mValues.addAll(items);
     }
 
     @Override
@@ -39,7 +57,8 @@ public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItem
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BangumiDetailsActivity.newInstance((Activity) v.getContext(), mValues.get(position).getId(), mValues.get(position).getImage(), mValues.get(position).getNameCn(), holder.mImageView);
+                BangumiDetailsActivity.newInstance((Activity) v.getContext(), mValues.get(position).getId(), mValues.get(position).getImage(), mValues.get(position).getNameCn(),
+                        holder.mImageView);
             }
         });
         Glide.with(holder.itemView.getContext())

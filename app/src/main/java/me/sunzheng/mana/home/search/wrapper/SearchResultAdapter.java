@@ -17,15 +17,16 @@ import java.util.List;
 
 import me.sunzheng.mana.BangumiDetailsActivity;
 import me.sunzheng.mana.R;
+import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
 
 /**
  * Created by Sun on 2017/6/20.
  */
 
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
-    List<Datum> mValues;
+    List<BangumiModel> mValues;
 
-    public SearchResultAdapter(List<Datum> list) {
+    public SearchResultAdapter(List<BangumiModel> list) {
         this.mValues = list;
     }
 
@@ -41,12 +42,13 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BangumiDetailsActivity.newInstance((Activity) v.getContext(), mValues.get(position).getId(), mValues.get(position).getImage(), mValues.get(position).getNameCn(), holder.mImageView);
+                BangumiDetailsActivity.newInstance((Activity) v.getContext(), mValues.get(position).getId(), mValues.get(position).getImage(), mValues.get(position).getNameCn(),
+                        holder.mImageView);
             }
         });
         Glide.with(holder.itemView.getContext())
                 .load(mValues.get(position).getImage())
-                .placeholder(new ColorDrawable(Color.parseColor(mValues.get(position).getCoverColor())))
+                .placeholder(new ColorDrawable(Color.parseColor(mValues.get(position).getCover_color())))
                 .into(holder.mImageView);
         holder.mTitleTextView.setText(mValues.get(position).getNameCn());
         holder.mSummaryTextView.setText(mValues.get(position).getSummary());

@@ -2,9 +2,6 @@ package me.sunzheng.mana.home;
 
 import android.support.v7.widget.RecyclerView;
 
-import java.util.List;
-
-import me.sunzheng.mana.home.bangumi.wrapper.Episode;
 import me.sunzheng.mana.utils.IPresenter;
 import me.sunzheng.mana.utils.IView;
 
@@ -38,11 +35,13 @@ public interface HomeContract {
 
             void setOriginName(CharSequence originName);
 
-            void setEpisodes(List<Episode> episodeList);
+            void setAdapter(RecyclerView.Adapter adapter);
 
             void setFavouriteStatus(long status);
 
             void setName(CharSequence name);
+
+            void setEpisode(int eps_now, int eps);
         }
 
         interface Presenter extends IPresenter {
@@ -79,6 +78,8 @@ public interface HomeContract {
 
         interface Presenter extends IPresenter {
             void load();
+
+            void setFilter(int status);
         }
     }
 }

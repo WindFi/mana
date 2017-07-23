@@ -24,7 +24,6 @@
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SettingsActivity"
@@ -39,12 +38,10 @@
         <activity
             android:name=".BangumiDetailsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTop"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".VideoPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleInstance"
             android:screenOrientation="landscape"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
         <activity
@@ -68,7 +65,7 @@
             android:value=".SearchResultActivity" />
 
         <activity
-            android:name=".MyFavioursActivity"
+            android:name=".MyFavouritesActivity"
             android:label="@string/title_activity_faviours"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
@@ -76,7 +73,6 @@
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

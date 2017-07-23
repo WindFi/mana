@@ -1,89 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content"
+    tools:context="me.sunzheng.mana.BangumiDetailsActivity">
 
-    <android.support.constraint.ConstraintLayout
+    <android.support.design.widget.AppBarLayout
+        android:id="@+id/bangumidetails_appbar"
+        android:layout_width="match_parent"
+        android:layout_height="246dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay">
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/header_collaspingtoolbarlayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:contentScrim="?attr/colorPrimary"
+            app:layout_scrollFlags="scroll|enterAlwaysCollapsed|enterAlways">
+
+            <ImageView
+                android:id="@+id/banner_imageview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:scaleType="centerCrop"
+                app:layout_collapseMode="parallax" />
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                app:layout_collapseMode="pin" />
+        </android.support.design.widget.CollapsingToolbarLayout>
+    </android.support.design.widget.AppBarLayout>
+
+
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="8dp"
-        tools:context="me.sunzheng.mana.BangumiDetailsActivity">
+        android:fillViewport="true"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!--<android.support.v4.widget.ContentLoadingProgressBar-->
-        <!--android:id="@+id/bangumidetails_proggressbar"-->
-        <!--style="?android:attr/progressBarStyleLarge"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent" />-->
+        <RelativeLayout
+            android:id="@+id/bangumidetails_header_constraint"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/bangumidetails_ablum_imageview"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@mipmap/ic_launcher"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/bangumidetails_ablum_imageview"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@mipmap/ic_launcher" />
 
-        <TextView
-            android:id="@+id/bangumidetails_name_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Title"
-            app:layout_constraintStart_toEndOf="@id/bangumidetails_ablum_imageview"
-            app:layout_constraintTop_toTopOf="@+id/bangumidetails_ablum_imageview"
-            tools:text="name" />
+            <TextView
+                android:id="@+id/bangumidetails_name_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/bangumidetails_ablum_imageview"
+                android:layout_toEndOf="@+id/bangumidetails_ablum_imageview"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                tools:layout_editor_absoluteX="48dp"
+                tools:text="name" />
 
-        <TextView
-            android:id="@+id/bangumidetails_originname_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/TextAppearance.AppCompat.Widget.TextView.SpinnerItem"
-            app:layout_constraintStart_toEndOf="@id/bangumidetails_ablum_imageview"
-            app:layout_constraintTop_toBottomOf="@+id/bangumidetails_name_textview"
-            tools:layout_editor_absoluteX="48dp"
-            tools:text="name" />
+            <TextView
+                android:id="@+id/bangumidetails_originname_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/bangumidetails_name_textview"
+                android:layout_toEndOf="@+id/bangumidetails_ablum_imageview"
+                android:textAppearance="@style/TextAppearance.AppCompat.Widget.TextView.SpinnerItem"
+                tools:text="name" />
 
-        <TextView
-            android:id="@+id/bangumidetails_summary_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bangumidetails_ablum_imageview"
-            tools:layout_editor_absoluteX="0dp"
-            tools:text="content" />
+            <TextView
+                android:id="@+id/bangumidetails_summary_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/bangumidetails_ablum_imageview"
+                tools:text="content" />
 
-        <TextView
-            android:id="@+id/bangumidetails_faviortestatus_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="喜欢"
-            app:layout_constraintBaseline_toBaselineOf="@+id/bangumidetails_episode_label_textview"
-            app:layout_constraintEnd_toEndOf="parent" />
+            <TextView
+                android:id="@+id/bangumidetails_faviortestatus_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@+id/bangumidetails_episode_label_textview"
+                android:text="@string/title_uncollection_status"
+                android:textColor="@android:color/white" />
 
-        <TextView
-            android:id="@+id/bangumidetails_episode_label_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/title_episode_textview"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bangumidetails_summary_textview"
-            tools:layout_editor_absoluteX="0dp" />
+            <TextView
+                android:id="@+id/bangumidetails_episode_label_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/bangumidetails_summary_textview" />
 
-        <android.support.v7.widget.LinearLayoutCompat
-            android:id="@+id/bangumidetails_episode_linearlayout"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:divider="?attr/dividerHorizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/bangumidetails_episode_label_textview"
-            app:showDividers="middle"
-            tools:layout_editor_absoluteX="8dp" />
-    </android.support.constraint.ConstraintLayout>
-</android.support.v4.widget.NestedScrollView>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/bangumidetails_episode_label_textview" />
+
+            <android.support.v4.widget.ContentLoadingProgressBar
+                android:id="@+id/bangumidetails_progreassbar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
+        </RelativeLayout>
+    </android.support.v4.widget.NestedScrollView>
+</android.support.design.widget.CoordinatorLayout>

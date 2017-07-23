@@ -3,4 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+    <color name="favorite_wish">@color/orange</color>
+    <color name="favorite_watched">@color/olive</color>
+    <color name="favorite_watching">@color/blue</color>
+    <color name="favorite_pause">@color/brow</color>
+    <color name="favorite_abanoned">@color/grey</color>
 </resources>

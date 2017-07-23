@@ -1,9 +1,10 @@
 
 package me.sunzheng.mana.home.bangumi.wrapper;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
 
 public class Data {
 
@@ -39,7 +40,7 @@ public class Data {
     private long status;
     @SerializedName("update_time")
     @Expose
-    private Float updateTime;
+    private long updateTime;
     @SerializedName("air_date")
     @Expose
     private String airDate;
@@ -63,7 +64,7 @@ public class Data {
     private String cover;
     @SerializedName("eps")
     @Expose
-    private long eps;
+    private int eps;
     @SerializedName("summary")
     @Expose
     private String summary;
@@ -160,11 +161,11 @@ public class Data {
         this.status = status;
     }
 
-    public Float getUpdateTime() {
+    public long getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Float updateTime) {
+    public void setUpdateTime(long updateTime) {
         this.updateTime = updateTime;
     }
 
@@ -224,11 +225,11 @@ public class Data {
         this.cover = cover;
     }
 
-    public long getEps() {
+    public int getEps() {
         return eps;
     }
 
-    public void setEps(long eps) {
+    public void setEps(int eps) {
         this.eps = eps;
     }
 

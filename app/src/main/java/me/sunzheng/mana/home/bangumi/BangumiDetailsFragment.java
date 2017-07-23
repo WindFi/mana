@@ -1,19 +1,21 @@
 package me.sunzheng.mana.home.bangumi;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.ContentLoadingProgressBar;
-import android.support.v7.widget.LinearLayoutCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
-import android.text.TextUtils;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -21,21 +23,17 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
-import java.util.List;
-
 import me.sunzheng.mana.BangumiDetailsActivity;
 import me.sunzheng.mana.FavoriteCompact;
 import me.sunzheng.mana.R;
-import me.sunzheng.mana.VideoPlayerActivity;
 import me.sunzheng.mana.home.HomeContract;
-import me.sunzheng.mana.home.bangumi.wrapper.Episode;
 import me.sunzheng.mana.utils.PreferenceManager;
 
-/**
- * Created by Sun on 2017/5/27.
- */
 
 public class BangumiDetailsFragment extends Fragment implements HomeContract.Bangumi.View {
+    ImageView mBannerImageView;
+    CollapsingToolbarLayout mHeaderCollapsingToolbarLayout;
+    Toolbar mToolbar;
 
     ImageView mImageView;
     TextView mCNTitleTextView;
@@ -44,13 +42,12 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     TextView mAirDateTextView;
     TextView mWeekDayTextView;
     TextView mFavoriteStatusTextView;
+    TextView mEpisodeLabelTextView;
     ContentLoadingProgressBar mContentLoadingProgressBar;
-    LinearLayoutCompat mEpisodeLinearLayout;
+    RecyclerView mRecyclerView;
 
     HomeContract.Bangumi.Presenter mPresenter;
     SharedPreferences sharedPreferences;
-
-    private boolean unloaded = true;
 
     public BangumiDetailsFragment() {
     }
@@ -76,21 +73,47 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     @Override
     public void onViewCreated(android.view.View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        initToolbar(view);
+        initContent(view);
+    }
+
+    private ActionBar getSupportActionBar() {
+        return ((AppCompatActivity) getActivity()).getSupportActionBar();
+    }
+
+    private void setSupportActionBar(Toolbar toolbar) {
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+
+    }
+
+    private void initToolbar(View view) {
+        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
+        mBannerImageView = (ImageView) view.findViewById(R.id.banner_imageview);
+        mHeaderCollapsingToolbarLayout = (CollapsingToolbarLayout) view.findViewById(R.id.header_collaspingtoolbarlayout);
+        Glide.with(this).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mBannerImageView);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(getArguments().getString(BangumiDetailsActivity.ARGS_TITLE_STR));
+    }
+
+    private void initContent(View view) {
         mImageView = (ImageView) view.findViewById(R.id.bangumidetails_ablum_imageview);
         mCNTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_name_textview);
         mOriginTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_originname_textview);
         mSummaryTextView = (TextView) view.findViewById(R.id.bangumidetails_summary_textview);
-        mEpisodeLinearLayout = (LinearLayoutCompat) view.findViewById(R.id.bangumidetails_episode_linearlayout);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mFavoriteStatusTextView = (TextView) view.findViewById(R.id.bangumidetails_faviortestatus_textview);
-//        mContentLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_proggressbar);
+        mContentLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_progreassbar);
+        mEpisodeLabelTextView = (TextView) view.findViewById(R.id.bangumidetails_episode_label_textview);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
         Glide.with(this).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mImageView);
-        mPresenter.load(getArguments().getString(BangumiDetailsActivity.ARGS_ID_STR));
-        mFavoriteStatusTextView.setOnTouchListener(new View.OnTouchListener() {
+        setName(getArguments().getString(BangumiDetailsActivity.ARGS_TITLE_STR));
+
+        mFavoriteStatusTextView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
+            public void onClick(View v) {
                 PopupMenu popupMenu = new PopupMenu(getContext(), mFavoriteStatusTextView);
                 popupMenu.inflate(R.menu.favorite);
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
@@ -113,18 +136,21 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
                             status = 5;
                         }
                         mPresenter.changeBangumiFavoriteState(getArguments().getString(BangumiDetailsActivity.ARGS_ID_STR), status);
-                        return false;
+                        return true;
                     }
                 });
                 popupMenu.show();
-                return false;
             }
         });
+        mRecyclerView.setNestedScrollingEnabled(false);
+        mPresenter.load(getArguments().getString(BangumiDetailsActivity.ARGS_ID_STR));
+
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        mPresenter.subscribe();
         if (mContentLoadingProgressBar != null)
             mContentLoadingProgressBar.onAttachedToWindow();
     }
@@ -132,10 +158,10 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     @Override
     public void onDetach() {
         super.onDetach();
-        if (mContentLoadingProgressBar != null)
-            mContentLoadingProgressBar.onDetachedFromWindow();
         if (mPresenter != null)
             mPresenter.unsubscribe();
+        if (mContentLoadingProgressBar != null)
+            mContentLoadingProgressBar.onDetachedFromWindow();
     }
 
     @Override
@@ -147,7 +173,6 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     public void setWeekDay(long updateDate) {
         if (mWeekDayTextView == null)
             return;
-        // TODO: 2017/5/27  will change to week from decimal
         mWeekDayTextView.setText(updateDate + "");
     }
 
@@ -185,64 +210,32 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     }
 
     @Override
-    public void setEpisodes(List<Episode> episodeList) {
-        if (episodeList == null || episodeList.isEmpty()) {
-//            episode is null
-        } else {
-            for (Episode item : episodeList)
-                onBindViewHolder(onCreateViewHolder(mEpisodeLinearLayout), item);
-        }
+    public void setEpisode(int eps_now, int eps) {
+        CharSequence charSequence = String.format(getString(R.string.title_episode_textview), eps_now, eps);
+        mEpisodeLabelTextView.setText(charSequence);
     }
 
-    private ViewHolder onCreateViewHolder(ViewGroup parent) {
-        View view = LayoutInflater.from(getActivity()).inflate(R.layout.item_onairfragment, null);
-        view.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-        parent.addView(view);
-        return new ViewHolder(view);
-    }
-
-    private void onBindViewHolder(ViewHolder holder, final Episode item) {
-        holder.mTitleTextView.setText(item.getNameCn());
-        if (item.getStatus() == 2L) {
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), VideoPlayerActivity.class);
-                    Bundle extras = new Bundle();
-                    extras.putString(VideoPlayerActivity.ARGS_URI_STR, item.getId());
-                    intent.putExtras(extras);
-                    v.getContext().startActivity(intent);
-                }
-            });
-            holder.itemView.setClickable(true);
-        } else {
-            holder.itemView.setClickable(false);
-        }
-        Glide.with(this).load(item.getThumbnail()).into(holder.mImageView);
-        holder.mEpisodeNoTextView.setText(getString(R.string.episode_template, item.getEpisodeNo() + ""));
-        holder.mTitleTextView.setText(TextUtils.isEmpty(item.getNameCn()) ? item.getName() : item.getNameCn());
-        holder.mUpdateDateTextView.setText(item.getAirdate());
+    @Override
+    public void setAdapter(RecyclerView.Adapter adapter) {
+        if (mRecyclerView == null)
+            return;
+        if (mRecyclerView.getAdapter() == null)
+            mRecyclerView.setAdapter(adapter);
+        else
+            mRecyclerView.swapAdapter(adapter, true);
+        if (mRecyclerView.getLayoutManager() == null)
+            mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
     }
 
     @Override
     public void showProgressIntractor(boolean active) {
-//        if (active)
-//            mContentLoadingProgressBar.show();
-//        else
-//            mContentLoadingProgressBar.hide();
+        if (mContentLoadingProgressBar == null)
+            return;
+        if (active)
+            mContentLoadingProgressBar.show();
+        else
+            mContentLoadingProgressBar.hide();
     }
 
-    private static final class ViewHolder {
-        final View itemView;
-        final TextView mTitleTextView, mUpdateDateTextView, mEpisodeNoTextView;
-        final ImageView mImageView;
 
-        public ViewHolder(View view) {
-            itemView = view;
-            mEpisodeNoTextView = (TextView) view.findViewById(R.id.item_title_textview);
-            mTitleTextView = (TextView) view.findViewById(R.id.item_subtitle_textview);
-            mUpdateDateTextView = (TextView) view.findViewById(R.id.item_etc_textview);
-            mImageView = (ImageView) view.findViewById(R.id.item_album);
-        }
-    }
 }

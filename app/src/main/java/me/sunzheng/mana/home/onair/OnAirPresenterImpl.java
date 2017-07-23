@@ -20,7 +20,6 @@ public class OnAirPresenterImpl implements HomeContract.OnAir.Presenter {
     HomeContract.OnAir.View view;
     HomeApiService.OnAir apiServices;
     CompositeDisposable compositeDisposable;
-    OnAirItemRecyclerViewAdapter adapter;
     public OnAirPresenterImpl(HomeContract.OnAir.View view, HomeApiService.OnAir apiServices) {
         this.view = view;
         this.apiServices = apiServices;
