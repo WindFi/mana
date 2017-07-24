@@ -27,4 +27,6 @@
     <string name="hint_fragment_login_host">域名</string>
     <string name="action_search">搜索</string>
     <string name="hint_search">番名</string>
+    <string name="title_anim_catalog_tablayout">新番</string>
+    <string name="title_dram_catalog_tablayout">日剧</string>
 </resources>
