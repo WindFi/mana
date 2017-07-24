@@ -20,6 +20,7 @@ public class OnAirPresenterImpl implements HomeContract.OnAir.Presenter {
     HomeContract.OnAir.View view;
     HomeApiService.OnAir apiServices;
     CompositeDisposable compositeDisposable;
+
     public OnAirPresenterImpl(HomeContract.OnAir.View view, HomeApiService.OnAir apiServices) {
         this.view = view;
         this.apiServices = apiServices;
@@ -42,22 +43,23 @@ public class OnAirPresenterImpl implements HomeContract.OnAir.Presenter {
         Disposable disposable = apiServices.listAll(type)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        view.showProgressIntractor(false);
+                    }
+                })
                 .subscribe(new Consumer<AirWrapper>() {
                     @Override
                     public void accept(AirWrapper air) throws Exception {
-                        if(air.getData()!=null&&air.getData().size()>0)
-                        view.setAdapter(new OnAirItemRecyclerViewAdapter(air.getData()));
+                        if (air.getData() != null && air.getData().size() > 0)
+                            view.setAdapter(new OnAirItemRecyclerViewAdapter(air.getData()));
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Log.i("e:",throwable.getLocalizedMessage());
+                        Log.i("e:", throwable.getLocalizedMessage());
 
-                    }
-                }, new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        view.showProgressIntractor(false);
                     }
                 });
         compositeDisposable.add(disposable);

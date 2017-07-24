@@ -54,6 +54,12 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                 .delay(500, TimeUnit.MILLISECONDS)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        mView.showProgressIntractor(false);
+                    }
+                })
                 .subscribe(new Consumer<BangumiDetailWrapper>() {
                     @Override
                     public void accept(BangumiDetailWrapper bangumiDetailWrapper) throws Exception {
@@ -93,12 +99,7 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
-                        Log.e("exception:", throwable.getLocalizedMessage());
-                    }
-                }, new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        mView.showProgressIntractor(false);
+                        Log.e(TAG, throwable.getLocalizedMessage());
                     }
                 });
         mView.showProgressIntractor(true);
