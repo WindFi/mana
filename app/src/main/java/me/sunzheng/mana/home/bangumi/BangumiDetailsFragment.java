@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.ContentLoadingProgressBar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,7 +43,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     TextView mWeekDayTextView;
     TextView mFavoriteStatusTextView;
     TextView mEpisodeLabelTextView;
-    ContentLoadingProgressBar mContentLoadingProgressBar;
+    SwipeRefreshLayout mSwipeRefreshLayout;
     RecyclerView mRecyclerView;
 
     HomeContract.Bangumi.Presenter mPresenter;
@@ -103,8 +103,8 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         mSummaryTextView = (TextView) view.findViewById(R.id.bangumidetails_summary_textview);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mFavoriteStatusTextView = (TextView) view.findViewById(R.id.bangumidetails_faviortestatus_textview);
-        mContentLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_progreassbar);
         mEpisodeLabelTextView = (TextView) view.findViewById(R.id.bangumidetails_episode_label_textview);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiprefreshlayout);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
@@ -142,17 +142,14 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
                 popupMenu.show();
             }
         });
-        mRecyclerView.setNestedScrollingEnabled(false);
         mPresenter.load(getArguments().getString(BangumiDetailsActivity.ARGS_ID_STR));
-
+        mRecyclerView.setNestedScrollingEnabled(false);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mPresenter.subscribe();
-        if (mContentLoadingProgressBar != null)
-            mContentLoadingProgressBar.onAttachedToWindow();
     }
 
     @Override
@@ -160,8 +157,6 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         super.onDetach();
         if (mPresenter != null)
             mPresenter.unsubscribe();
-        if (mContentLoadingProgressBar != null)
-            mContentLoadingProgressBar.onDetachedFromWindow();
     }
 
     @Override
@@ -211,7 +206,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     @Override
     public void setEpisode(int eps_now, int eps) {
-        CharSequence charSequence = String.format(getString(R.string.title_episode_textview), eps_now, eps);
+        CharSequence charSequence = String.format(getString(R.string.title_episode_textview), eps_now + "", eps + "");
         mEpisodeLabelTextView.setText(charSequence);
     }
 
@@ -229,12 +224,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     @Override
     public void showProgressIntractor(boolean active) {
-        if (mContentLoadingProgressBar == null)
-            return;
-        if (active)
-            mContentLoadingProgressBar.show();
-        else
-            mContentLoadingProgressBar.hide();
+        mSwipeRefreshLayout.setRefreshing(active);
     }
 
 

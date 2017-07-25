@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
@@ -72,13 +71,11 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
         apiService = ((App) getApplicationContext()).getRetrofit().create(HomeApiService.OnAir.class);
         titles = new CharSequence[]{getText(R.string.title_anim_catalog_tablayout), getText(R.string.title_dram_catalog_tablayout)};
-//        init layouts
         tabLayout = (TabLayout) findViewById(R.id.main_tablayout);
         mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
         mViewPager.setAdapter(fragmentPagerAdapter);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setupWithViewPager(mViewPager, true);
-
     }
 
     @Override
