@@ -70,13 +70,15 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
                     @Override
                     public void accept(SearchResultWrapper searchResultWrapper) throws Exception {
                         // TODO: 2017/7/24  loadmore
+                        mView.setAdapter(new SearchResultAdapter(searchResultWrapper.getData()));
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
+                        Log.e(TAG, throwable.getLocalizedMessage());
                     }
                 });
-        compositeDisposable.add(compositeDisposable);
+        compositeDisposable.add(disposable);
     }
 
     private Observable<SearchResultWrapper> query(QueryData queryData) {

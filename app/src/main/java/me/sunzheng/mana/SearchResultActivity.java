@@ -97,7 +97,7 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
         if (mRecyclerView.getAdapter() == null)
             mRecyclerView.setAdapter(adapter);
         else
-            mRecyclerView.swapAdapter(adapter, true);
+            mRecyclerView.swapAdapter(adapter, false);
     }
 
     @Override
