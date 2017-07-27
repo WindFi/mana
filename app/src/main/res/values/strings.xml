@@ -102,8 +102,8 @@
     <string name="text_fragment_remember" translatable="false">Rememberd</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
-    <string name="title_anim_catalog_tablayout" translatable="false">Anim</string>
-    <string name="title_dram_catalog_tablayout" translatable="false">Dram</string>
+    <string name="title_anim_catalog_tablayout">Anim</string>
+    <string name="title_dram_catalog_tablayout">Daram</string>
     <string name="title_episode_textview">Episode( %1$s / %2$s )</string>
     <string name="episode_template">Episode: %1$s</string>
     <string name="hint_search">Name</string>

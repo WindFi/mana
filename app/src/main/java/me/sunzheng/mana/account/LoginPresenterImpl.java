@@ -43,6 +43,12 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
         Disposable disposable = service.login(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        mView.showProgressIntractor(false);
+                    }
+                })
                 .subscribe(new Consumer<LoginResponse>() {
                     @Override
                     public void accept(LoginResponse loginSuccessResponse) throws Exception {
@@ -55,11 +61,6 @@ public class LoginPresenterImpl implements LoginContract.LoginPresenter {
                         if (throwable != null)
                             Log.e("login e", throwable.getLocalizedMessage());
                         mView.showToast(throwable.getLocalizedMessage());
-                    }
-                }, new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        mView.showProgressIntractor(false);
                     }
                 });
         compositeDisposable.add(disposable);

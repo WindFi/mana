@@ -1,8 +1,11 @@
 package me.sunzheng.mana.home.mybangumi;
 
+import android.util.Log;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import me.sunzheng.mana.home.HomeApiService;
@@ -15,6 +18,7 @@ import me.sunzheng.mana.home.onair.OnAirItemRecyclerViewAdapter;
  */
 
 public class MyFavouritePresenter implements HomeContract.MyBangumi.Presenter {
+    final String TAG = getClass().getSimpleName();
     HomeApiService.MyBangumi apiService;
     CompositeDisposable compositeDisposable;
     HomeContract.MyBangumi.View mView;
@@ -41,11 +45,22 @@ public class MyFavouritePresenter implements HomeContract.MyBangumi.Presenter {
         Disposable disposable = apiService.listMyBangumi()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        mView.showProgressIntractor(false);
+                    }
+                })
                 .subscribe(new Consumer<FaviourWrapper>() {
                     @Override
                     public void accept(FaviourWrapper faviourWrapper) throws Exception {
                         faviourWrapper.getData();
                         mView.setAdapter(new OnAirItemRecyclerViewAdapter(faviourWrapper.getData()));
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.e(TAG, throwable.getLocalizedMessage());
                     }
                 });
         compositeDisposable.add(disposable);

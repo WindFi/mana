@@ -43,11 +43,13 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     TextView mWeekDayTextView;
     TextView mFavoriteStatusTextView;
     TextView mEpisodeLabelTextView;
-    ContentLoadingProgressBar mContentLoadingProgressBar;
+    ContentLoadingProgressBar mProgressBar;
     RecyclerView mRecyclerView;
 
     HomeContract.Bangumi.Presenter mPresenter;
     SharedPreferences sharedPreferences;
+
+    boolean isLoaded;
 
     public BangumiDetailsFragment() {
     }
@@ -86,6 +88,13 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isLoaded)
+            mProgressBar.hide();
+    }
+
     private void initToolbar(View view) {
         mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
         mBannerImageView = (ImageView) view.findViewById(R.id.banner_imageview);
@@ -103,8 +112,8 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         mSummaryTextView = (TextView) view.findViewById(R.id.bangumidetails_summary_textview);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mFavoriteStatusTextView = (TextView) view.findViewById(R.id.bangumidetails_faviortestatus_textview);
-        mContentLoadingProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_progreassbar);
         mEpisodeLabelTextView = (TextView) view.findViewById(R.id.bangumidetails_episode_label_textview);
+        mProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_progreassbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
@@ -142,17 +151,14 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
                 popupMenu.show();
             }
         });
-        mRecyclerView.setNestedScrollingEnabled(false);
         mPresenter.load(getArguments().getString(BangumiDetailsActivity.ARGS_ID_STR));
-
+        mRecyclerView.setNestedScrollingEnabled(false);
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         mPresenter.subscribe();
-        if (mContentLoadingProgressBar != null)
-            mContentLoadingProgressBar.onAttachedToWindow();
     }
 
     @Override
@@ -160,8 +166,6 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         super.onDetach();
         if (mPresenter != null)
             mPresenter.unsubscribe();
-        if (mContentLoadingProgressBar != null)
-            mContentLoadingProgressBar.onDetachedFromWindow();
     }
 
     @Override
@@ -211,7 +215,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     @Override
     public void setEpisode(int eps_now, int eps) {
-        CharSequence charSequence = String.format(getString(R.string.title_episode_textview), eps_now, eps);
+        CharSequence charSequence = String.format(getString(R.string.title_episode_textview), eps_now + "", eps + "");
         mEpisodeLabelTextView.setText(charSequence);
     }
 
@@ -229,12 +233,12 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     @Override
     public void showProgressIntractor(boolean active) {
-        if (mContentLoadingProgressBar == null)
-            return;
         if (active)
-            mContentLoadingProgressBar.show();
-        else
-            mContentLoadingProgressBar.hide();
+            mProgressBar.show();
+        else {
+            mProgressBar.hide();
+            isLoaded = true;
+        }
     }
 
 
