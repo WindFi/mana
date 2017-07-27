@@ -49,6 +49,8 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     HomeContract.Bangumi.Presenter mPresenter;
     SharedPreferences sharedPreferences;
 
+    boolean isLoaded;
+
     public BangumiDetailsFragment() {
     }
 
@@ -84,6 +86,13 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     private void setSupportActionBar(Toolbar toolbar) {
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isLoaded)
+            mProgressBar.hide();
     }
 
     private void initToolbar(View view) {
@@ -226,8 +235,10 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     public void showProgressIntractor(boolean active) {
         if (active)
             mProgressBar.show();
-        else
+        else {
             mProgressBar.hide();
+            isLoaded = true;
+        }
     }
 
 
