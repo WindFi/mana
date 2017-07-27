@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -43,7 +43,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     TextView mWeekDayTextView;
     TextView mFavoriteStatusTextView;
     TextView mEpisodeLabelTextView;
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    ContentLoadingProgressBar mProgressBar;
     RecyclerView mRecyclerView;
 
     HomeContract.Bangumi.Presenter mPresenter;
@@ -104,7 +104,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mFavoriteStatusTextView = (TextView) view.findViewById(R.id.bangumidetails_faviortestatus_textview);
         mEpisodeLabelTextView = (TextView) view.findViewById(R.id.bangumidetails_episode_label_textview);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiprefreshlayout);
+        mProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_progreassbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
@@ -224,7 +224,10 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     @Override
     public void showProgressIntractor(boolean active) {
-        mSwipeRefreshLayout.setRefreshing(active);
+        if (active)
+            mProgressBar.show();
+        else
+            mProgressBar.hide();
     }
 
 

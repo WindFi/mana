@@ -36,88 +36,82 @@
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
-            android:layout_width="match_parent"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="8dp"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/swiprefreshlayout"
+        <RelativeLayout
+            android:id="@+id/bangumidetails_header_constraint"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
-                android:id="@+id/bangumidetails_header_constraint"
+            <ImageView
+                android:id="@+id/bangumidetails_ablum_imageview"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:src="@mipmap/ic_launcher" />
+
+            <TextView
+                android:id="@+id/bangumidetails_name_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/bangumidetails_ablum_imageview"
+                android:layout_toEndOf="@+id/bangumidetails_ablum_imageview"
+                android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                tools:layout_editor_absoluteX="48dp"
+                tools:text="name" />
+
+            <TextView
+                android:id="@+id/bangumidetails_originname_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/bangumidetails_name_textview"
+                android:layout_toEndOf="@+id/bangumidetails_ablum_imageview"
+                android:textAppearance="@style/TextAppearance.AppCompat.Widget.TextView.SpinnerItem"
+                tools:text="name" />
+
+            <TextView
+                android:id="@+id/bangumidetails_summary_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/bangumidetails_ablum_imageview"
+                tools:text="content" />
+
+            <TextView
+                android:id="@+id/bangumidetails_faviortestatus_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignTop="@+id/bangumidetails_episode_label_textview"
+                android:text="@string/title_uncollection_status"
+                android:textColor="@android:color/white" />
+
+            <TextView
+                android:id="@+id/bangumidetails_episode_label_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_below="@+id/bangumidetails_summary_textview"
+                android:text="hello"
+                android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                android:textColor="@android:color/black" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:layout_below="@+id/bangumidetails_episode_label_textview" />
 
-                <ImageView
-                    android:id="@+id/bangumidetails_ablum_imageview"
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
-                    android:src="@mipmap/ic_launcher" />
-
-                <TextView
-                    android:id="@+id/bangumidetails_name_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignTop="@+id/bangumidetails_ablum_imageview"
-                    android:layout_toEndOf="@+id/bangumidetails_ablum_imageview"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                    tools:layout_editor_absoluteX="48dp"
-                    tools:text="name" />
-
-                <TextView
-                    android:id="@+id/bangumidetails_originname_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@+id/bangumidetails_name_textview"
-                    android:layout_toEndOf="@+id/bangumidetails_ablum_imageview"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Widget.TextView.SpinnerItem"
-                    tools:text="name" />
-
-                <TextView
-                    android:id="@+id/bangumidetails_summary_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@+id/bangumidetails_ablum_imageview"
-                    tools:text="content" />
-
-                <TextView
-                    android:id="@+id/bangumidetails_faviortestatus_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignTop="@+id/bangumidetails_episode_label_textview"
-                    android:text="@string/title_uncollection_status"
-                    android:textColor="@android:color/white" />
-
-                <TextView
-                    android:id="@+id/bangumidetails_episode_label_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_below="@+id/bangumidetails_summary_textview"
-                    android:text="hello"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@android:color/black" />
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/recycler_view"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_below="@+id/bangumidetails_episode_label_textview" />
-
-                <!--<android.support.v4.widget.ContentLoadingProgressBar-->
-                <!--android:id="@+id/bangumidetails_progreassbar"-->
-                <!--style="?android:attr/progressBarStyleLarge"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:layout_alignParentStart="true"-->
-                <!--android:layout_alignParentTop="true" />-->
-            </RelativeLayout>
-        </android.support.v4.widget.SwipeRefreshLayout>
+            <android.support.v4.widget.ContentLoadingProgressBar
+                android:id="@+id/bangumidetails_progreassbar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true" />
+        </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>
