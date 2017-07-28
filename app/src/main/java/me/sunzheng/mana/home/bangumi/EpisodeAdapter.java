@@ -15,8 +15,8 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import me.sunzheng.mana.R;
-import me.sunzheng.mana.VideoPlayerActivity;
 import me.sunzheng.mana.home.bangumi.wrapper.Episode;
+import me.sunzheng.mana.home.episode.service.PlayService;
 
 /**
  * Created by Sun on 2017/7/14.
@@ -36,18 +36,22 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, final int position) {
         final Episode item = values.get(position);
         holder.mTitleTextView.setText(item.getNameCn());
         if (item.getStatus() == 2L) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), VideoPlayerActivity.class);
+                    Intent intent = new Intent(v.getContext(), PlayService.class);
                     Bundle extras = new Bundle();
-                    extras.putString(VideoPlayerActivity.ARGS_URI_STR, item.getId());
+                    String[] strings = new String[position + 1];
+                    for (int i = 0; i < strings.length; i++) {
+                        strings[i] = values.get(position - i).getId();
+                    }
+                    extras.putStringArray(PlayService.ARGS_ITEMS_STR, strings);
                     intent.putExtras(extras);
-                    v.getContext().startActivity(intent);
+                    v.getContext().startService(intent);
                 }
             });
             holder.itemView.setClickable(true);
