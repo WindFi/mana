@@ -1,4 +1,4 @@
-package me.sunzheng.mana.account;
+package me.sunzheng.mana.account.login;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import me.sunzheng.mana.MainActivity;
 import me.sunzheng.mana.R;
+import me.sunzheng.mana.account.AccountContrant;
 import me.sunzheng.mana.utils.PreferenceManager;
 
 /**

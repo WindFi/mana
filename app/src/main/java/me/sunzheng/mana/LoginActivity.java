@@ -6,8 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 
 import me.sunzheng.mana.account.AccountApiService;
 import me.sunzheng.mana.account.AccountTableController;
-import me.sunzheng.mana.account.LoginFragment;
 import me.sunzheng.mana.account.config.HostFragment;
+import me.sunzheng.mana.account.login.LoginFragment;
 import me.sunzheng.mana.utils.App;
 
 /**

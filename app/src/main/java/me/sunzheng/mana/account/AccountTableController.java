@@ -4,6 +4,7 @@ import android.support.v4.app.FragmentManager;
 
 import me.sunzheng.mana.account.config.HostFragment;
 import me.sunzheng.mana.account.config.StartPresenterImpl;
+import me.sunzheng.mana.account.login.LoginFragment;
 import me.sunzheng.mana.account.login.LoginPresenterImpl;
 
 /**
