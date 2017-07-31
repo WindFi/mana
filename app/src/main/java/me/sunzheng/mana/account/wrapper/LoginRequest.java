@@ -1,4 +1,4 @@
-package me.sunzheng.mana.account;
+package me.sunzheng.mana.account.wrapper;
 
 /**
  * Created by Sun on 2017/5/23.

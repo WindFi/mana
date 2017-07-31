@@ -138,7 +138,7 @@ public class MainActivity extends AppCompatActivity
             // TODO: 2017/5/22 history
             Intent intent = new Intent(this, MyFavouritesActivity.class);
             startActivity(intent);
-        } else if (id == R.id.account) {
+        } else if (id == R.id.nav_exit) {
             // TODO: 2017/5/22 account change to account page
             SharedPreferences sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
             sharedPreferences.edit().putBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false).commit();

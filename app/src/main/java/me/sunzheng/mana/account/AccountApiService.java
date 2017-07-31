@@ -1,6 +1,8 @@
 package me.sunzheng.mana.account;
 
 import io.reactivex.Observable;
+import me.sunzheng.mana.account.wrapper.LoginRequest;
+import me.sunzheng.mana.account.wrapper.LoginResponse;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 

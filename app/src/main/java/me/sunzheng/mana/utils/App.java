@@ -3,6 +3,7 @@ package me.sunzheng.mana.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.multidex.MultiDexApplication;
+import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
@@ -26,6 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class App extends MultiDexApplication {
     Retrofit mRetrofit;
+    String TAG = getClass().getSimpleName();
 
     @Override
     public void onCreate() {
@@ -34,18 +36,17 @@ public class App extends MultiDexApplication {
     }
 
     public Retrofit getRetrofit() {
-        if (mRetrofit == null)
-            try {
-                mRetrofit = defaultRetrofit();
-            } catch (IllegalArgumentException e) {
-
-            }
         return mRetrofit;
     }
 
+    public void initClient() {
+        mRetrofit = defaultRetrofit();
+    }
     private String getHost() {
         SharedPreferences sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "");
+        String host = sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "");
+        Log.i(TAG, host);
+        return host;
     }
 
     private Retrofit defaultRetrofit() throws IllegalArgumentException {
