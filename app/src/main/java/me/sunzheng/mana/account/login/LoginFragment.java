@@ -8,9 +8,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
@@ -62,7 +63,7 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
         android.view.View view = inflater.inflate(R.layout.fragment_login, container, false);
         loginUserNameEditText = (TextInputEditText) view.findViewById(R.id.login_username_textinputedittext);
         loginPassWordEditText = (TextInputEditText) view.findViewById(R.id.login_passowrd_textinputedittext);
-        ((Button) view.findViewById(android.R.id.button1)).setOnClickListener(new android.view.View.OnClickListener() {
+        ((AppCompatButton) view.findViewById(android.R.id.button1)).setOnClickListener(new android.view.View.OnClickListener() {
             @Override
             public void onClick(android.view.View v) {
                 try {
@@ -72,7 +73,7 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
                 }
             }
         });
-        ((CheckBox) view.findViewById(R.id.checkbox)).setChecked(sharedPreferences.getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false));
+        ((AppCompatCheckBox) view.findViewById(R.id.checkbox)).setChecked(sharedPreferences.getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false));
         return view;
     }
 

@@ -42,14 +42,16 @@
             android:inputType="textPassword"
             android:maxLines="1" />
     </android.support.design.widget.TextInputLayout>
-    <CheckBox
+
+    <android.support.v7.widget.AppCompatCheckBox
         android:id="@+id/checkbox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/text_fragment_remember"
         app:layout_constraintStart_toStartOf="@+id/password_form"
         app:layout_constraintTop_toBottomOf="@+id/password_form"/>
-    <Button
+
+    <android.support.v7.widget.AppCompatButton
         android:id="@android:id/button1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
