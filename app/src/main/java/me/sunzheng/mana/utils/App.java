@@ -28,22 +28,42 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class App extends MultiDexApplication {
     Retrofit mRetrofit;
     String TAG = getClass().getSimpleName();
+    SharedPreferences sharedPreferences;
+    boolean isConfigChanged = false;
+    SharedPreferences.OnSharedPreferenceChangeListener configListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals(PreferenceManager.Global.STR_KEY_HOST)) {
+                isConfigChanged = true;
+            }
+        }
+    };
 
     @Override
     public void onCreate() {
         super.onCreate();
         Glide.get(this).setMemoryCategory(MemoryCategory.NORMAL);
+        sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(configListener);
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
     }
 
     public Retrofit getRetrofit() {
+        if (mRetrofit == null || isConfigChanged)
+            try {
+                mRetrofit = defaultRetrofit();
+                isConfigChanged = false;
+            } catch (IllegalArgumentException e) {
+
+            }
         return mRetrofit;
     }
 
-    public void initClient() {
-        mRetrofit = defaultRetrofit();
-    }
     private String getHost() {
-        SharedPreferences sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
         String host = sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "");
         Log.i(TAG, host);
         return host;
@@ -73,5 +93,4 @@ public class App extends MultiDexApplication {
                 })
                 .build();
     }
-
 }

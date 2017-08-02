@@ -43,6 +43,7 @@ dependencies {
     compile "com.squareup.retrofit2:converter-gson:$rootProject.retrofit2Version"
     compile "com.github.bumptech.glide:glide:$rootProject.glideVersion"
     compile "org.apache.commons:commons-lang3:$rootProject.common3Version"
+//    compile "com.android.support:multidex:$rootProject.supportMultidexVersion"
     compile "com.android.support:multidex:$rootProject.supportMultidexVersion"
     compile "com.squareup.retrofit2:retrofit-mock:$rootProject.retrofitMockVersion"
     compile "com.squareup.retrofit2:adapter-rxjava2:$rootProject.retrofitAdapterVersion"
@@ -59,8 +60,7 @@ dependencies {
     compile "com.android.support:support-v4:$rootProject.supportLibraryVersion"
     compile "com.android.support:support-vector-drawable:$rootProject.supportLibraryVersion"
     compile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
-    compile "com.android.support.constraint:constraint-layout:$rootProject.constraintlayoutVersion"
+    compile "com.android.support:support-core-utils:$rootProject.supportLibraryVersion"
     compile "com.google.android.exoplayer:exoplayer:$rootProject.exoplayerVersion"
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
 }

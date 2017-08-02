@@ -18,8 +18,10 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import me.sunzheng.mana.home.HomeApiService;
+import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.onair.OnAirFragment;
 import me.sunzheng.mana.home.onair.OnAirPresenterImpl;
 import me.sunzheng.mana.utils.App;
@@ -32,11 +34,18 @@ public class MainActivity extends AppCompatActivity
     HomeApiService.OnAir apiService;
     CharSequence[] titles;
     FragmentStatePagerAdapter fragmentPagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            OnAirFragment fragment = (OnAirFragment) super.instantiateItem(container, position);
+            HomeContract.OnAir.Presenter presenter = new OnAirPresenterImpl(fragment, apiService);
+            fragment.setPresenter(presenter);
+            presenter.load(fragment.getArguments().getInt(OnAirFragment.INT_ARGS_TYPE));
+            return fragment;
+        }
 
         @Override
         public android.support.v4.app.Fragment getItem(int position) {
             OnAirFragment fragment = OnAirFragment.newInstance(position % 2 == 0 ? OnAirFragment.INT_TYPE_ANIMATION : OnAirFragment.INT_TYPE_DRAMA);
-            fragment.setPresenter(new OnAirPresenterImpl(fragment, apiService));
             return fragment;
         }
 

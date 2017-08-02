@@ -33,7 +33,6 @@ public class LoginActivity extends AppCompatActivity implements HostFragment.OnB
 
     @Override
     public void onSave() {
-        ((App) getApplicationContext()).initClient();
         controller.loginViewShow(((App) getApplicationContext()).getRetrofit().create(AccountApiService.Login.class));
     }
 

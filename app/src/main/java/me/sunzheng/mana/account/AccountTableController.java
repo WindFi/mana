@@ -2,6 +2,7 @@ package me.sunzheng.mana.account;
 
 import android.support.v4.app.FragmentManager;
 
+import me.sunzheng.mana.R;
 import me.sunzheng.mana.account.config.HostFragment;
 import me.sunzheng.mana.account.config.StartPresenterImpl;
 import me.sunzheng.mana.account.login.LoginFragment;
@@ -32,6 +33,10 @@ public class AccountTableController {
     public void loginViewShow(AccountApiService.Login apiService) {
         presenter.setLoginPresenter(new LoginPresenterImpl(loginFragment, apiService));
         loginFragment.setPresenter(presenter);
-        fragmentManager.beginTransaction().replace(replaceId, loginFragment).addToBackStack("host").commit();
+        fragmentManager.beginTransaction()
+                .setCustomAnimations(R.anim.slide_in_right, android.R.anim.slide_out_right, R.anim.slide_in_right, android.R.anim.slide_out_right)
+                .addToBackStack("host")
+                .replace(replaceId, loginFragment)
+                .commit();
     }
 }
