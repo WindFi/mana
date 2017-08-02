@@ -68,6 +68,7 @@ public class OnAirFragment extends android.support.v4.app.Fragment implements Ho
                 mPresenter.load(type);
             }
         });
+        showProgressIntractor(true);
     }
 
     @Override
