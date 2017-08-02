@@ -1,8 +1,11 @@
 package me.sunzheng.mana.home.episode.wrapper;
 
-import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.List;
+
+import me.sunzheng.mana.home.bangumi.WatchProgress;
 
 public class EpisodeWrapper {
 
@@ -51,7 +54,9 @@ public class EpisodeWrapper {
     @SerializedName("video_files")
     @Expose
     private List<VideoFile> videoFiles = null;
-
+    @SerializedName("watch_progress")
+    @Expose
+    private WatchProgress watch_process = null;
     public String getId() {
         return id;
     }
@@ -172,4 +177,11 @@ public class EpisodeWrapper {
         this.videoFiles = videoFiles;
     }
 
+    public WatchProgress getWatch_process() {
+        return watch_process;
+    }
+
+    public void setWatch_process(WatchProgress watch_process) {
+        this.watch_process = watch_process;
+    }
 }

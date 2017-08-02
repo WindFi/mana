@@ -4,6 +4,8 @@ package me.sunzheng.mana.home.bangumi.wrapper;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import me.sunzheng.mana.home.bangumi.WatchProgress;
+
 public class Episode {
     @SerializedName("status")
     @Expose

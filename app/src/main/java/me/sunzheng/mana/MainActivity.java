@@ -3,6 +3,7 @@ package me.sunzheng.mana;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -17,11 +18,14 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import me.sunzheng.mana.home.HomeApiService;
+import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.onair.OnAirFragment;
 import me.sunzheng.mana.home.onair.OnAirPresenterImpl;
 import me.sunzheng.mana.utils.App;
+import me.sunzheng.mana.utils.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -30,11 +34,18 @@ public class MainActivity extends AppCompatActivity
     HomeApiService.OnAir apiService;
     CharSequence[] titles;
     FragmentStatePagerAdapter fragmentPagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            OnAirFragment fragment = (OnAirFragment) super.instantiateItem(container, position);
+            HomeContract.OnAir.Presenter presenter = new OnAirPresenterImpl(fragment, apiService);
+            fragment.setPresenter(presenter);
+            presenter.load(fragment.getArguments().getInt(OnAirFragment.INT_ARGS_TYPE));
+            return fragment;
+        }
 
         @Override
         public android.support.v4.app.Fragment getItem(int position) {
             OnAirFragment fragment = OnAirFragment.newInstance(position % 2 == 0 ? OnAirFragment.INT_TYPE_ANIMATION : OnAirFragment.INT_TYPE_DRAMA);
-            fragment.setPresenter(new OnAirPresenterImpl(fragment, apiService));
             return fragment;
         }
 
@@ -136,8 +147,10 @@ public class MainActivity extends AppCompatActivity
             // TODO: 2017/5/22 history
             Intent intent = new Intent(this, MyFavouritesActivity.class);
             startActivity(intent);
-        } else if (id == R.id.account) {
+        } else if (id == R.id.nav_exit) {
             // TODO: 2017/5/22 account change to account page
+            SharedPreferences sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
+            sharedPreferences.edit().putBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false).commit();
             Intent intent = new Intent(this, LoginActivity.class);
             startActivity(intent);
         }

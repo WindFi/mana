@@ -1,4 +1,4 @@
-package me.sunzheng.mana.account;
+package me.sunzheng.mana.account.login;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,15 +8,16 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
 import me.sunzheng.mana.MainActivity;
 import me.sunzheng.mana.R;
+import me.sunzheng.mana.account.AccountContrant;
 import me.sunzheng.mana.utils.PreferenceManager;
 
 /**
@@ -27,9 +28,9 @@ import me.sunzheng.mana.utils.PreferenceManager;
  * Use the {@link LoginFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class LoginFragment extends Fragment implements LoginContract.LoginView {
+public class LoginFragment extends Fragment implements AccountContrant.Login.View {
     SharedPreferences sharedPreferences;
-    private LoginContract.LoginPresenter mPresenter;
+    private AccountContrant.Login.Presenter mPresenter;
     private OnFragmentInteractionListener mListener;
     private TextInputEditText loginUserNameEditText;
     private TextInputEditText loginPassWordEditText;
@@ -57,14 +58,14 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
+    public android.view.View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                          Bundle savedInstanceState) {
+        android.view.View view = inflater.inflate(R.layout.fragment_login, container, false);
         loginUserNameEditText = (TextInputEditText) view.findViewById(R.id.login_username_textinputedittext);
         loginPassWordEditText = (TextInputEditText) view.findViewById(R.id.login_passowrd_textinputedittext);
-        ((Button) view.findViewById(android.R.id.button1)).setOnClickListener(new View.OnClickListener() {
+        ((AppCompatButton) view.findViewById(android.R.id.button1)).setOnClickListener(new android.view.View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(android.view.View v) {
                 try {
                     mPresenter.login(loginUserNameEditText.getText().toString(), loginPassWordEditText.getText().toString());
                 } catch (IllegalArgumentException e) {
@@ -72,12 +73,12 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView {
                 }
             }
         });
-        ((CheckBox) view.findViewById(R.id.checkbox)).setChecked(sharedPreferences.getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false));
+        ((AppCompatCheckBox) view.findViewById(R.id.checkbox)).setChecked(sharedPreferences.getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false));
         return view;
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(android.view.View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         boolean isRememberd = sharedPreferences.getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false);
         if (isRememberd)
@@ -109,7 +110,7 @@ public class LoginFragment extends Fragment implements LoginContract.LoginView {
     }
 
     @Override
-    public void setPresenter(LoginContract.LoginPresenter presenter) {
+    public void setPresenter(AccountContrant.Login.Presenter presenter) {
         mPresenter = presenter;
     }
 

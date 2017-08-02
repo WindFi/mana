@@ -1,5 +1,5 @@
 
-package me.sunzheng.mana.home.bangumi.wrapper;
+package me.sunzheng.mana.home.bangumi;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

@@ -3,6 +3,7 @@ package me.sunzheng.mana.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.multidex.MultiDexApplication;
+import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
@@ -26,17 +27,36 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class App extends MultiDexApplication {
     Retrofit mRetrofit;
+    String TAG = getClass().getSimpleName();
+    SharedPreferences sharedPreferences;
+    boolean isConfigChanged = false;
+    SharedPreferences.OnSharedPreferenceChangeListener configListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+        @Override
+        public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+            if (key.equals(PreferenceManager.Global.STR_KEY_HOST)) {
+                isConfigChanged = true;
+            }
+        }
+    };
 
     @Override
     public void onCreate() {
         super.onCreate();
         Glide.get(this).setMemoryCategory(MemoryCategory.NORMAL);
+        sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(configListener);
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
     }
 
     public Retrofit getRetrofit() {
-        if (mRetrofit == null)
+        if (mRetrofit == null || isConfigChanged)
             try {
                 mRetrofit = defaultRetrofit();
+                isConfigChanged = false;
             } catch (IllegalArgumentException e) {
 
             }
@@ -44,8 +64,9 @@ public class App extends MultiDexApplication {
     }
 
     private String getHost() {
-        SharedPreferences sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "");
+        String host = sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "");
+        Log.i(TAG, host);
+        return host;
     }
 
     private Retrofit defaultRetrofit() throws IllegalArgumentException {
@@ -72,5 +93,4 @@ public class App extends MultiDexApplication {
                 })
                 .build();
     }
-
 }

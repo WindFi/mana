@@ -7,9 +7,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -41,13 +42,15 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     TextView mSummaryTextView;
     TextView mAirDateTextView;
     TextView mWeekDayTextView;
-    TextView mFavoriteStatusTextView;
+    AppCompatButton mFavoriteStatusButton;
     TextView mEpisodeLabelTextView;
-    SwipeRefreshLayout mSwipeRefreshLayout;
+    ContentLoadingProgressBar mProgressBar;
     RecyclerView mRecyclerView;
 
     HomeContract.Bangumi.Presenter mPresenter;
     SharedPreferences sharedPreferences;
+
+    boolean isLoaded;
 
     public BangumiDetailsFragment() {
     }
@@ -86,6 +89,13 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (isLoaded)
+            mProgressBar.hide();
+    }
+
     private void initToolbar(View view) {
         mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
         mBannerImageView = (ImageView) view.findViewById(R.id.banner_imageview);
@@ -102,24 +112,24 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         mOriginTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_originname_textview);
         mSummaryTextView = (TextView) view.findViewById(R.id.bangumidetails_summary_textview);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mFavoriteStatusTextView = (TextView) view.findViewById(R.id.bangumidetails_faviortestatus_textview);
+        mFavoriteStatusButton = (AppCompatButton) view.findViewById(R.id.bangumidetails_faviortestatus_textview);
         mEpisodeLabelTextView = (TextView) view.findViewById(R.id.bangumidetails_episode_label_textview);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiprefreshlayout);
+        mProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_progreassbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
         Glide.with(this).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mImageView);
         setName(getArguments().getString(BangumiDetailsActivity.ARGS_TITLE_STR));
 
-        mFavoriteStatusTextView.setOnClickListener(new View.OnClickListener() {
+        mFavoriteStatusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PopupMenu popupMenu = new PopupMenu(getContext(), mFavoriteStatusTextView);
+                PopupMenu popupMenu = new PopupMenu(getContext(), mFavoriteStatusButton);
                 popupMenu.inflate(R.menu.favorite);
                 popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                     @Override
                     public boolean onMenuItemClick(MenuItem item) {
-                        if (item.getTitle().equals(mFavoriteStatusTextView.getText()))
+                        if (item.getTitle().equals(mFavoriteStatusButton.getText()))
                             return false;
                         int status = 0;
                         if (item.getItemId() == R.id.pop_uncollection) {
@@ -194,7 +204,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     @Override
     public void setFavouriteStatus(long status) {
-        FavoriteCompact.setFavorite(status, mFavoriteStatusTextView);
+        FavoriteCompact.setFavorite(status, mFavoriteStatusButton);
     }
 
     @Override
@@ -224,7 +234,12 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     @Override
     public void showProgressIntractor(boolean active) {
-        mSwipeRefreshLayout.setRefreshing(active);
+        if (active)
+            mProgressBar.show();
+        else {
+            mProgressBar.hide();
+            isLoaded = true;
+        }
     }
 
 

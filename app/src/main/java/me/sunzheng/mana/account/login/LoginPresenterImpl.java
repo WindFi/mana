@@ -1,4 +1,4 @@
-package me.sunzheng.mana.account;
+package me.sunzheng.mana.account.login;
 
 import android.util.Log;
 
@@ -8,17 +8,21 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import me.sunzheng.mana.account.AccountApiService;
+import me.sunzheng.mana.account.AccountContrant;
+import me.sunzheng.mana.account.wrapper.LoginRequest;
+import me.sunzheng.mana.account.wrapper.LoginResponse;
 
 /**
  * Created by Sun on 2017/5/22.
  */
 
-public class LoginPresenterImpl implements LoginContract.LoginPresenter {
-    LoginContract.LoginView mView;
+public class LoginPresenterImpl implements AccountContrant.Login.Presenter {
+    AccountContrant.Login.View mView;
     AccountApiService.Login service;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
 
-    public LoginPresenterImpl(LoginContract.LoginView loginView, AccountApiService.Login service) {
+    public LoginPresenterImpl(AccountContrant.Login.View loginView, AccountApiService.Login service) {
         this.mView = loginView;
         this.service = service;
     }
