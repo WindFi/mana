@@ -76,12 +76,6 @@ public class VideoPlayerActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_player);
-//        if (savedInstanceState == null)
-//            savedInstanceState = getIntent().getExtras();
-//        if (savedInstanceState == null) {
-//            Toast.makeText(this, "error", Toast.LENGTH_SHORT).show();
-//            finish();
-//        }
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         ActionBar actionBar = getActionBar();
         if (actionBar != null)
