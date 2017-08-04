@@ -2,10 +2,13 @@ package me.sunzheng.mana;
 
 import android.app.ActionBar;
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -59,6 +62,18 @@ public class VideoPlayerActivity extends Activity {
     EventLog eventLogger;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
     RemotePlayer remote;
+    AudioManager audioManager;
+    AudioManager.OnAudioFocusChangeListener audioFocusChangeListener;
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+                if (player != null && player.getPlayWhenReady())
+                    playerPlay();
+            }
+        }
+    };
+    IntentFilter intentFilter = new IntentFilter();
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -81,10 +96,40 @@ public class VideoPlayerActivity extends Activity {
         if (actionBar != null)
             actionBar.hide();
         initPlayer();
-
         service = ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Episode.class);
         Intent serviceIntent = new Intent(this, PlayService.class);
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
+        initAudioManager();
+    }
+
+    private void initAudioManager() {
+        intentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        registerReceiver(broadcastReceiver, intentFilter);
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+            @Override
+            public void onAudioFocusChange(int focusChange) {
+                if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                    // Permanent loss of audio focus
+                    // Pause playback immediately
+//                    mediaController.getTransportControls().pause();
+                    // Wait 30 seconds before stopping playback
+//                    mHandler.postDelayed(mDelayedStopRunnable,
+//                            TimeUnit.SECONDS.toMillis(30));
+                } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+                    // Pause playback
+                    playerPause();
+                } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+                    // Lower the volume, keep playing
+                } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+                    // Your app has been granted audio focus again
+                    // Raise volume to normal, restart playback if necessary
+                    playerPlay();
+                }
+            }
+        };
+        audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
     }
 
     private void initPlayer() {
@@ -157,25 +202,37 @@ public class VideoPlayerActivity extends Activity {
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(VideoPlayerActivity.this, Util.getUserAgent(VideoPlayerActivity.this, getPackageName()), mDefaultBandwidthMeter);
         ExtractorsFactory extractorFactory = new DefaultExtractorsFactory();
         MediaSource videoSource = new ExtractorMediaSource(uri, dataSourceFactory, extractorFactory, null, null);
-
-        player.setPlayWhenReady(true);
         player.prepare(videoSource);
+        playerPlay();
     }
 
     @Override
     protected void onStop() {
-        player.setPlayWhenReady(false);
+        playerPause();
         super.onStop();
     }
 
     @Override
     protected void onDestroy() {
         if (player != null)
-        player.release();
+            player.release();
         if (compositeDisposable != null)
             compositeDisposable.clear();
         unbindService(serviceConnection);
+        if (broadcastReceiver != null)
+            unregisterReceiver(broadcastReceiver);
+        audioManager.abandonAudioFocus(audioFocusChangeListener);
         super.onDestroy();
+    }
+
+    private void playerPlay() {
+        if (player != null && !player.getPlayWhenReady())
+            player.setPlayWhenReady(true);
+    }
+
+    private void playerPause() {
+        if (player != null && player.getPlayWhenReady())
+            player.setPlayWhenReady(false);
     }
 
     private void loopAndStartPlay() {
