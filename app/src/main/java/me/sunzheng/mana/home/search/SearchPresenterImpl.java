@@ -2,6 +2,8 @@ package me.sunzheng.mana.home.search;
 
 import android.util.Log;
 
+import java.util.List;
+
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -11,7 +13,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
-import me.sunzheng.mana.home.search.wrapper.SearchResultAdapter;
+import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
 
 /**
  * Created by Sun on 2017/6/15.
@@ -23,6 +25,7 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
     CompositeDisposable compositeDisposable;
     HomeApiService.Bangumi service;
     QueryData data;
+    List<BangumiModel> list;
 
     public SearchPresenterImpl(HomeContract.Search.View view, HomeApiService.Bangumi service) {
         this.mView = view;
@@ -48,7 +51,8 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
                 .subscribe(new Consumer<SearchResultWrapper>() {
                     @Override
                     public void accept(SearchResultWrapper searchResultWrapper) throws Exception {
-                        mView.setAdapter(new SearchResultAdapter(searchResultWrapper.getData()));
+                        list = searchResultWrapper.getData();
+                        mView.setAdapter(new SearchResultAdapter(list));
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -70,7 +74,10 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
                     @Override
                     public void accept(SearchResultWrapper searchResultWrapper) throws Exception {
                         // TODO: 2017/7/24  loadmore
-                        mView.setAdapter(new SearchResultAdapter(searchResultWrapper.getData()));
+                        if (searchResultWrapper != null && searchResultWrapper.getTotal() > 0L) {
+                            list.addAll(searchResultWrapper.getData());
+                            mView.notifyDataSetChanged();
+                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override

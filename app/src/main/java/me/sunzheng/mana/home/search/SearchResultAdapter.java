@@ -1,4 +1,4 @@
-package me.sunzheng.mana.home.search.wrapper;
+package me.sunzheng.mana.home.search;
 
 import android.app.Activity;
 import android.graphics.Color;
@@ -31,11 +31,17 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
     }
 
     @Override
+    public int getItemCount() {
+        return mValues.size();
+    }
+
+    @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_onairfragment, parent, false);
         return new ViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
@@ -53,11 +59,6 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         holder.mTitleTextView.setText(mValues.get(position).getNameCn());
         holder.mSummaryTextView.setText(mValues.get(position).getSummary());
         holder.mEtcTextView.setText(mValues.get(position).getAirDate());
-    }
-
-    @Override
-    public int getItemCount() {
-        return mValues == null ? 0 : mValues.size();
     }
 
     protected final static class ViewHolder extends RecyclerView.ViewHolder {

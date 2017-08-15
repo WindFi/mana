@@ -1,10 +1,12 @@
 package me.sunzheng.mana;
 
 import android.app.SearchManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -29,10 +31,12 @@ import me.sunzheng.mana.utils.PreferenceManager;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    final static long CLICK_DELAY_MILLIONSECONDS = 500;
     TabLayout tabLayout;
     ViewPager mViewPager;
     HomeApiService.OnAir apiService;
     CharSequence[] titles;
+    Handler handler = new Handler();
     FragmentStatePagerAdapter fragmentPagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
@@ -138,24 +142,29 @@ public class MainActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.closeDrawer(GravityCompat.START);
+        final Intent intent = new Intent();
 
         if (id == R.id.nav_settings) {
             // TODO: 2017/5/22 app settings
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            intent.setComponent(new ComponentName(this, SettingsActivity.class));
         } else if (id == R.id.nav_history) {
             // TODO: 2017/5/22 history
-            Intent intent = new Intent(this, MyFavouritesActivity.class);
-            startActivity(intent);
+            intent.setComponent(new ComponentName(this, MyFavouritesActivity.class));
         } else if (id == R.id.nav_exit) {
             // TODO: 2017/5/22 account change to account page
             SharedPreferences sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
             sharedPreferences.edit().putBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false).commit();
-            Intent intent = new Intent(this, LoginActivity.class);
-            startActivity(intent);
+            intent.setComponent(new ComponentName(this, LoginActivity.class));
         }
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (intent.getComponent() != null)
+                    startActivity(intent);
+            }
+        }, CLICK_DELAY_MILLIONSECONDS);
         return true;
     }
 }

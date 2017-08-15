@@ -24,6 +24,7 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
     RecyclerView mRecyclerView;
     HomeContract.Search.Presenter mPresenter;
     ContentLoadingProgressBar progressBar;
+    boolean isLoading = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,13 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         mRecyclerView = (RecyclerView) findViewById(R.id.recycler_view);
         progressBar = (ContentLoadingProgressBar) findViewById(R.id.progressbar);
-
+        mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+                if (newState == RecyclerView.SCROLL_STATE_SETTLING && !isLoading)
+                    mPresenter.loadMore();
+            }
+        });
         mPresenter = new SearchPresenterImpl(this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Bangumi.class));
         setPresenter(mPresenter);
         handleIntent(getIntent());
@@ -102,7 +109,8 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
 
     @Override
     public void notifyDataSetChanged() {
-
+        mRecyclerView.getAdapter().notifyDataSetChanged();
+        isLoading = false;
     }
 
     @Override
