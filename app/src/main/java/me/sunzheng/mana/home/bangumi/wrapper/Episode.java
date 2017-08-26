@@ -12,7 +12,7 @@ public class Episode {
     private Long status;
     @SerializedName("episode_no")
     @Expose
-    private Long episodeNo;
+    private int episodeNo;
     @SerializedName("update_time")
     @Expose
     private Float updateTime;
@@ -66,11 +66,11 @@ public class Episode {
         this.status = status;
     }
 
-    public Long getEpisodeNo() {
+    public int getEpisodeNo() {
         return episodeNo;
     }
 
-    public void setEpisodeNo(Long episodeNo) {
+    public void setEpisodeNo(int episodeNo) {
         this.episodeNo = episodeNo;
     }
 

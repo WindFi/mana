@@ -2,6 +2,8 @@ package me.sunzheng.mana.home.episode.service;
 
 import android.os.IBinder;
 
+import java.util.List;
+
 import me.sunzheng.mana.home.episode.Record;
 
 /**
@@ -9,7 +11,17 @@ import me.sunzheng.mana.home.episode.Record;
  */
 
 public interface RemotePlayer extends IBinder {
-    String pop();
+
+    List<PlayService.PlayItem> queryAllPlayList();
+
+    int getPosition();
+
+    boolean hasNext();
+
+    PlayService.PlayItem moveToNext();
 
     void logWatchProcess(Record record);
+
+    void onDisconnect();
+
 }

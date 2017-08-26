@@ -1,7 +1,8 @@
 package me.sunzheng.mana.home.bangumi;
 
+import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -23,6 +24,7 @@ import me.sunzheng.mana.home.episode.service.PlayService;
  */
 
 public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHolder> {
+    Handler mHandler = new Handler();
     List<Episode> values;
 
     public EpisodeAdapter(List<Episode> values) {
@@ -43,15 +45,15 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(v.getContext(), PlayService.class);
-                    Bundle extras = new Bundle();
-                    String[] strings = new String[position + 1];
-                    for (int i = 0; i < strings.length; i++) {
-                        strings[i] = values.get(position - i).getId();
-                    }
-                    extras.putStringArray(PlayService.ARGS_ITEMS_STR, strings);
-                    intent.putExtras(extras);
-                    v.getContext().startService(intent);
+                    final Context context = v.getContext();
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent service = PlayService.newInstance(context, values, position);
+                            context.startService(service);
+                        }
+                    }, 300);
+
                 }
             });
             holder.itemView.setClickable(true);

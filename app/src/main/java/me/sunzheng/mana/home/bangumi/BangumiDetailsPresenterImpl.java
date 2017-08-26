@@ -76,7 +76,7 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                         }).toSortedList(new Comparator<Episode>() {
                             @Override
                             public int compare(Episode o1, Episode o2) {
-                                return (int) (o2.getEpisodeNo() - o1.getEpisodeNo());
+                                return o2.getEpisodeNo() - o1.getEpisodeNo();
                             }
                         }).subscribe(new SingleObserver<List<Episode>>() {
                             @Override

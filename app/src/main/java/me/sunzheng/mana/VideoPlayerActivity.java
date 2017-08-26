@@ -236,7 +236,7 @@ public class VideoPlayerActivity extends Activity {
     }
 
     private void loopAndStartPlay() {
-        String itemId = remote.pop();
+        String itemId = remote.queryAllPlayList().get(remote.getPosition()).id;
         if (!TextUtils.isEmpty(itemId)) {
             Disposable disposable = service.getEpisode(itemId)
                     .subscribeOn(Schedulers.io())
