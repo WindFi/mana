@@ -167,7 +167,8 @@ public class VideoPlayerActivity extends Activity {
                     return;
                 switch (playbackState) {
                     case ExoPlayer.STATE_ENDED:
-                        loopAndStartPlay();
+//                        loopAndStartPlay();
+                        finish();
                         break;
                     case ExoPlayer.STATE_BUFFERING:
                         break;
