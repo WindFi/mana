@@ -165,6 +165,6 @@ public class MainActivity extends AppCompatActivity
                     startActivity(intent);
             }
         }, CLICK_DELAY_MILLIONSECONDS);
-        return true;
+        return false;
     }
 }
