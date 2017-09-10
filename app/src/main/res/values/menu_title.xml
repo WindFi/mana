@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="title_nav_account">Account</string>
-    <string name="title_nav_settings">@string/action_settings</string>
-    <string name="title_nav_history">History &amp; Faviroty</string>
-    <string name="title_nav_logout">Sign Out</string>
+    <string name="title_nav_account">@string/title_nav_account</string>
+    <string name="title_nav_history">@string/title_nav_history</string>
+    <string name="title_nav_logout">@string/title_nav_logout</string>
+    <string name="title_nav_settings">@string/title_nav_settings</string>
+    <string name="title_nav_bangumi">@string/title_nav_bangumi</string>
 </resources>

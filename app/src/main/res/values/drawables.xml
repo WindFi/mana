@@ -8,4 +8,5 @@
     <item name="ic_menu_account" type="drawable">@drawable/ic_menu_account_24dp</item>
     <item name="ic_menu_recent_history" type="drawable">@drawable/ic_menu_history_24dp</item>
     <item name="ic_menu_search" type="drawable">@drawable/ic_menu_search_24dp</item>
+    <item name="ic_menu_bangumi" type="drawable">@drawable/ic_menu_list_24dp</item>
 </resources>
