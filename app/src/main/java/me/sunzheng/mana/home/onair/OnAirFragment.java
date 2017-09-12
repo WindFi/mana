@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.home.HomeContract;
@@ -95,6 +96,11 @@ public class OnAirFragment extends android.support.v4.app.Fragment implements Ho
     public void showProgressIntractor(boolean active) {
         if (swipeRefreshLayout != null)
             swipeRefreshLayout.setRefreshing(active);
+    }
+
+    @Override
+    public void showToast(String errorMessage) {
+        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override

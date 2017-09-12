@@ -12,6 +12,8 @@ import me.sunzheng.mana.utils.IView;
 public interface HomeContract {
     interface OnAir {
         interface View extends IView<Presenter> {
+            void showToast(String errorMessage);
+
             void showProgressIntractor(boolean active);
 
             void setAdapter(RecyclerView.Adapter adapter);

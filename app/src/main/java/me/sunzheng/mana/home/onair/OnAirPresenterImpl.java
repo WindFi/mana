@@ -59,7 +59,7 @@ public class OnAirPresenterImpl implements HomeContract.OnAir.Presenter {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.i("e:", throwable.getLocalizedMessage());
-
+                        view.showToast(throwable.getLocalizedMessage());
                     }
                 });
         compositeDisposable.add(disposable);

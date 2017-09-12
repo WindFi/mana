@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.SearchRecentSuggestions;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
@@ -16,6 +17,7 @@ import android.view.MenuItem;
 
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
+import me.sunzheng.mana.home.search.HistorySuggestionProvider;
 import me.sunzheng.mana.home.search.SearchPresenterImpl;
 import me.sunzheng.mana.utils.App;
 
@@ -50,6 +52,8 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String key = intent.getStringExtra(SearchManager.QUERY);
             mPresenter.query(key);
+            SearchRecentSuggestions searchRecentSuggestions = new SearchRecentSuggestions(this, HistorySuggestionProvider.AUTHORITY, HistorySuggestionProvider.MODE);
+            searchRecentSuggestions.saveRecentQuery(key, null);
         }
     }
 

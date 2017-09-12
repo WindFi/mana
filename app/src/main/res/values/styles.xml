@@ -6,18 +6,23 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="autoCompleteTextViewStyle">@style/SuggestionAutoCompleteTextViewStyle</item>
+        <item name="textAppearanceSearchResultTitle">@style/SuggestionTitleStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
     <style name="AppTheme.NoActionBar.FullScreen" parent="AppTheme.NoActionBar">
         <!--<item name="android:windowTranslucentStatus">false</item>-->
     </style>
+
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
     <style name="Widget.App.ActionButton" parent="@style/Widget.AppCompat.ActionButton">
         <item name="textAllCaps">false</item>
     </style>
@@ -33,5 +38,14 @@
         <item name="android:windowBackground">@null</item>
 
         <item name="actionButtonStyle">@style/Widget.App.ActionButton</item>
+    </style>
+
+    <style name="SuggestionAutoCompleteTextViewStyle" parent="Widget.AppCompat.Light.AutoCompleteTextView">
+        <item name="android:popupBackground">@drawable/dropview_background_selector</item>
+    </style>
+
+    <style name="SuggestionTitleStyle" parent="TextAppearance.AppCompat.SearchResult.Title">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">12dp</item>
     </style>
 </resources>

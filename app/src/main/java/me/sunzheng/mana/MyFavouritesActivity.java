@@ -26,7 +26,6 @@ public class MyFavouritesActivity extends AppCompatActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         fragment = FavoriteFragment.newInstance();
-        // TODO: 2017/7/4  setPresenter
         fragment.setPresenter(new MyFavouritePresenter(fragment, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.MyBangumi.class)));
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPanel, fragment).commit();
     }

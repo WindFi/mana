@@ -84,6 +84,9 @@
             android:name=".home.episode.service.PlayService"
             android:enabled="true"
             android:exported="false" />
+        <provider
+            android:name=".home.search.HistorySuggestionProvider"
+            android:authorities="me.sunzheng.mana.historysugestionprovider" />
     </application>
 
 </manifest>
