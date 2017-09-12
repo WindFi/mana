@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.SearchView;
@@ -112,7 +113,17 @@ public class MainActivity extends AppCompatActivity
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
         SearchView searchView = null;
+        SearchViewCompat.setOnQueryTextListener(searchView, new SearchViewCompat.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
 
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
         if (searchItem != null) {
             searchView = (SearchView) searchItem.getActionView();
         }
@@ -147,13 +158,10 @@ public class MainActivity extends AppCompatActivity
         final Intent intent = new Intent();
 
         if (id == R.id.nav_settings) {
-            // TODO: 2017/5/22 app settings
             intent.setComponent(new ComponentName(this, SettingsActivity.class));
         } else if (id == R.id.nav_history) {
-            // TODO: 2017/5/22 history
             intent.setComponent(new ComponentName(this, MyFavouritesActivity.class));
         } else if (id == R.id.nav_exit) {
-            // TODO: 2017/5/22 account change to account page
             SharedPreferences sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
             sharedPreferences.edit().putBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false).commit();
             intent.setComponent(new ComponentName(this, LoginActivity.class));
