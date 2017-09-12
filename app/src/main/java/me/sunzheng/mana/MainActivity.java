@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_settings) {
             intent.setComponent(new ComponentName(this, SettingsActivity.class));
         } else if (id == R.id.nav_history) {
-            intent.setComponent(new ComponentName(this, MyFavouritesActivity.class));
+            intent.setComponent(new ComponentName(this, MyFavoritesActivity.class));
         } else if (id == R.id.nav_exit) {
             SharedPreferences sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
             sharedPreferences.edit().putBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false).commit();

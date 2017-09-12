@@ -15,7 +15,7 @@ import me.sunzheng.mana.utils.App;
  * for list the faviours
  * and click any item goto {@link BangumiDetailsActivity}
  */
-public class MyFavouritesActivity extends AppCompatActivity {
+public class MyFavoritesActivity extends AppCompatActivity {
     HomeApiService.MyBangumi apiService;
     FavoriteFragment fragment;
 

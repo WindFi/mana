@@ -67,7 +67,7 @@
             android:value=".SearchResultActivity" />
 
         <activity
-            android:name=".MyFavouritesActivity"
+            android:name=".MyFavoritesActivity"
             android:label="@string/title_activity_faviours"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
