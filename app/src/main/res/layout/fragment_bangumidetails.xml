@@ -53,7 +53,7 @@
                 android:layout_height="96dp"
                 android:src="@mipmap/ic_launcher" />
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/bangumidetails_name_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
                 tools:layout_editor_absoluteX="48dp"
                 tools:text="name" />
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/bangumidetails_originname_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
                 android:textAppearance="@style/TextAppearance.AppCompat.Widget.TextView.SpinnerItem"
                 tools:text="name" />
 
-            <TextView
+            <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/bangumidetails_summary_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -105,6 +105,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/bangumidetails_episode_label_textview" />
+
             <android.support.v4.widget.ContentLoadingProgressBar
                 android:id="@+id/bangumidetails_progreassbar"
                 style="?android:attr/progressBarStyleLarge"

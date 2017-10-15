@@ -11,6 +11,7 @@ import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +21,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 
@@ -37,13 +37,13 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     Toolbar mToolbar;
 
     ImageView mImageView;
-    TextView mCNTitleTextView;
-    TextView mOriginTitleTextView;
-    TextView mSummaryTextView;
-    TextView mAirDateTextView;
-    TextView mWeekDayTextView;
+    AppCompatTextView mCNTitleTextView;
+    AppCompatTextView mOriginTitleTextView;
+    AppCompatTextView mSummaryTextView;
+    AppCompatTextView mAirDateTextView;
+    AppCompatTextView mWeekDayTextView;
     AppCompatButton mFavoriteStatusButton;
-    TextView mEpisodeLabelTextView;
+    AppCompatTextView mEpisodeLabelTextView;
     ContentLoadingProgressBar mProgressBar;
     RecyclerView mRecyclerView;
 
@@ -108,12 +108,12 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     private void initContent(View view) {
         mImageView = (ImageView) view.findViewById(R.id.bangumidetails_ablum_imageview);
-        mCNTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_name_textview);
-        mOriginTitleTextView = (TextView) view.findViewById(R.id.bangumidetails_originname_textview);
-        mSummaryTextView = (TextView) view.findViewById(R.id.bangumidetails_summary_textview);
+        mCNTitleTextView = (AppCompatTextView) view.findViewById(R.id.bangumidetails_name_textview);
+        mOriginTitleTextView = (AppCompatTextView) view.findViewById(R.id.bangumidetails_originname_textview);
+        mSummaryTextView = (AppCompatTextView) view.findViewById(R.id.bangumidetails_summary_textview);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mFavoriteStatusButton = (AppCompatButton) view.findViewById(R.id.bangumidetails_faviortestatus_textview);
-        mEpisodeLabelTextView = (TextView) view.findViewById(R.id.bangumidetails_episode_label_textview);
+        mEpisodeLabelTextView = (AppCompatTextView) view.findViewById(R.id.bangumidetails_episode_label_textview);
         mProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_progreassbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);

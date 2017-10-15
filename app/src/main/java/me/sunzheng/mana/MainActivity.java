@@ -13,9 +13,9 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v4.widget.SearchViewCompat;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -85,6 +85,9 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        AppCompatTextView account = (AppCompatTextView) navigationView.getHeaderView(0).findViewById(R.id.nav_title);
+        account.setText(getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE).getString(PreferenceManager.Global.STR_USERNAME, ""));
         apiService = ((App) getApplicationContext()).getRetrofit().create(HomeApiService.OnAir.class);
         titles = new CharSequence[]{getText(R.string.title_anim_catalog_tablayout), getText(R.string.title_dram_catalog_tablayout)};
         tabLayout = (TabLayout) findViewById(R.id.main_tablayout);
@@ -113,22 +116,22 @@ public class MainActivity extends AppCompatActivity
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
 
         SearchView searchView = null;
-        SearchViewCompat.setOnQueryTextListener(searchView, new SearchViewCompat.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
         if (searchItem != null) {
             searchView = (SearchView) searchItem.getActionView();
         }
         if (searchView != null) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+//            SearchViewCompat.setOnQueryTextListener(searchView, new SearchViewCompat.OnQueryTextListener() {
+//                @Override
+//                public boolean onQueryTextSubmit(String query) {
+//                    return false;
+//                }
+//
+//                @Override
+//                public boolean onQueryTextChange(String newText) {
+//                    return false;
+//                }
+//            });
         }
         return super.onCreateOptionsMenu(menu);
     }

@@ -25,25 +25,25 @@ public class FavoriteCompact {
         else
             drawableCompat = new BaseDrawableCompatImpl(v.getContext());
 //        v.setBackground(drawableCompat.getDrawable(status,v));
-        switch ((int) status) {
-            case 1:
-                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_wish));
-                break;
-            case 2:
-                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_watched));
-                break;
-            case 3:
-                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_watching));
-                break;
-            case 4:
-                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_pause));
-                break;
-            case 5:
-                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_abanoned));
-                break;
-            default:
-                break;
-        }
+//        switch ((int) status) {
+//            case 1:
+//                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_wish));
+//                break;
+//            case 2:
+//                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_watched));
+//                break;
+//            case 3:
+//                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_watching));
+//                break;
+//            case 4:
+//                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_pause));
+//                break;
+//            case 5:
+//                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_abanoned));
+//                break;
+//            default:
+//                break;
+//        }
         v.setText(statusString);
     }
 

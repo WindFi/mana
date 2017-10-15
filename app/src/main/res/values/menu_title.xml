@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="title_nav_account">@string/title_nav_account</string>
-    <string name="title_nav_history">@string/title_nav_history</string>
-    <string name="title_nav_logout">@string/title_nav_logout</string>
-    <string name="title_nav_settings">@string/title_nav_settings</string>
-    <string name="title_nav_bangumi">@string/title_nav_bangumi</string>
+    <string name="title_nav_account" translatable="false">@string/title_account</string>
+    <string name="title_nav_history" translatable="false">@string/title_history</string>
+    <string name="title_nav_logout" translatable="false">@string/title_logout</string>
+    <string name="title_nav_settings" translatable="false">@string/title_settings</string>
+    <string name="title_nav_bangumi" translatable="false">@string/title_bangumi</string>
 </resources>
