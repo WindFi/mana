@@ -46,7 +46,7 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
     @Override
     public void query(String key) {
         mView.showProgressIntractor(true);
-        data = new QueryData(1, 30, "air_date", "desc", key);
+        data = new QueryData(1, 3, "air_date", "desc", key);
         Disposable disposable = query(data)
                 .subscribe(new Consumer<SearchResultWrapper>() {
                     @Override
@@ -69,7 +69,14 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
         if (data == null)
             return;
         data.page++;
+        mView.showLoadMoreProgressIntractor(true);
         Disposable disposable = query(data)
+                .doOnTerminate(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        mView.showLoadMoreProgressIntractor(false);
+                    }
+                })
                 .subscribe(new Consumer<SearchResultWrapper>() {
                     @Override
                     public void accept(SearchResultWrapper searchResultWrapper) throws Exception {

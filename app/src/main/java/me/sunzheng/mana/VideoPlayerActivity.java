@@ -117,6 +117,7 @@ public class VideoPlayerActivity extends Activity {
                     // Wait 30 seconds before stopping playback
 //                    mHandler.postDelayed(mDelayedStopRunnable,
 //                            TimeUnit.SECONDS.toMillis(30));
+                    playerPause();
                 } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
                     // Pause playback
                     playerPause();
@@ -193,17 +194,17 @@ public class VideoPlayerActivity extends Activity {
 
             @Override
             public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-
             }
         });
     }
 
-    private void play(Uri uri) {
+    private void play(Uri uri, long lastWatchPosition) {
         DefaultBandwidthMeter mDefaultBandwidthMeter = new DefaultBandwidthMeter();
         DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(VideoPlayerActivity.this, Util.getUserAgent(VideoPlayerActivity.this, getPackageName()), mDefaultBandwidthMeter);
         ExtractorsFactory extractorFactory = new DefaultExtractorsFactory();
         MediaSource videoSource = new ExtractorMediaSource(uri, dataSourceFactory, extractorFactory, null, null);
         player.prepare(videoSource);
+        player.seekTo(lastWatchPosition);
         playerPlay();
     }
 
@@ -237,16 +238,16 @@ public class VideoPlayerActivity extends Activity {
     }
 
     private void loopAndStartPlay() {
-        String itemId = remote.queryAllPlayList().get(remote.getPosition()).id;
-        if (!TextUtils.isEmpty(itemId)) {
-            Disposable disposable = service.getEpisode(itemId)
+        final PlayService.PlayItem item = remote.queryAllPlayList().get(remote.getPosition());
+        if (!TextUtils.isEmpty(item.id)) {
+            Disposable disposable = service.getEpisode(item.id)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<EpisodeWrapper>() {
                         @Override
                         public void accept(EpisodeWrapper episodeWrapper) throws Exception {
                             String uri = episodeWrapper.getVideoFiles().get(0).getUrl();
-                            play(Uri.parse(uri));
+                            play(Uri.parse(uri), item.lastWatchPosition);
                         }
                     });
             compositeDisposable.add(disposable);

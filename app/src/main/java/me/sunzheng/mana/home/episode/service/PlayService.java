@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.sunzheng.mana.VideoPlayerActivity;
+import me.sunzheng.mana.home.bangumi.WatchProgress;
 import me.sunzheng.mana.home.bangumi.wrapper.Episode;
 import me.sunzheng.mana.home.episode.Record;
 
@@ -46,6 +47,11 @@ public class PlayService extends Service {
         item.name = episode.getName();
         item.nameCn = episode.getNameCn();
         item.thumbnail = episode.getThumbnail();
+        WatchProgress watchProgress = episode.getWatchProgress();
+        if (watchProgress != null) {
+            item.lastWatchTime = (long) watchProgress.getLastWatchTime();
+            item.lastWatchPosition = (long) watchProgress.getLastWatchPosition();
+        }
         return item;
     }
 
@@ -77,7 +83,6 @@ public class PlayService extends Service {
         current = intent.getIntExtra(ARGS_POSITION_INT, 0);
         Intent playerIntent = new Intent(PlayService.this, VideoPlayerActivity.class);
         startActivity(playerIntent);
-
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -121,6 +126,8 @@ public class PlayService extends Service {
         public int episodeNo;
         public String name;
         public String nameCn;
+        public long lastWatchTime;
+        public long lastWatchPosition;
 
         public PlayItem() {
         }
@@ -131,6 +138,8 @@ public class PlayService extends Service {
             episodeNo = in.readInt();
             name = in.readString();
             nameCn = in.readString();
+            lastWatchTime = in.readLong();
+            lastWatchPosition = in.readLong();
         }
 
         @Override
@@ -140,6 +149,8 @@ public class PlayService extends Service {
             dest.writeInt(episodeNo);
             dest.writeString(name);
             dest.writeString(nameCn);
+            dest.writeLong(lastWatchTime);
+            dest.writeLong(lastWatchPosition);
         }
 
         @Override

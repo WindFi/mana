@@ -62,6 +62,8 @@ public interface HomeContract {
             void setAdapter(RecyclerView.Adapter adapter);
 
             void notifyDataSetChanged();
+
+            void showLoadMoreProgressIntractor(boolean active);
         }
 
         interface Presenter extends IPresenter {

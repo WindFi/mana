@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.widget.ContentLoadingProgressBar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
     RecyclerView mRecyclerView;
     HomeContract.Search.Presenter mPresenter;
     ContentLoadingProgressBar progressBar;
+    SwipeRefreshLayout mSwipeRefreshLayout;
     boolean isLoading = false;
 
     @Override
@@ -40,10 +42,26 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
         mRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-                if (newState == RecyclerView.SCROLL_STATE_SETTLING && !isLoading)
+                LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
+                if (!isLoading && layoutManager.findFirstCompletelyVisibleItemPosition() + layoutManager.getChildCount() >= layoutManager.getItemCount()) {
                     mPresenter.loadMore();
+                }
             }
         });
+//        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.search_swiperefreshlayout);
+//        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+//            @Override
+//            public void onRefresh() {
+//
+//            }
+//        });
+//        mSwipeRefreshLayout.setProgressViewOffset(true, 1900, 200);
+//        mSwipeRefreshLayout.setOnChildScrollUpCallback(new SwipeRefreshLayout.OnChildScrollUpCallback() {
+//            @Override
+//            public boolean canChildScrollUp(SwipeRefreshLayout parent, @Nullable View child) {
+//                return true;
+//            }
+//        });
         mPresenter = new SearchPresenterImpl(this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Bangumi.class));
         setPresenter(mPresenter);
         handleIntent(getIntent());
@@ -123,5 +141,13 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
             progressBar.show();
         else
             progressBar.hide();
+    }
+
+    @Override
+    public void showLoadMoreProgressIntractor(boolean active) {
+        if (mSwipeRefreshLayout == null)
+            return;
+        isLoading = active;
+        mSwipeRefreshLayout.setRefreshing(active);
     }
 }
