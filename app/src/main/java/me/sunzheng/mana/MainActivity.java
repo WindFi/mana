@@ -27,6 +27,7 @@ import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.onair.OnAirFragment;
 import me.sunzheng.mana.home.onair.OnAirPresenterImpl;
+import me.sunzheng.mana.home.onair.respository.DataRepositoryImpl;
 import me.sunzheng.mana.utils.App;
 import me.sunzheng.mana.utils.PreferenceManager;
 
@@ -40,9 +41,14 @@ public class MainActivity extends AppCompatActivity
     Handler handler = new Handler();
     FragmentStatePagerAdapter fragmentPagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
         @Override
+        public void finishUpdate(ViewGroup container) {
+            super.finishUpdate(container);
+        }
+
+        @Override
         public Object instantiateItem(ViewGroup container, int position) {
             OnAirFragment fragment = (OnAirFragment) super.instantiateItem(container, position);
-            HomeContract.OnAir.Presenter presenter = new OnAirPresenterImpl(fragment, apiService);
+            HomeContract.OnAir.Presenter presenter = new OnAirPresenterImpl(fragment, new DataRepositoryImpl(MainActivity.this, apiService));
             fragment.setPresenter(presenter);
             presenter.load(fragment.getArguments().getInt(OnAirFragment.INT_ARGS_TYPE));
             return fragment;

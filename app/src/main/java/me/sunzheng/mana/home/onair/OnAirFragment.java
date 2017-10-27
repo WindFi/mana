@@ -114,4 +114,9 @@ public class OnAirFragment extends android.support.v4.app.Fragment implements Ho
             recyclerView.addItemDecoration(itemDecoration);
         }
     }
+
+    @Override
+    public Context getContext() {
+        return getActivity();
+    }
 }

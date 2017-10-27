@@ -8,8 +8,8 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
+import me.sunzheng.mana.home.onair.respository.DataRepository;
 import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
 
 /**
@@ -18,12 +18,12 @@ import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
 
 public class OnAirPresenterImpl implements HomeContract.OnAir.Presenter {
     HomeContract.OnAir.View view;
-    HomeApiService.OnAir apiServices;
     CompositeDisposable compositeDisposable;
+    DataRepository dataDataRepository;
 
-    public OnAirPresenterImpl(HomeContract.OnAir.View view, HomeApiService.OnAir apiServices) {
+    public OnAirPresenterImpl(HomeContract.OnAir.View view, DataRepository dataRepository) {
         this.view = view;
-        this.apiServices = apiServices;
+        this.dataDataRepository = dataRepository;
         compositeDisposable = new CompositeDisposable();
     }
 
@@ -40,28 +40,30 @@ public class OnAirPresenterImpl implements HomeContract.OnAir.Presenter {
     @Override
     public void load(int type) {
         view.showProgressIntractor(true);
-        Disposable disposable = apiServices.listAll(type)
+        Disposable disposable = dataDataRepository.query(type)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnTerminate(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        view.showProgressIntractor(false);
-                    }
-                })
-                .subscribe(new Consumer<AirWrapper>() {
-                    @Override
-                    public void accept(AirWrapper air) throws Exception {
-                        if (air.getData() != null && air.getData().size() > 0)
-                            view.setAdapter(new OnAirItemRecyclerViewAdapter(air.getData()));
-                    }
-                }, new Consumer<Throwable>() {
+                .doOnError(new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.i("e:", throwable.getLocalizedMessage());
                         view.showToast(throwable.getLocalizedMessage());
                     }
-                });
+                })
+                .doOnNext(new Consumer<AirWrapper>() {
+                    @Override
+                    public void accept(AirWrapper air) throws Exception {
+                        if (air != null && air.getData() != null && air.getData().size() > 0)
+                            view.setAdapter(new OnAirItemRecyclerViewAdapter(air.getData()));
+                    }
+                })
+                .doOnComplete(new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        view.showProgressIntractor(false);
+                    }
+                }).subscribe();
+
         compositeDisposable.add(disposable);
     }
 }

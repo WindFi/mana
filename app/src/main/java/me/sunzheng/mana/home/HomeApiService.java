@@ -1,6 +1,7 @@
 package me.sunzheng.mana.home;
 
 import io.reactivex.Observable;
+import io.reactivex.Single;
 import me.sunzheng.mana.home.bangumi.Response;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
@@ -42,7 +43,7 @@ public interface HomeApiService {
          * @return
          */
         @GET(PATH)
-        Observable<AirWrapper> listAll(@Query("type") int type);
+        Single<AirWrapper> listAll(@Query("type") int type);
     }
 
     interface Bangumi {

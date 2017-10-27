@@ -150,4 +150,9 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
         isLoading = active;
         mSwipeRefreshLayout.setRefreshing(active);
     }
+
+    @Override
+    public Context getContext() {
+        return this;
+    }
 }
