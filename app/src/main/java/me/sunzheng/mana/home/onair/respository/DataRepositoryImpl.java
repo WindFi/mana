@@ -8,6 +8,7 @@ import java.util.Map;
 import io.reactivex.Completable;
 import io.reactivex.Notification;
 import io.reactivex.Observable;
+import io.reactivex.functions.Action;
 import io.reactivex.functions.BiFunction;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.onair.respository.local.LocalDataRepository;
@@ -57,17 +58,32 @@ public class DataRepositoryImpl implements DataRepository {
 
     @Override
     public Completable insert(AirWrapper o) {
-        return null;
+        return Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+
+            }
+        });
     }
 
     @Override
     public Completable delete(AirWrapper o) {
-        return null;
+        return Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+
+            }
+        });
     }
 
     @Override
     public Completable update(AirWrapper o) {
-        return null;
+        return Completable.fromAction(new Action() {
+            @Override
+            public void run() throws Exception {
+
+            }
+        });
     }
 
     private Completable queryRemoteAndCache(AirWrapper o, final int type) {
