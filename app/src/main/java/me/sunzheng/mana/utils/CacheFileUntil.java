@@ -19,10 +19,10 @@ import okio.Sink;
  * Created by Sun on 2017/10/27.
  */
 
-public class CachFileUtil {
+public class CacheFileUntil {
     File mFile;
 
-    public CachFileUtil(Context mContext, String fileName) {
+    public CacheFileUntil(Context mContext, String fileName) {
         mFile = new File(mContext.getCacheDir(), fileName);
         try {
             if (!mFile.exists())
@@ -32,7 +32,7 @@ public class CachFileUtil {
         }
     }
 
-    public CachFileUtil insert(Object o) {
+    public CacheFileUntil insert(Object o) {
         try {
             Sink sink = Okio.sink(mFile);
             BufferedSink bufferedSource = Okio.buffer(sink);
@@ -46,13 +46,13 @@ public class CachFileUtil {
         return this;
     }
 
-    public CachFileUtil delete() {
+    public CacheFileUntil delete() {
         if (mFile.exists())
             mFile.delete();
         return this;
     }
 
-    public CachFileUtil update(Object o) {
+    public CacheFileUntil update(Object o) {
         return insert(o);
     }
 

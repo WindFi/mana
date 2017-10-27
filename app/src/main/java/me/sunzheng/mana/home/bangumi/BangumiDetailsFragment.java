@@ -144,15 +144,15 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
                         } else if (item.getItemId() == R.id.pop_abanoned) {
                             status = 5;
                         }
-                        mPresenter.changeBangumiFavoriteState(getArguments().getString(BangumiDetailsActivity.ARGS_ID_STR), status);
+                        mPresenter.changeBangumiFavoriteState(status);
                         return true;
                     }
                 });
                 popupMenu.show();
             }
         });
-        mPresenter.load(getArguments().getString(BangumiDetailsActivity.ARGS_ID_STR));
         mRecyclerView.setNestedScrollingEnabled(false);
+        mPresenter.load();
     }
 
     @Override

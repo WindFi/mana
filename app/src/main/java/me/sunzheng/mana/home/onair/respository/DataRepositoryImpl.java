@@ -39,19 +39,13 @@ public class DataRepositoryImpl implements DataRepository {
         return Observable.zip(map.get(type).query(type).materialize(), remoteDataRepository.query(type).materialize(), new BiFunction<Notification<AirWrapper>, Notification<AirWrapper>, AirWrapper>() {
             @Override
             public AirWrapper apply(Notification<AirWrapper> airWrapperNotification, Notification<AirWrapper> airWrapperNotification2) throws Exception {
-                if (airWrapperNotification.getValue() == null) {
-                    if (airWrapperNotification2.getValue() == null) {
-                        return new AirWrapper();
-                    } else {
-                        queryRemoteAndCache(airWrapperNotification2.getValue(), type).subscribe();
-                        return airWrapperNotification2.getValue();
-                    }
-                } else {
-                    if (airWrapperNotification.getValue() == null)
-                        throw new NullPointerException("");
-                    else
-                        return airWrapperNotification.getValue();
+                if (airWrapperNotification.getValue() != null)
+                    return airWrapperNotification.getValue();
+                if (airWrapperNotification2.getValue() != null) {
+                    queryRemoteAndCache(airWrapperNotification2.getValue(), type).subscribe();
+                    return airWrapperNotification2.getValue();
                 }
+                return new AirWrapper();
             }
         });
     }

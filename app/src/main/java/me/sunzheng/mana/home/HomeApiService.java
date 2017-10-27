@@ -77,7 +77,7 @@ public interface HomeApiService {
          * @return
          */
         @POST("/api/watch/favorite/bangumi/{id}")
-        Observable<Response> changeBangumiFavoriteStatus(@Path("id") String id, @Body FavoriteStatusRequest request);
+        Single<Response> changeBangumiFavoriteStatus(@Path("id") String id, @Body FavoriteStatusRequest request);
     }
 
     interface Episode {

@@ -5,7 +5,6 @@ import android.util.Log;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import io.reactivex.Observable;
 import io.reactivex.SingleObserver;
@@ -16,9 +15,8 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
-import me.sunzheng.mana.home.FavoriteStatusRequest;
-import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
+import me.sunzheng.mana.home.bangumi.respository.DataRespository;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
 import me.sunzheng.mana.home.bangumi.wrapper.Data;
 import me.sunzheng.mana.home.bangumi.wrapper.Episode;
@@ -31,11 +29,12 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
     final String TAG = getClass().getSimpleName();
     CompositeDisposable completable;
     HomeContract.Bangumi.View mView;
-    HomeApiService.Bangumi apiServices;
+    DataRespository dataRespository;
+    BangumiDetailWrapper data;
 
-    public BangumiDetailsPresenterImpl(HomeContract.Bangumi.View view, HomeApiService.Bangumi apiServices) {
+    public BangumiDetailsPresenterImpl(HomeContract.Bangumi.View view, DataRespository dataRespository) {
         this.mView = view;
-        this.apiServices = apiServices;
+        this.dataRespository = dataRespository;
         completable = new CompositeDisposable();
     }
 
@@ -49,21 +48,29 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
     }
 
     @Override
-    public void load(String id) {
-        Disposable disposable = apiServices.getBangumiDetail(id)
-                .delay(500, TimeUnit.MILLISECONDS)
+    public void load() {
+        Disposable disposable = dataRespository.query()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnTerminate(new Action() {
+                .doOnError(new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        mView.showProgressIntractor(false);
+                    }
+                })
+                .doOnComplete(new Action() {
                     @Override
                     public void run() throws Exception {
                         mView.showProgressIntractor(false);
                     }
                 })
-                .subscribe(new Consumer<BangumiDetailWrapper>() {
+                .doOnNext(new Consumer<BangumiDetailWrapper>() {
                     @Override
                     public void accept(BangumiDetailWrapper bangumiDetailWrapper) throws Exception {
                         final Data mData = bangumiDetailWrapper.getData();
+                        if (mData == null)
+                            return;
+                        data = bangumiDetailWrapper;
                         mView.setAirDate(mData.getAirDate());
                         mView.setSummary(mData.getSummary());
                         mView.setFavouriteStatus(mData.getFavoriteStatus());
@@ -96,36 +103,28 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                             }
                         });
                     }
-                }, new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Log.e(TAG, throwable.getLocalizedMessage());
-                    }
-                });
+                }).subscribe();
         mView.showProgressIntractor(true);
         completable.add(disposable);
     }
 
     @Override
-    public void changeBangumiFavoriteState(String id, final int status) {
-        FavoriteStatusRequest request = new FavoriteStatusRequest();
-        request.status = status;
-        Disposable disposable = apiServices.changeBangumiFavoriteStatus(id, request)
+    public void changeBangumiFavoriteState(int status) {
+        final long originStatus = data.getData().getFavoriteStatus();
+        data.getData().setFavoriteStatus(status);
+        Disposable disposable = dataRespository.update(data)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<Response>() {
+                .subscribe(new Action() {
                     @Override
-                    public void accept(Response response) throws Exception {
-                        if (response.status == 0) {
-                            mView.setFavouriteStatus(status);
-                        } else {
-                            Log.i(TAG, response.message);
-                        }
+                    public void run() throws Exception {
+                        mView.setFavouriteStatus(data.getData().getFavoriteStatus());
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.e(TAG, throwable.getLocalizedMessage());
+                        data.getData().setStatus(originStatus);
                     }
                 });
         completable.add(disposable);

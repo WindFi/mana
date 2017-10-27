@@ -12,6 +12,7 @@ import android.view.View;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.bangumi.BangumiDetailsFragment;
 import me.sunzheng.mana.home.bangumi.BangumiDetailsPresenterImpl;
+import me.sunzheng.mana.home.bangumi.respository.DataRespositoryImpl;
 import me.sunzheng.mana.utils.App;
 
 /**
@@ -45,7 +46,7 @@ public class BangumiDetailsActivity extends AppCompatActivity {
         if (savedInstanceState == null)
             finish();
         fragment = BangumiDetailsFragment.newInstance(savedInstanceState);
-        fragment.setPresenter(new BangumiDetailsPresenterImpl(fragment, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Bangumi.class)));
+        fragment.setPresenter(new BangumiDetailsPresenterImpl(fragment, new DataRespositoryImpl(this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Bangumi.class), savedInstanceState.getString(ARGS_ID_STR))));
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPanel, fragment).commit();
     }
 

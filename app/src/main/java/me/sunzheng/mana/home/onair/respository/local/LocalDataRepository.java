@@ -11,17 +11,17 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
 import me.sunzheng.mana.home.onair.respository.DataRepository;
 import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
-import me.sunzheng.mana.utils.CachFileUtil;
+import me.sunzheng.mana.utils.CacheFileUntil;
 
 /**
  * Created by Sun on 2017/10/22.
  */
 
 public class LocalDataRepository implements DataRepository {
-    CachFileUtil fileUtil;
+    CacheFileUntil fileUtil;
 
     public LocalDataRepository(Context context, int type) {
-        fileUtil = new CachFileUtil(context, "OnAir" + type + ".tmp");
+        fileUtil = new CacheFileUntil(context, "OnAir" + type + ".tmp");
     }
 
     private Maybe<AirWrapper> getAirs() {
