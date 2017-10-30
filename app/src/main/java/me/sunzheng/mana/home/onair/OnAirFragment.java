@@ -56,7 +56,7 @@ public class OnAirFragment extends android.support.v4.app.Fragment implements Ho
                                           Bundle savedInstanceState) {
         android.view.View view = inflater.inflate(R.layout.fragment_item_list, container, false);
         recyclerView = (RecyclerView) view.findViewById(R.id.list);
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiprefreshlayout);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefreshlayout);
         return view;
     }
 

@@ -45,22 +45,25 @@ public class MyFavouritePresenter implements HomeContract.MyBangumi.Presenter {
         Disposable disposable = apiService.listMyBangumi()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnTerminate(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        mView.showProgressIntractor(false);
-                    }
-                })
                 .subscribe(new Consumer<FaviourWrapper>() {
                     @Override
                     public void accept(FaviourWrapper faviourWrapper) throws Exception {
                         faviourWrapper.getData();
+                        if (faviourWrapper == null || faviourWrapper.getData().isEmpty()) {
+                            mView.showEmpty();
+                        }
                         mView.setAdapter(new OnAirItemRecyclerViewAdapter(faviourWrapper.getData()));
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.e(TAG, throwable.getLocalizedMessage());
+                        mView.showProgressIntractor(false);
+                    }
+                }, new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        mView.showProgressIntractor(false);
                     }
                 });
         compositeDisposable.add(disposable);

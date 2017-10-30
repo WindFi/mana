@@ -43,27 +43,24 @@ public class OnAirPresenterImpl implements HomeContract.OnAir.Presenter {
         Disposable disposable = dataDataRepository.query(type)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        Log.i("e:", throwable.getLocalizedMessage());
-                        view.showToast(throwable.getLocalizedMessage());
-                    }
-                })
-                .doOnNext(new Consumer<AirWrapper>() {
+                .subscribe(new Consumer<AirWrapper>() {
                     @Override
                     public void accept(AirWrapper air) throws Exception {
                         if (air != null && air.getData() != null && air.getData().size() > 0)
                             view.setAdapter(new OnAirItemRecyclerViewAdapter(air.getData()));
                     }
-                })
-                .doOnComplete(new Action() {
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.i("e:", throwable.getLocalizedMessage());
+                        view.showToast(throwable.getLocalizedMessage());
+                    }
+                }, new Action() {
                     @Override
                     public void run() throws Exception {
                         view.showProgressIntractor(false);
                     }
-                }).subscribe();
-
+                });
         compositeDisposable.add(disposable);
     }
 }

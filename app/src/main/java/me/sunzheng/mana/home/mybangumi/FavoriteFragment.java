@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.ContentLoadingProgressBar;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,10 +19,8 @@ import me.sunzheng.mana.home.HomeContract;
  */
 
 public class FavoriteFragment extends Fragment implements HomeContract.MyBangumi.View {
-    ContentLoadingProgressBar mProgressBar;
-
     RecyclerView mRecyclerView;
-
+    SwipeRefreshLayout mSwipeRefreshLayout;
     HomeContract.MyBangumi.Presenter mPresenter;
 
     public FavoriteFragment() {
@@ -49,6 +47,13 @@ public class FavoriteFragment extends Fragment implements HomeContract.MyBangumi
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefreshlayout);
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPresenter.load();
+            }
+        });
         mPresenter.load();
     }
 
@@ -75,12 +80,14 @@ public class FavoriteFragment extends Fragment implements HomeContract.MyBangumi
 
     @Override
     public void showProgressIntractor(boolean active) {
-        if (mProgressBar == null)
+        if (mSwipeRefreshLayout == null)
             return;
-        if (active)
-            mProgressBar.show();
-        else
-            mProgressBar.hide();
+        mSwipeRefreshLayout.setRefreshing(active);
+    }
+
+    @Override
+    public void showEmpty() {
+
     }
 
     @Override

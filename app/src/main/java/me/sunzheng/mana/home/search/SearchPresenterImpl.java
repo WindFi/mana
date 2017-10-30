@@ -46,7 +46,7 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
     @Override
     public void query(String key) {
         mView.showProgressIntractor(true);
-        data = new QueryData(1, 3, "air_date", "desc", key);
+        data = new QueryData(INT_DEFAULT_PAGE, INT_DEFAULT_PAGESIZE, "air_date", "desc", key);
         Disposable disposable = query(data)
                 .subscribe(new Consumer<SearchResultWrapper>() {
                     @Override
@@ -58,6 +58,12 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.e(TAG, throwable.getLocalizedMessage());
+                        mView.showProgressIntractor(false);
+                    }
+                }, new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        mView.showProgressIntractor(false);
                     }
                 });
         compositeDisposable.add(disposable);
@@ -71,12 +77,6 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
         data.page++;
         mView.showLoadMoreProgressIntractor(true);
         Disposable disposable = query(data)
-                .doOnTerminate(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        mView.showLoadMoreProgressIntractor(false);
-                    }
-                })
                 .subscribe(new Consumer<SearchResultWrapper>() {
                     @Override
                     public void accept(SearchResultWrapper searchResultWrapper) throws Exception {
@@ -90,6 +90,12 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.e(TAG, throwable.getLocalizedMessage());
+                        mView.showLoadMoreProgressIntractor(false);
+                    }
+                }, new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        mView.showLoadMoreProgressIntractor(false);
                     }
                 });
         compositeDisposable.add(disposable);
@@ -98,13 +104,7 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
     private Observable<SearchResultWrapper> query(QueryData queryData) {
         return service.listAll(queryData.page, queryData.count, queryData.field, queryData.sort, queryData.key)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeOn(Schedulers.io())
-                .doOnTerminate(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        mView.showProgressIntractor(false);
-                    }
-                });
+                .subscribeOn(Schedulers.io());
     }
 
     private static class QueryData {
