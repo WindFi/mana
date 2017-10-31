@@ -34,7 +34,7 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
     private OnFragmentInteractionListener mListener;
     private TextInputEditText loginUserNameEditText;
     private TextInputEditText loginPassWordEditText;
-
+    private AppCompatCheckBox checkBox;
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -67,13 +67,14 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
             @Override
             public void onClick(android.view.View v) {
                 try {
-                    mPresenter.login(loginUserNameEditText.getText().toString(), loginPassWordEditText.getText().toString());
+                    mPresenter.login(loginUserNameEditText.getText().toString(), loginPassWordEditText.getText().toString(), checkBox.isChecked());
                 } catch (IllegalArgumentException e) {
                     showToast(e.getLocalizedMessage());
                 }
             }
         });
-        ((AppCompatCheckBox) view.findViewById(R.id.checkbox)).setChecked(sharedPreferences.getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false));
+        checkBox = (AppCompatCheckBox) view.findViewById(R.id.checkbox);
+        checkBox.setChecked(sharedPreferences.getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false));
         return view;
     }
 

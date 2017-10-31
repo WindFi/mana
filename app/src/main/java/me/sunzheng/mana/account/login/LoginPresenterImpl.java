@@ -38,33 +38,33 @@ public class LoginPresenterImpl implements AccountContrant.Login.Presenter {
     }
 
     @Override
-    public void login(String userName, String passWord) {
+    public void login(String userName, String passWord, boolean isRemembered) {
         mView.showProgressIntractor(true);
         LoginRequest request = new LoginRequest();
         request.name = userName;
         request.password = passWord;
-        request.remember = true;
+        request.remember = isRemembered;
         Disposable disposable = service.login(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnTerminate(new Action() {
-                    @Override
-                    public void run() throws Exception {
-                        mView.showProgressIntractor(false);
-                    }
-                })
                 .subscribe(new Consumer<LoginResponse>() {
                     @Override
                     public void accept(LoginResponse loginSuccessResponse) throws Exception {
                         mView.showToast(loginSuccessResponse.msg);
-                        mView.onLoginSuccess();
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         if (throwable != null)
                             Log.e("login e", throwable.getLocalizedMessage());
+                        mView.showProgressIntractor(false);
                         mView.showToast(throwable.getLocalizedMessage());
+                    }
+                }, new Action() {
+                    @Override
+                    public void run() throws Exception {
+                        mView.showProgressIntractor(false);
+                        mView.onLoginSuccess();
                     }
                 });
         compositeDisposable.add(disposable);

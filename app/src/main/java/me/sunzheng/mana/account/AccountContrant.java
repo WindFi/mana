@@ -22,7 +22,7 @@ public interface AccountContrant {
         }
 
         interface Presenter extends IPresenter {
-            void login(String userName, String passWord);
+            void login(String userName, String passWord, boolean isRemembered);
         }
     }
 
