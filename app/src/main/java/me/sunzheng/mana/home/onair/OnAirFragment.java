@@ -107,9 +107,10 @@ public class OnAirFragment extends android.support.v4.app.Fragment implements Ho
     public void setAdapter(RecyclerView.Adapter adapter) {
         if (recyclerView.getAdapter() == null)
             recyclerView.setAdapter(adapter);
-        if (recyclerView.getLayoutManager() == null)
+        else
+            recyclerView.swapAdapter(adapter, true);
+        if (recyclerView.getLayoutManager() == null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        if (recyclerView.getItemAnimator() == null) {
             DividerItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
             recyclerView.addItemDecoration(itemDecoration);
         }

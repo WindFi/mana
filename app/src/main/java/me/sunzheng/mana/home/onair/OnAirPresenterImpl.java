@@ -54,6 +54,7 @@ public class OnAirPresenterImpl implements HomeContract.OnAir.Presenter {
                     public void accept(Throwable throwable) throws Exception {
                         Log.i("e:", throwable.getLocalizedMessage());
                         view.showToast(throwable.getLocalizedMessage());
+                        view.showProgressIntractor(false);
                     }
                 }, new Action() {
                     @Override

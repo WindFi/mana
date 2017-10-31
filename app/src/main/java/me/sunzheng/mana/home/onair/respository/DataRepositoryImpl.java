@@ -10,6 +10,7 @@ import io.reactivex.Notification;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Consumer;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.onair.respository.local.LocalDataRepository;
 import me.sunzheng.mana.home.onair.respository.remote.RemoteDataRepository;
@@ -36,15 +37,13 @@ public class DataRepositoryImpl implements DataRepository {
         if (!map.containsKey(type))
             map.put(type, new LocalDataRepository(mContext, type));
         //see https://stackoverflow.com/questions/45216713/using-zip-with-a-maybe-that-may-not-emit-a-value
-        return Observable.zip(map.get(type).query(type).materialize(), remoteDataRepository.query(type).materialize(), new BiFunction<Notification<AirWrapper>, Notification<AirWrapper>, AirWrapper>() {
+        return Observable.zip(map.get(type).query(type).materialize(), queryRemoteAndCache(type).materialize(), new BiFunction<Notification<AirWrapper>, Notification<AirWrapper>, AirWrapper>() {
             @Override
             public AirWrapper apply(Notification<AirWrapper> airWrapperNotification, Notification<AirWrapper> airWrapperNotification2) throws Exception {
                 if (airWrapperNotification.getValue() != null)
                     return airWrapperNotification.getValue();
-                if (airWrapperNotification2.getValue() != null) {
-                    queryRemoteAndCache(airWrapperNotification2.getValue(), type).subscribe();
+                if (airWrapperNotification2.getValue() != null)
                     return airWrapperNotification2.getValue();
-                }
                 return new AirWrapper();
             }
         });
@@ -80,7 +79,12 @@ public class DataRepositoryImpl implements DataRepository {
         });
     }
 
-    private Completable queryRemoteAndCache(AirWrapper o, final int type) {
-        return map.get(type).insert(o);
+    private Observable<AirWrapper> queryRemoteAndCache(final int type) {
+        return remoteDataRepository.query(type).doOnNext(new Consumer<AirWrapper>() {
+            @Override
+            public void accept(AirWrapper airWrapper) throws Exception {
+                map.get(type).insert(airWrapper);
+            }
+        });
     }
 }
