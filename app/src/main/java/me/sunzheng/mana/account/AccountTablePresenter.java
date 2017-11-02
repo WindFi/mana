@@ -31,8 +31,8 @@ public class AccountTablePresenter implements AccountContrant.Login.Presenter, A
     }
 
     @Override
-    public void login(String userName, String passWord) {
-        loginPresenter.login(userName, passWord);
+    public void login(String userName, String passWord, boolean isRemembered) {
+        loginPresenter.login(userName, passWord, isRemembered);
     }
 
     @Override
