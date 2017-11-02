@@ -91,8 +91,8 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     @Override
     public void onResume() {
         super.onResume();
-//        if (isLoaded)
-//            mProgressBar.hide();
+        if (isLoaded)
+            mProgressBar.hide();
     }
 
     private void initToolbar(View view) {
