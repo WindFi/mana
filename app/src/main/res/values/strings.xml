@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Mana</string>
+    <string name="app_name" translatable="false">Mana</string>
 
     <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
     <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
@@ -103,7 +103,7 @@
     <string name="hint_fragment_login_password">PassWord</string>
     <string name="title_fragment_login_button">Login</string>
     <string name="hint_fragment_login_host">Host</string>
-    <string name="text_fragment_remember" translatable="false">Rememberd</string>
+    <string name="text_fragment_remember">Rememberd</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="title_anim_catalog_tablayout">Anim</string>
@@ -127,4 +127,5 @@
         <item>@string/title_pause_status</item>
         <item>@string/title_abanoned_status</item>
     </string-array>
+    <string name="title_start">getstart</string>
 </resources>

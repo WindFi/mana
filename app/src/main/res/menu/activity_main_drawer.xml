@@ -6,10 +6,10 @@
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_menu_recent_history"
             android:title="@string/title_nav_history" />
-        <item
-            android:id="@+id/nav_bangumi"
-            android:icon="@drawable/ic_menu_bangumi"
-            android:title="@string/title_nav_bangumi" />
+        <!--<item-->
+        <!--android:id="@+id/nav_bangumi"-->
+        <!--android:icon="@drawable/ic_menu_bangumi"-->
+        <!--android:title="@string/title_nav_bangumi" />-->
 
     </group>
 

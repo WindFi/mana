@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">mana</string>
     <string name="action_settings">设置</string>
     <string name="pref_header_data_sync">同步</string>
     <string name="pref_ringtone_silent">静音</string>
@@ -15,7 +14,7 @@
     <string name="hint_fragment_login_username">用户名</string>
     <string name="hint_fragment_login_password">密码</string>
     <string name="title_fragment_login_button">登录</string>
-    <string name="title_episode_textview">( %1$s / %2$s )</string>
+    <string name="title_episode_textview">剧集( %1$s / %2$s )</string>
     <string name="episode_template">第 %1$s 话</string>
     <string name="title_activity_faviours">收藏</string>
 
@@ -30,4 +29,6 @@
     <string name="hint_search">番名</string>
     <string name="title_anim_catalog_tablayout">新番</string>
     <string name="title_dram_catalog_tablayout">日剧</string>
+    <string name="title_start">开始</string>
+    <string name="text_fragment_remember">记住并自动登录</string>
 </resources>

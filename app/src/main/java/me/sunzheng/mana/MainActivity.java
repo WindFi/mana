@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
@@ -167,21 +168,30 @@ public class MainActivity extends AppCompatActivity
         final Intent intent = new Intent();
 
         if (id == R.id.nav_settings) {
-            intent.setComponent(new ComponentName(this, SettingsActivity.class));
+//            intent.setComponent(new ComponentName(this, SettingsActivity.class));
+            Toast.makeText(this, "no support this feature now!", Toast.LENGTH_SHORT).show();
         } else if (id == R.id.nav_history) {
             intent.setComponent(new ComponentName(this, MyFavoritesActivity.class));
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (intent.getComponent() != null)
+                        startActivity(intent);
+                }
+            }, CLICK_DELAY_MILLIONSECONDS);
         } else if (id == R.id.nav_exit) {
             SharedPreferences sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
             sharedPreferences.edit().putBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false).commit();
-            intent.setComponent(new ComponentName(this, LoginActivity.class));
+            intent.setComponent(new ComponentName(this, LaunchActivity.class));
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (intent.getComponent() != null)
+                        startActivity(intent);
+                    finish();
+                }
+            }, CLICK_DELAY_MILLIONSECONDS);
         }
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (intent.getComponent() != null)
-                    startActivity(intent);
-            }
-        }, CLICK_DELAY_MILLIONSECONDS);
         return false;
     }
 }
