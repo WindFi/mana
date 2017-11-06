@@ -3,7 +3,7 @@
 
 [![Get It On Google Play](https://play.google.com/intl/en_us/badges/images/badge_new.png)](https://play.google.com/store/apps/details?id=me.sunzheng.mana)
 
-Android client for [Albireo](https://github.com/lordfriend/Albireo).
+Android client for [Albireo](https://github.com/lordfriend/Albireo).Use [todo-mvp](https://github.com/googlesamples/android-architecture) pattern
 
 ## Build
 
