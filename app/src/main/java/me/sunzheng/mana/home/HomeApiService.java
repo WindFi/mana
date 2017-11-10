@@ -25,12 +25,12 @@ public interface HomeApiService {
         String PATH = HOME_PATH + "/my_bangumi";
 
         /**
-         * list all bangumi which is favorite by current user and status is 3 (WATCHING)
+         * the favorite status, can be one of the following value: 1 (WISH), 2 (WATCHED), 3 (WATCHING), 4 (PAUSE), 5 (ABANDONED) and 0 (all of above) Default: 3
          *
          * @return
          */
         @GET(PATH)
-        Observable<FaviourWrapper> listMyBangumi();
+        Observable<FaviourWrapper> listMyBangumi(@Query("status") int status);
     }
 
     interface OnAir {

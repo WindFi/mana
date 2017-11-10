@@ -118,9 +118,17 @@
     <string name="title_watching_status">WATCHING</string>
     <string name="title_pause_status">PAUSE</string>
     <string name="title_abanoned_status">ABANONED</string>
-
+    <string name="title_all">All</string>
     <string-array name="favorite_status_values">
         <item>@string/title_uncollection_status</item>
+        <item>@string/title_wish_status</item>
+        <item>@string/title_watched_status</item>
+        <item>@string/title_watching_status</item>
+        <item>@string/title_pause_status</item>
+        <item>@string/title_abanoned_status</item>
+    </string-array>
+    <string-array name="favorite_status_values_ontitle">
+        <item>@string/title_all</item>
         <item>@string/title_wish_status</item>
         <item>@string/title_watched_status</item>
         <item>@string/title_watching_status</item>

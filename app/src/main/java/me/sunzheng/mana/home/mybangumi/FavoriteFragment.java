@@ -28,7 +28,6 @@ public class FavoriteFragment extends Fragment implements HomeContract.MyBangumi
 
     public static FavoriteFragment newInstance() {
         FavoriteFragment fragment = new FavoriteFragment();
-
         return fragment;
     }
 
@@ -48,13 +47,7 @@ public class FavoriteFragment extends Fragment implements HomeContract.MyBangumi
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
         mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefreshlayout);
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mPresenter.load();
-            }
-        });
-        mPresenter.load();
+        mSwipeRefreshLayout.setEnabled(false);
     }
 
     @Override
@@ -88,6 +81,11 @@ public class FavoriteFragment extends Fragment implements HomeContract.MyBangumi
     @Override
     public void showEmpty() {
 
+    }
+
+    @Override
+    public void onFilter(int status) {
+        mPresenter.setFilter(status);
     }
 
     @Override

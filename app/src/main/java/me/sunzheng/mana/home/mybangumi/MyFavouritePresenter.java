@@ -41,8 +41,13 @@ public class MyFavouritePresenter implements HomeContract.MyBangumi.Presenter {
 
     @Override
     public void load() {
+
+    }
+
+    @Override
+    public void setFilter(int status) {
         mView.showProgressIntractor(true);
-        Disposable disposable = apiService.listMyBangumi()
+        Disposable disposable = apiService.listMyBangumi(status)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Consumer<FaviourWrapper>() {
@@ -67,10 +72,5 @@ public class MyFavouritePresenter implements HomeContract.MyBangumi.Presenter {
                     }
                 });
         compositeDisposable.add(disposable);
-    }
-
-    @Override
-    public void setFilter(int status) {
-
     }
 }

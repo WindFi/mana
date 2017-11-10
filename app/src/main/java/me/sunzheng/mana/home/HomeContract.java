@@ -69,6 +69,7 @@ public interface HomeContract {
         interface Presenter extends IPresenter {
             int INT_DEFAULT_PAGE = 1;
             int INT_DEFAULT_PAGESIZE = 10;
+
             void query(String key);
 
             void loadMore();
@@ -77,6 +78,8 @@ public interface HomeContract {
 
     interface MyBangumi {
         interface View extends IView<Presenter> {
+            void onFilter(int status);
+
             void showEmpty();
 
             void showProgressIntractor(boolean active);
