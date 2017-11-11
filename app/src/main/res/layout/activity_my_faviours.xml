@@ -17,27 +17,21 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
+            app:layout_scrollFlags="scroll|enterAlways">
 
 
-        <android.support.v7.widget.AppCompatSpinner
-            android:id="@+id/faviort_spinner"
-            android:layout_width="wrap_content"
-            android:layout_height="?attr/actionBarSize"
-            android:layout_gravity="end"
-            android:entries="@array/favorite_status_values_ontitle"
-            app:layout_scrollFlags="enterAlways" />
+            <android.support.v7.widget.AppCompatSpinner
+                android:id="@+id/spinner"
+                android:layout_width="wrap_content"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_gravity="end"
+                android:entries="@array/favorite_status_values_ontitle"
+                app:layout_scrollFlags="enterAlways" />
+        </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
-
-    <EditText
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:inputType="text" />
     <FrameLayout
         android:id="@+id/contentPanel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
 </android.support.design.widget.CoordinatorLayout>

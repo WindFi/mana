@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -27,7 +28,7 @@ public class MyFavoritesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_faviours);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        spinner = (AppCompatSpinner) findViewById(R.id.faviort_spinner);
+        spinner = (AppCompatSpinner) findViewById(R.id.spinner);
         fragment = FavoriteFragment.newInstance();
         fragment.setPresenter(new MyFavouritePresenter(fragment, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.MyBangumi.class)));
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPanel, fragment).commit();
@@ -42,6 +43,11 @@ public class MyFavoritesActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
