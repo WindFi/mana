@@ -6,9 +6,13 @@ import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.j256.ormlite.field.DataType;
+import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+@DatabaseTable(tableName = "favorites")
 public class BangumiModel implements Parcelable {
 
     public static final Creator<BangumiModel> CREATOR = new Creator<BangumiModel>() {
@@ -22,80 +26,116 @@ public class BangumiModel implements Parcelable {
             return new BangumiModel[size];
         }
     };
+    @DatabaseField(generatedId = true)
+    private long _id;
+    @DatabaseField(columnName = "id", dataType = DataType.STRING)
     @SerializedName("id")
     @Expose
     private String id;
+    @DatabaseField(columnName = "bgm_id", dataType = DataType.INTEGER)
     @SerializedName("bgm_id")
     @Expose
-    private Integer bgmId;
+    private int bgmId;
+    @DatabaseField(columnName = "name")
     @SerializedName("name")
     @Expose
     private String name;
+    @DatabaseField(columnName = "name_cn")
     @SerializedName("name_cn")
     @Expose
     private String nameCn;
+    @DatabaseField(columnName = "summary")
     @SerializedName("summary")
     @Expose
     private String summary;
+    @DatabaseField(columnName = "image")
     @SerializedName("image")
     @Expose
     private String image;
+    @DatabaseField(columnName = "cover")
     @SerializedName("cover")
     @Expose
     private String cover;
+    @DatabaseField(columnName = "cover_color")
     @SerializedName("cover_color")
     @Expose
     private String cover_color;
+    @DatabaseField(columnName = "create_time", dataType = DataType.LONG)
     @SerializedName("create_time")
     @Expose
     private long createTime;
+    @DatabaseField(columnName = "update_time", dataType = DataType.LONG)
     @SerializedName("update_time")
     @Expose
     private long updateTime;
+    @DatabaseField(columnName = "eps_no_offset", dataType = DataType.LONG)
     @SerializedName("eps_no_offset")
     @Expose
     private long epsNoOffset;
+    @DatabaseField(columnName = "bangumi_moe")
     @SerializedName("bangumi_moe")
     @Expose
     private String bangumiMoe;
+    @DatabaseField(columnName = "libyk_so")
     @SerializedName("libyk_so")
     @Expose
     private String libykSo;
+    @DatabaseField(columnName = "dmhy")
     @SerializedName("dmhy")
     @Expose
     private String dmhy;
+    @DatabaseField(columnName = "type", dataType = DataType.INTEGER)
     @SerializedName("type")
     @Expose
-    private Integer type;
+    private int type;
+    @DatabaseField(columnName = "status", dataType = DataType.INTEGER)
     @SerializedName("status")
     @Expose
-    private Integer status;
+    private int status;
+    @DatabaseField(columnName = "air_date")
     @SerializedName("air_date")
     @Expose
     private String airDate;
+    @DatabaseField(columnName = "air_weekday", dataType = DataType.LONG)
     @SerializedName("air_weekday")
     @Expose
     private long airWeekday;
+    @DatabaseField(columnName = "delete_mark", dataType = DataType.LONG)
     @SerializedName("delete_mark")
     @Expose
     private long deleteMark;
+    @DatabaseField(columnName = "acg_rip")
     @SerializedName("acg_rip")
     @Expose
     private String acgRip;
+    @DatabaseField(columnName = "rss")
     @SerializedName("rss")
     @Expose
     private String rss;
+    @DatabaseField(columnName = "eps_regex")
     @SerializedName("eps_regex")
     @Expose
     private String epsRegex;
+    @DatabaseField(columnName = "eps", dataType = DataType.INTEGER)
     @SerializedName("eps")
     @Expose
-    private Integer eps;
+    private int eps;
+    @DatabaseField(columnName = "favorite_status", dataType = DataType.INTEGER)
     @SerializedName("favorite_status")
     @Expose
-    private Integer favoriteStatus;
+    private int favoriteStatus;
 
-    protected BangumiModel(Parcel in) {
+    @DatabaseField(columnName = "unwatched_count", dataType = DataType.INTEGER)
+    @SerializedName("unwatched_count")
+    @Expose
+    private int unwatched_count;
+
+    public BangumiModel() {
+    }
+
+    ;
+
+    public BangumiModel(Parcel in) {
         id = in.readString();
         name = in.readString();
         nameCn = in.readString();
@@ -115,6 +155,7 @@ public class BangumiModel implements Parcelable {
         acgRip = in.readString();
         rss = in.readString();
         epsRegex = in.readString();
+        unwatched_count = in.readInt();
     }
 
     @Override
@@ -138,6 +179,7 @@ public class BangumiModel implements Parcelable {
         dest.writeString(acgRip);
         dest.writeString(rss);
         dest.writeString(epsRegex);
+        dest.writeInt(unwatched_count);
     }
 
     @Override
@@ -153,11 +195,11 @@ public class BangumiModel implements Parcelable {
         this.id = id;
     }
 
-    public Integer getBgmId() {
+    public int getBgmId() {
         return bgmId;
     }
 
-    public void setBgmId(Integer bgmId) {
+    public void setBgmId(int bgmId) {
         this.bgmId = bgmId;
     }
 
@@ -249,19 +291,19 @@ public class BangumiModel implements Parcelable {
         this.dmhy = dmhy;
     }
 
-    public Integer getType() {
+    public int getType() {
         return type;
     }
 
-    public void setType(Integer type) {
+    public void setType(int type) {
         this.type = type;
     }
 
-    public Integer getStatus() {
+    public int getStatus() {
         return status;
     }
 
-    public void setStatus(Integer status) {
+    public void setStatus(int status) {
         this.status = status;
     }
 
@@ -314,20 +356,28 @@ public class BangumiModel implements Parcelable {
         this.epsRegex = epsRegex;
     }
 
-    public Integer getEps() {
+    public int getEps() {
         return eps;
     }
 
-    public void setEps(Integer eps) {
+    public void setEps(int eps) {
         this.eps = eps;
     }
 
-    public Integer getFavoriteStatus() {
+    public int getFavoriteStatus() {
         return favoriteStatus;
     }
 
-    public void setFavoriteStatus(Integer favoriteStatus) {
+    public void setFavoriteStatus(int favoriteStatus) {
         this.favoriteStatus = favoriteStatus;
+    }
+
+    public int getUnwatched_count() {
+        return unwatched_count;
+    }
+
+    public void setUnwatched_count(int unwatched_count) {
+        this.unwatched_count = unwatched_count;
     }
 
     @Override
@@ -341,5 +391,23 @@ public class BangumiModel implements Parcelable {
 
     public void setCover_color(String cover_color) {
         this.cover_color = cover_color;
+    }
+
+    public long get_id() {
+        return _id;
+    }
+
+    public void set_id(long _id) {
+        this._id = _id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        BangumiModel that = (BangumiModel) o;
+
+        return id.equals(that.id);
     }
 }

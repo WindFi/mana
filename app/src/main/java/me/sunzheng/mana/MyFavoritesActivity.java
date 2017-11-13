@@ -12,6 +12,7 @@ import android.widget.AdapterView;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.mybangumi.FavoriteFragment;
 import me.sunzheng.mana.home.mybangumi.MyFavouritePresenter;
+import me.sunzheng.mana.home.mybangumi.respository.DataRespositoryImpl;
 import me.sunzheng.mana.utils.App;
 
 /**
@@ -30,7 +31,7 @@ public class MyFavoritesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         spinner = (AppCompatSpinner) findViewById(R.id.spinner);
         fragment = FavoriteFragment.newInstance();
-        fragment.setPresenter(new MyFavouritePresenter(fragment, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.MyBangumi.class)));
+        fragment.setPresenter(new MyFavouritePresenter(fragment, new DataRespositoryImpl(MyFavoritesActivity.this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.MyBangumi.class))));
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPanel, fragment).commit();
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

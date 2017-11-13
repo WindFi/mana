@@ -2,16 +2,18 @@ package me.sunzheng.mana.home.mybangumi;
 
 import android.util.Log;
 
+import java.util.List;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
-import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
-import me.sunzheng.mana.home.mybangumi.wrapper.FaviourWrapper;
+import me.sunzheng.mana.home.mybangumi.respository.DataRespository;
 import me.sunzheng.mana.home.onair.OnAirItemRecyclerViewAdapter;
+import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
 
 /**
  * Created by Sun on 2017/7/17.
@@ -19,14 +21,14 @@ import me.sunzheng.mana.home.onair.OnAirItemRecyclerViewAdapter;
 
 public class MyFavouritePresenter implements HomeContract.MyBangumi.Presenter {
     final String TAG = getClass().getSimpleName();
-    HomeApiService.MyBangumi apiService;
     CompositeDisposable compositeDisposable;
     HomeContract.MyBangumi.View mView;
+    DataRespository dataRespository;
 
-    public MyFavouritePresenter(HomeContract.MyBangumi.View mView, HomeApiService.MyBangumi apiService) {
-        this.apiService = apiService;
+    public MyFavouritePresenter(HomeContract.MyBangumi.View mView, DataRespository dataRespository) {
         this.mView = mView;
         compositeDisposable = new CompositeDisposable();
+        this.dataRespository = dataRespository;
     }
 
     @Override
@@ -47,17 +49,17 @@ public class MyFavouritePresenter implements HomeContract.MyBangumi.Presenter {
     @Override
     public void setFilter(int status) {
         mView.showProgressIntractor(true);
-        Disposable disposable = apiService.listMyBangumi(status)
+        Disposable disposable = dataRespository.query(status)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<FaviourWrapper>() {
+                .subscribe(new Consumer<List<BangumiModel>>() {
                     @Override
-                    public void accept(FaviourWrapper faviourWrapper) throws Exception {
-                        faviourWrapper.getData();
-                        if (faviourWrapper == null || faviourWrapper.getData().isEmpty()) {
+                    public void accept(List<BangumiModel> bangumiModels) throws Exception {
+                        if (bangumiModels == null || bangumiModels.isEmpty())
                             mView.showEmpty();
+                        else {
+                            mView.setAdapter(new OnAirItemRecyclerViewAdapter(bangumiModels));
                         }
-                        mView.setAdapter(new OnAirItemRecyclerViewAdapter(faviourWrapper.getData()));
                     }
                 }, new Consumer<Throwable>() {
                     @Override

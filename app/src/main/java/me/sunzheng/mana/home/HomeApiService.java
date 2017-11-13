@@ -30,7 +30,7 @@ public interface HomeApiService {
          * @return
          */
         @GET(PATH)
-        Observable<FaviourWrapper> listMyBangumi(@Query("status") int status);
+        Single<FaviourWrapper> listMyBangumi(@Query("status") int status);
     }
 
     interface OnAir {
