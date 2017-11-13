@@ -10,8 +10,8 @@ import android.view.View;
 import android.widget.AdapterView;
 
 import me.sunzheng.mana.home.HomeApiService;
-import me.sunzheng.mana.home.mybangumi.FavoriteFragment;
-import me.sunzheng.mana.home.mybangumi.MyFavouritePresenter;
+import me.sunzheng.mana.home.mybangumi.FavoritesFragment;
+import me.sunzheng.mana.home.mybangumi.MyFavoritesPresenter;
 import me.sunzheng.mana.home.mybangumi.respository.DataRespositoryImpl;
 import me.sunzheng.mana.utils.App;
 
@@ -21,7 +21,7 @@ import me.sunzheng.mana.utils.App;
  * and click any item goto {@link BangumiDetailsActivity}
  */
 public class MyFavoritesActivity extends AppCompatActivity {
-    FavoriteFragment fragment;
+    FavoritesFragment fragment;
     AppCompatSpinner spinner;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,8 +30,8 @@ public class MyFavoritesActivity extends AppCompatActivity {
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         spinner = (AppCompatSpinner) findViewById(R.id.spinner);
-        fragment = FavoriteFragment.newInstance();
-        fragment.setPresenter(new MyFavouritePresenter(fragment, new DataRespositoryImpl(MyFavoritesActivity.this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.MyBangumi.class))));
+        fragment = FavoritesFragment.newInstance();
+        fragment.setPresenter(new MyFavoritesPresenter(fragment, new DataRespositoryImpl(MyFavoritesActivity.this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.MyBangumi.class))));
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPanel, fragment).commit();
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override

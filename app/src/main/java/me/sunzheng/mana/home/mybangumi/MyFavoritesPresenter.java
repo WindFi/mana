@@ -19,13 +19,13 @@ import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
  * Created by Sun on 2017/7/17.
  */
 
-public class MyFavouritePresenter implements HomeContract.MyBangumi.Presenter {
+public class MyFavoritesPresenter implements HomeContract.MyBangumi.Presenter {
     final String TAG = getClass().getSimpleName();
     CompositeDisposable compositeDisposable;
     HomeContract.MyBangumi.View mView;
     DataRespository dataRespository;
 
-    public MyFavouritePresenter(HomeContract.MyBangumi.View mView, DataRespository dataRespository) {
+    public MyFavoritesPresenter(HomeContract.MyBangumi.View mView, DataRespository dataRespository) {
         this.mView = mView;
         compositeDisposable = new CompositeDisposable();
         this.dataRespository = dataRespository;

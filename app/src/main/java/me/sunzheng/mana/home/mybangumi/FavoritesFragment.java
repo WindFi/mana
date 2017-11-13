@@ -18,16 +18,16 @@ import me.sunzheng.mana.home.HomeContract;
  * Created by Sun on 2017/6/22.
  */
 
-public class FavoriteFragment extends Fragment implements HomeContract.MyBangumi.View {
+public class FavoritesFragment extends Fragment implements HomeContract.MyBangumi.View {
     RecyclerView mRecyclerView;
     SwipeRefreshLayout mSwipeRefreshLayout;
     HomeContract.MyBangumi.Presenter mPresenter;
 
-    public FavoriteFragment() {
+    public FavoritesFragment() {
     }
 
-    public static FavoriteFragment newInstance() {
-        FavoriteFragment fragment = new FavoriteFragment();
+    public static FavoritesFragment newInstance() {
+        FavoritesFragment fragment = new FavoritesFragment();
         return fragment;
     }
 
