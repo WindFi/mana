@@ -5,6 +5,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
+import java.util.UUID;
 
 public class Data {
 
@@ -22,7 +23,7 @@ public class Data {
     private Object epsNoOffset;
     @SerializedName("id")
     @Expose
-    private String id;
+    private UUID id;
     @SerializedName("bgm_id")
     @Expose
     private long bgmId;
@@ -81,6 +82,18 @@ public class Data {
     @Expose
     private Object dmhy;
 
+    @SerializedName("cover_image")
+    @Expose
+    private ImageInfo cover_image;
+
+    public ImageInfo getCover_image() {
+        return cover_image;
+    }
+
+    public void setCover_image(ImageInfo cover_image) {
+        this.cover_image = cover_image;
+    }
+
     public String getImage() {
         return image;
     }
@@ -114,11 +127,11 @@ public class Data {
     }
 
     public String getId() {
-        return id;
+        return id.toString();
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = UUID.fromString(id);
     }
 
     public long getBgmId() {

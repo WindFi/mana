@@ -13,8 +13,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.sunzheng.mana.VideoPlayerActivity;
-import me.sunzheng.mana.home.bangumi.WatchProgress;
 import me.sunzheng.mana.home.bangumi.wrapper.Episode;
+import me.sunzheng.mana.home.bangumi.wrapper.WatchProgress;
 import me.sunzheng.mana.home.episode.Record;
 
 public class PlayService extends Service {

@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-import me.sunzheng.mana.home.bangumi.WatchProgress;
+import me.sunzheng.mana.home.bangumi.wrapper.WatchProgress;
 
 public class EpisodeWrapper {
 

@@ -4,7 +4,7 @@ package me.sunzheng.mana.home.bangumi.wrapper;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import me.sunzheng.mana.home.bangumi.WatchProgress;
+import java.util.UUID;
 
 public class Episode {
     @SerializedName("status")
@@ -24,7 +24,7 @@ public class Episode {
     private Long bgmEpsId;
     @SerializedName("bangumi_id")
     @Expose
-    private String bangumiId;
+    private UUID bangumiId;
     @SerializedName("airdate")
     @Expose
     private String airdate;
@@ -34,6 +34,9 @@ public class Episode {
     @SerializedName("thumbnail")
     @Expose
     private String thumbnail;
+    @SerializedName("thumbnail_color")
+    @Expose
+    private String thumbnailColor;
     @SerializedName("delete_mark")
     @Expose
     private Object deleteMark;
@@ -45,10 +48,21 @@ public class Episode {
     private String duration;
     @SerializedName("id")
     @Expose
-    private String id;
+    private UUID id;
     @SerializedName("watch_progress")
     @Expose
     private WatchProgress watchProgress;
+    @SerializedName("thumbnail_image")
+    @Expose
+    private ImageInfo thumbnailImage;
+
+    public ImageInfo getThumbnailImage() {
+        return thumbnailImage;
+    }
+
+    public void setThumbnailImage(ImageInfo thumbnailImage) {
+        this.thumbnailImage = thumbnailImage;
+    }
 
     public WatchProgress getWatchProgress() {
         return watchProgress;
@@ -99,11 +113,11 @@ public class Episode {
     }
 
     public String getBangumiId() {
-        return bangumiId;
+        return bangumiId.toString();
     }
 
     public void setBangumiId(String bangumiId) {
-        this.bangumiId = bangumiId;
+        this.bangumiId = UUID.fromString(bangumiId);
     }
 
     public String getAirdate() {
@@ -155,11 +169,18 @@ public class Episode {
     }
 
     public String getId() {
-        return id;
+        return id.toString();
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = UUID.fromString(id);
     }
 
+    public String getThumbnailColor() {
+        return thumbnailColor;
+    }
+
+    public void setThumbnailColor(String thumbnailColor) {
+        this.thumbnailColor = thumbnailColor;
+    }
 }

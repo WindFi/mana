@@ -2,6 +2,8 @@ package me.sunzheng.mana.home.bangumi;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -60,7 +62,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
         } else {
             holder.itemView.setClickable(false);
         }
-        Glide.with(holder.itemView.getContext()).load(item.getThumbnail()).into(holder.mImageView);
+        Glide.with(holder.itemView.getContext()).load(item.getThumbnail()).placeholder(new ColorDrawable(Color.parseColor(item.getThumbnailColor()))).into(holder.mImageView);
         holder.mEpisodeNoTextView.setText(holder.itemView.getContext().getString(R.string.episode_template, item.getEpisodeNo() + ""));
         holder.mTitleTextView.setText(TextUtils.isEmpty(item.getNameCn()) ? item.getName() : item.getNameCn());
         holder.mUpdateDateTextView.setText(item.getAirdate());

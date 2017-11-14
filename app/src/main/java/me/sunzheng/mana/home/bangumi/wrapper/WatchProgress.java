@@ -1,5 +1,5 @@
 
-package me.sunzheng.mana.home.bangumi;
+package me.sunzheng.mana.home.bangumi.wrapper;
 
 import android.os.Parcel;
 import android.os.Parcelable;
