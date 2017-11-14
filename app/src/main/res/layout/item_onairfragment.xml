@@ -6,7 +6,6 @@
     android:layout_height="wrap_content"
     android:foreground="?attr/selectableItemBackground"
     android:orientation="horizontal"
-    app:cardElevation="8dp"
     app:contentPadding="4dp">
 
     <android.support.constraint.ConstraintLayout
@@ -19,7 +18,6 @@
             android:layout_height="96dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:layout_editor_absoluteX="0dp"
             tools:src="@mipmap/ic_launcher" />
 
         <android.support.v7.widget.LinearLayoutCompat
