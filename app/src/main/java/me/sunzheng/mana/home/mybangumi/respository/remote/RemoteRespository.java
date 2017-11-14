@@ -8,7 +8,7 @@ import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.mybangumi.respository.DataRespository;
-import me.sunzheng.mana.home.mybangumi.wrapper.FaviourWrapper;
+import me.sunzheng.mana.home.mybangumi.wrapper.FavoriteWrapper;
 import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
 
 /**
@@ -24,10 +24,10 @@ public class RemoteRespository implements DataRespository {
 
     @Override
     public Observable<List<BangumiModel>> query(int status) {
-        return apiService.listMyBangumi(status).flatMapObservable(new Function<FaviourWrapper, ObservableSource<? extends List<BangumiModel>>>() {
+        return apiService.listMyBangumi(status).flatMapObservable(new Function<FavoriteWrapper, ObservableSource<? extends List<BangumiModel>>>() {
             @Override
-            public ObservableSource<? extends List<BangumiModel>> apply(FaviourWrapper faviourWrapper) throws Exception {
-                return Observable.just(faviourWrapper.getData());
+            public ObservableSource<? extends List<BangumiModel>> apply(FavoriteWrapper favoriteWrapper) throws Exception {
+                return Observable.just(favoriteWrapper.getData());
             }
         });
     }

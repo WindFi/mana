@@ -23,13 +23,14 @@ import me.sunzheng.mana.utils.App;
 public class MyFavoritesActivity extends AppCompatActivity {
     FavoritesFragment fragment;
     AppCompatSpinner spinner;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_faviours);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        spinner = (AppCompatSpinner) findViewById(R.id.spinner);
+        spinner = findViewById(R.id.spinner);
         fragment = FavoritesFragment.newInstance();
         fragment.setPresenter(new MyFavoritesPresenter(fragment, new DataRespositoryImpl(MyFavoritesActivity.this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.MyBangumi.class))));
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPanel, fragment).commit();

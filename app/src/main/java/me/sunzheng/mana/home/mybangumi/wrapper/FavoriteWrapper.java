@@ -8,7 +8,7 @@ import java.util.List;
 
 import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
 
-public class FaviourWrapper {
+public class FavoriteWrapper {
 
     @SerializedName("status")
     @Expose
