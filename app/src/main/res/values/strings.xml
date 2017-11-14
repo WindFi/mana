@@ -94,6 +94,7 @@
     <string name="error_invalid_password" translatable="false">This password is too short</string>
     <string name="error_incorrect_password" translatable="false">This password is incorrect</string>
     <string name="error_field_required" translatable="false">This field is required</string>
+    <string name="error_invalid_host">This host is invalid</string>
     <string name="permission_rationale" translatable="false">"Contacts permissions are needed for providing email
         completions."
     </string>

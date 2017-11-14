@@ -6,11 +6,17 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
+import android.support.v4.util.PatternsCompat;
 import android.support.v7.widget.AppCompatButton;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.account.AccountContrant;
@@ -45,12 +51,28 @@ public class HostFragment extends Fragment implements AccountContrant.Start.View
         sharedPreferences = getActivity().getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
         mTextInputEidtText = (TextInputEditText) view.findViewById(R.id.dialog_host_textinputedittext);
         mButton = (AppCompatButton) view.findViewById(R.id.dialog_host_button);
+        mTextInputEidtText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_GO) {
+                    mButton.performClick();
+                }
+                return false;
+            }
+        });
         if (!TextUtils.isEmpty(sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "")))
             mTextInputEidtText.setText(sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, ""));
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (TextUtils.isEmpty(mTextInputEidtText.getText().toString()) || !PatternsCompat.WEB_URL.matcher(mTextInputEidtText.getText().toString()).matches()) {
+                    Toast.makeText(getActivity(), getString(R.string.error_invalid_host), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 sharedPreferences.edit().putString(PreferenceManager.Global.STR_KEY_HOST, mTextInputEidtText.getText().toString()).commit();
+                InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                mTextInputEidtText.clearFocus();
                 if (listener != null)
                     listener.onSave();
             }
