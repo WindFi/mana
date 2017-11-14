@@ -7,6 +7,7 @@ import java.util.List;
 import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Predicate;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.mybangumi.respository.local.LocalDataRepository;
 import me.sunzheng.mana.home.mybangumi.respository.remote.RemoteRespository;
@@ -28,7 +29,12 @@ public class DataRespositoryImpl implements DataRespository {
     public Observable<List<BangumiModel>> query(int status) {
         if (status == 0) {
             local.delete(null).toObservable().subscribe();
-            return Observable.concat(queryFromRemoteAndSave(), local.query(status));
+            return Observable.concat(queryFromRemoteAndSave(), local.query(status)).filter(new Predicate() {
+                @Override
+                public boolean test(Object o) throws Exception {
+                    return o != null;
+                }
+            });
         } else
             return local.query(status);
     }

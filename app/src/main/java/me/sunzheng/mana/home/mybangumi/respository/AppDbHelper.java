@@ -19,7 +19,7 @@ import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
 
 public class AppDbHelper extends OrmLiteSqliteOpenHelper {
     final static String STR_DB_FILENAME = "Global";
-    final static int INT_VERSION_CURRENT = 7;
+    final static int INT_VERSION_CURRENT = 11;
 
     public AppDbHelper(Context context) {
         this(context, STR_DB_FILENAME, null, INT_VERSION_CURRENT);

@@ -33,9 +33,9 @@ task clean(type: Delete) {
     delete rootProject.buildDir
 }
 ext {
-    compileSdkVersion=26
+    compileSdkVersion=27
     buildToolsVersion = '26.0.3'
-    targetSdkVersion=26
+    targetSdkVersion=27
     rxandroid2Version = '2.0.1'
     retrofit2Version = '2.3.0'
     glideVersion = '3.7.0'
@@ -43,7 +43,7 @@ ext {
     supportMultidexVersion = '1.0.1'
     retrofitMockVersion = '2.2.0'
     retrofitAdapterVersion = '2.2.0'
-    supportLibraryVersion = '26.0.0'
+    supportLibraryVersion = '27.0.1'
     okhttpUrlConnectionVersion = '3.6.0'
     constraintlayoutVersion = '1.0.2'
     junitVersion = '4.12'

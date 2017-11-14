@@ -86,7 +86,7 @@ public class LocalDataRepository implements DataRespository {
             @Override
             public void run() throws Exception {
                 try {
-                    dao.create(object);
+                    dao.createOrUpdate(object);
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

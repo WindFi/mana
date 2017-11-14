@@ -12,6 +12,8 @@ import com.j256.ormlite.table.DatabaseTable;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
+import java.util.UUID;
+
 @DatabaseTable(tableName = "favorites")
 public class BangumiModel implements Parcelable {
 
@@ -28,10 +30,10 @@ public class BangumiModel implements Parcelable {
     };
     @DatabaseField(generatedId = true)
     private long _id;
-    @DatabaseField(columnName = "id", dataType = DataType.STRING)
+    @DatabaseField(columnName = "id", dataType = DataType.UUID)
     @SerializedName("id")
     @Expose
-    private String id;
+    private UUID id;
     @DatabaseField(columnName = "bgm_id", dataType = DataType.INTEGER)
     @SerializedName("bgm_id")
     @Expose
@@ -132,11 +134,9 @@ public class BangumiModel implements Parcelable {
 
     public BangumiModel() {
     }
-
-    ;
-
     public BangumiModel(Parcel in) {
-        id = in.readString();
+        _id = in.readLong();
+        id = UUID.fromString(in.readString());
         name = in.readString();
         nameCn = in.readString();
         summary = in.readString();
@@ -160,7 +160,8 @@ public class BangumiModel implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(id);
+        dest.writeLong(_id);
+        dest.writeString(id.toString());
         dest.writeString(name);
         dest.writeString(nameCn);
         dest.writeString(summary);
@@ -187,11 +188,11 @@ public class BangumiModel implements Parcelable {
         return 0;
     }
 
-    public String getId() {
+    public UUID getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
