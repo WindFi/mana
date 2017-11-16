@@ -4,6 +4,7 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import me.sunzheng.mana.home.bangumi.Response;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
+import me.sunzheng.mana.home.bangumi.wrapper.request.SynchronizeEpisodeHistoryWrapper;
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
 import me.sunzheng.mana.home.mybangumi.wrapper.FavoriteWrapper;
 import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
@@ -78,6 +79,9 @@ public interface HomeApiService {
          */
         @POST("/api/watch/favorite/bangumi/{id}")
         Single<Response> changeBangumiFavoriteStatus(@Path("id") String id, @Body FavoriteStatusRequest request);
+
+        @POST("/api/watch/history/synchronize")
+        Single<Response> synchronizeEpisodeHistory(@Body SynchronizeEpisodeHistoryWrapper request);
     }
 
     interface Episode {
