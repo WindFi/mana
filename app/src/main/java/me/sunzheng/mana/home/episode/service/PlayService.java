@@ -79,10 +79,12 @@ public class PlayService extends Service {
             playList.clear();
             playList = null;
         }
-        playList = intent.getParcelableArrayListExtra(ARGS_ITEMS_PARCEL);
-        current = intent.getIntExtra(ARGS_POSITION_INT, 0);
-        Intent playerIntent = new Intent(PlayService.this, VideoPlayerActivity.class);
-        startActivity(playerIntent);
+        if (intent != null) {
+            playList = intent.getParcelableArrayListExtra(ARGS_ITEMS_PARCEL);
+            current = intent.getIntExtra(ARGS_POSITION_INT, 0);
+            Intent playerIntent = new Intent(PlayService.this, VideoPlayerActivity.class);
+            startActivity(playerIntent);
+        }
         return super.onStartCommand(intent, flags, startId);
     }
 
