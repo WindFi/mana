@@ -6,112 +6,117 @@ import android.os.Parcelable;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.UUID;
+
 /**
  * Created by Sun on 2017/7/28.
  */
 
 public class Record implements Parcelable {
 
-    public final static Parcelable.Creator<Record> CREATOR = new Creator<Record>() {
-
-
-        @SuppressWarnings({
-                "unchecked"
-        })
+    public static final Creator<Record> CREATOR = new Creator<Record>() {
+        @Override
         public Record createFromParcel(Parcel in) {
-            Record instance = new Record();
-            instance.bangumiId = ((String) in.readValue((String.class.getClassLoader())));
-            instance.episodeId = ((String) in.readValue((String.class.getClassLoader())));
-            instance.lastWatchPosition = ((Float) in.readValue((Float.class.getClassLoader())));
-            instance.lastWatchTime = ((Integer) in.readValue((Integer.class.getClassLoader())));
-            instance.percentage = ((Integer) in.readValue((Integer.class.getClassLoader())));
-            instance.isFinished = ((Boolean) in.readValue((Boolean.class.getClassLoader())));
-            return instance;
+            return new Record(in);
         }
 
+        @Override
         public Record[] newArray(int size) {
-            return (new Record[size]);
+            return new Record[size];
         }
-
     };
     @SerializedName("bangumi_id")
     @Expose
-    private String bangumiId;
+    private UUID bangumiId;
     @SerializedName("episode_id")
     @Expose
-    private String episodeId;
+    private UUID episodeId;
     @SerializedName("last_watch_position")
     @Expose
-    private Float lastWatchPosition;
+    private float lastWatchPosition;
     @SerializedName("last_watch_time")
     @Expose
-    private Integer lastWatchTime;
+    private long lastWatchTime;
     @SerializedName("percentage")
     @Expose
-    private Integer percentage;
+    private float percentage;
     @SerializedName("is_finished")
     @Expose
-    private Boolean isFinished;
+    private boolean isFinished;
+
+    public Record() {
+    }
+
+    protected Record(Parcel in) {
+        bangumiId = UUID.fromString(in.readString());
+        episodeId = UUID.fromString(in.readString());
+        lastWatchPosition = in.readFloat();
+        lastWatchTime = in.readLong();
+        percentage = in.readFloat();
+        isFinished = in.readByte() != 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(bangumiId.toString());
+        dest.writeString(episodeId.toString());
+        dest.writeFloat(lastWatchPosition);
+        dest.writeLong(lastWatchTime);
+        dest.writeFloat(percentage);
+        dest.writeByte((byte) (isFinished ? 1 : 0));
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
     public String getBangumiId() {
-        return bangumiId;
+        return bangumiId.toString();
     }
 
     public void setBangumiId(String bangumiId) {
-        this.bangumiId = bangumiId;
+        this.bangumiId = UUID.fromString(bangumiId);
     }
 
     public String getEpisodeId() {
-        return episodeId;
+        return episodeId.toString();
     }
 
     public void setEpisodeId(String episodeId) {
-        this.episodeId = episodeId;
+        this.episodeId = UUID.fromString(episodeId);
     }
 
-    public Float getLastWatchPosition() {
+    public float getLastWatchPosition() {
         return lastWatchPosition;
     }
 
-    public void setLastWatchPosition(Float lastWatchPosition) {
+    public void setLastWatchPosition(float lastWatchPosition) {
         this.lastWatchPosition = lastWatchPosition;
     }
 
-    public Integer getLastWatchTime() {
+    public long getLastWatchTime() {
         return lastWatchTime;
     }
 
-    public void setLastWatchTime(Integer lastWatchTime) {
+    public void setLastWatchTime(long lastWatchTime) {
         this.lastWatchTime = lastWatchTime;
     }
 
-    public Integer getPercentage() {
+    public float getPercentage() {
         return percentage;
     }
 
-    public void setPercentage(Integer percentage) {
+    public void setPercentage(float percentage) {
         this.percentage = percentage;
     }
 
-    public Boolean getIsFinished() {
+    public boolean getIsFinished() {
         return isFinished;
     }
 
-    public void setIsFinished(Boolean isFinished) {
+    public void setIsFinished(boolean isFinished) {
         this.isFinished = isFinished;
-    }
-
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeValue(bangumiId);
-        dest.writeValue(episodeId);
-        dest.writeValue(lastWatchPosition);
-        dest.writeValue(lastWatchTime);
-        dest.writeValue(percentage);
-        dest.writeValue(isFinished);
-    }
-
-    public int describeContents() {
-        return 0;
     }
 
 }

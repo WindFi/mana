@@ -9,19 +9,19 @@ import java.util.UUID;
 public class Episode {
     @SerializedName("status")
     @Expose
-    private Long status;
+    private long status;
     @SerializedName("episode_no")
     @Expose
     private int episodeNo;
     @SerializedName("update_time")
     @Expose
-    private Float updateTime;
+    private float updateTime;
     @SerializedName("name")
     @Expose
     private String name;
     @SerializedName("bgm_eps_id")
     @Expose
-    private Long bgmEpsId;
+    private long bgmEpsId;
     @SerializedName("bangumi_id")
     @Expose
     private UUID bangumiId;
@@ -42,7 +42,7 @@ public class Episode {
     private Object deleteMark;
     @SerializedName("create_time")
     @Expose
-    private Float createTime;
+    private float createTime;
     @SerializedName("duration")
     @Expose
     private String duration;

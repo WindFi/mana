@@ -41,6 +41,9 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
+import java.util.concurrent.TimeUnit;
+
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.disposables.Disposable;
@@ -61,6 +64,7 @@ public class VideoPlayerActivity extends Activity {
     Handler mHandler = new Handler();
     EventLog eventLogger;
     CompositeDisposable compositeDisposable = new CompositeDisposable();
+    Disposable loggerDisposable;
     RemotePlayer remote;
     AudioManager audioManager;
     AudioManager.OnAudioFocusChangeListener audioFocusChangeListener;
@@ -87,6 +91,8 @@ public class VideoPlayerActivity extends Activity {
         }
     };
 
+    Observable timer;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,6 +106,8 @@ public class VideoPlayerActivity extends Activity {
         Intent serviceIntent = new Intent(this, PlayService.class);
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         initAudioManager();
+
+        compositeDisposable = new CompositeDisposable();
     }
 
     private void initAudioManager() {
@@ -134,7 +142,7 @@ public class VideoPlayerActivity extends Activity {
     }
 
     private void initPlayer() {
-        playerView = (SimpleExoPlayerView) findViewById(R.id.player);
+        playerView = findViewById(R.id.player);
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
@@ -169,6 +177,8 @@ public class VideoPlayerActivity extends Activity {
                 switch (playbackState) {
                     case ExoPlayer.STATE_ENDED:
 //                        loopAndStartPlay();
+                        intervalDispose();
+                        logWatchProgress();
                         finish();
                         break;
                     case ExoPlayer.STATE_BUFFERING:
@@ -216,6 +226,7 @@ public class VideoPlayerActivity extends Activity {
 
     @Override
     protected void onDestroy() {
+        logWatchProgress();
         if (player != null)
             player.release();
         if (compositeDisposable != null)
@@ -226,28 +237,52 @@ public class VideoPlayerActivity extends Activity {
         audioManager.abandonAudioFocus(audioFocusChangeListener);
         super.onDestroy();
     }
-
     private void playerPlay() {
         if (player != null && !player.getPlayWhenReady())
             player.setPlayWhenReady(true);
+        intervalLog();
+    }
+
+    private void intervalLog() {
+        loggerDisposable = Observable.interval(5000, TimeUnit.MILLISECONDS).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<Long>() {
+                    @Override
+                    public void accept(Long aLong) throws Exception {
+                        logWatchProgress();
+                    }
+                });
+    }
+
+    private void intervalDispose() {
+        if (loggerDisposable != null) {
+            if (!loggerDisposable.isDisposed())
+                loggerDisposable.dispose();
+            loggerDisposable = null;
+        }
+    }
+
+    private void logWatchProgress() {
+        remote.logWatchProcess(player.getCurrentPosition(), player.getDuration());
     }
 
     private void playerPause() {
         if (player != null && player.getPlayWhenReady())
             player.setPlayWhenReady(false);
+        intervalDispose();
+        logWatchProgress();
     }
 
     private void loopAndStartPlay() {
         final PlayService.PlayItem item = remote.queryAllPlayList().get(remote.getPosition());
-        if (!TextUtils.isEmpty(item.id)) {
-            Disposable disposable = service.getEpisode(item.id)
+        if (!TextUtils.isEmpty(item.getId())) {
+            Disposable disposable = service.getEpisode(item.getId())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(new Consumer<EpisodeWrapper>() {
                         @Override
                         public void accept(EpisodeWrapper episodeWrapper) throws Exception {
                             String uri = episodeWrapper.getVideoFiles().get(0).getUrl();
-                            play(Uri.parse(uri), item.lastWatchPosition);
+                            play(Uri.parse(uri), item.getLastWatchPosition());
                         }
                     });
             compositeDisposable.add(disposable);

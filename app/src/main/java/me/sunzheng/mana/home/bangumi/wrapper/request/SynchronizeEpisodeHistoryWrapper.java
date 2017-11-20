@@ -5,6 +5,8 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+import me.sunzheng.mana.home.episode.Record;
+
 /**
  * Created by Sun on 2017/11/15.
  */
@@ -12,13 +14,13 @@ import java.util.List;
 public class SynchronizeEpisodeHistoryWrapper {
     @SerializedName("records")
     @Expose
-    private List<WatchRecord> item;
+    private List<Record> item;
 
-    public List<WatchRecord> getItem() {
+    public List<Record> getItem() {
         return item;
     }
 
-    public void setItem(List<WatchRecord> item) {
+    public void setItem(List<Record> item) {
         this.item = item;
     }
 }

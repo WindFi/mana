@@ -11,7 +11,7 @@ public class VideoFile {
     private String id;
     @SerializedName("status")
     @Expose
-    private Long status;
+    private long status;
     @SerializedName("torrent_id")
     @Expose
     private String torrentId;
@@ -26,7 +26,7 @@ public class VideoFile {
     private String fileName;
     @SerializedName("resolution_w")
     @Expose
-    private Long resolutionW;
+    private long resolutionW;
     @SerializedName("download_url")
     @Expose
     private String downloadUrl;
@@ -35,13 +35,13 @@ public class VideoFile {
     private String episodeId;
     @SerializedName("resolution_h")
     @Expose
-    private Long resolutionH;
+    private long resolutionH;
     @SerializedName("bangumi_id")
     @Expose
     private String bangumiId;
     @SerializedName("duration")
     @Expose
-    private Long duration;
+    private long duration;
     @SerializedName("label")
     @Expose
     private String label;
@@ -54,11 +54,11 @@ public class VideoFile {
         this.id = id;
     }
 
-    public Long getStatus() {
+    public long getStatus() {
         return status;
     }
 
-    public void setStatus(Long status) {
+    public void setStatus(long status) {
         this.status = status;
     }
 
@@ -94,11 +94,11 @@ public class VideoFile {
         this.fileName = fileName;
     }
 
-    public Long getResolutionW() {
+    public long getResolutionW() {
         return resolutionW;
     }
 
-    public void setResolutionW(Long resolutionW) {
+    public void setResolutionW(long resolutionW) {
         this.resolutionW = resolutionW;
     }
 
@@ -118,11 +118,11 @@ public class VideoFile {
         this.episodeId = episodeId;
     }
 
-    public Long getResolutionH() {
+    public long getResolutionH() {
         return resolutionH;
     }
 
-    public void setResolutionH(Long resolutionH) {
+    public void setResolutionH(long resolutionH) {
         this.resolutionH = resolutionH;
     }
 
@@ -134,11 +134,11 @@ public class VideoFile {
         this.bangumiId = bangumiId;
     }
 
-    public Long getDuration() {
+    public long getDuration() {
         return duration;
     }
 
-    public void setDuration(Long duration) {
+    public void setDuration(long duration) {
         this.duration = duration;
     }
 
