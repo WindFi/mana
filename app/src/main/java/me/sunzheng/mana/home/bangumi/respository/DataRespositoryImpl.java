@@ -28,11 +28,10 @@ public class DataRespositoryImpl implements DataRespository {
         return Observable.zip(local.query().materialize(), remote.query().materialize(), new BiFunction<Notification<BangumiDetailWrapper>, Notification<BangumiDetailWrapper>, BangumiDetailWrapper>() {
             @Override
             public BangumiDetailWrapper apply(Notification<BangumiDetailWrapper> bangumiDetailWrapperNotification, Notification<BangumiDetailWrapper> bangumiDetailWrapperNotification2) throws Exception {
-                if (bangumiDetailWrapperNotification.getValue() != null)
-                    return bangumiDetailWrapperNotification.getValue();
                 if (bangumiDetailWrapperNotification2.getValue() != null) {
                     insert(bangumiDetailWrapperNotification2.getValue()).subscribe();
-                    return bangumiDetailWrapperNotification2.getValue();
+                    if (bangumiDetailWrapperNotification.getValue() != null)
+                        return bangumiDetailWrapperNotification.getValue();
                 }
                 return new BangumiDetailWrapper();
             }

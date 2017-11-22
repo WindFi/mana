@@ -30,7 +30,7 @@ public class MyFavoritesActivity extends AppCompatActivity {
         setContentView(R.layout.activity_my_faviours);
         setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        spinner = (AppCompatSpinner) findViewById(R.id.spinner);
+        spinner = findViewById(R.id.spinner);
         fragment = FavoritesFragment.newInstance();
         fragment.setPresenter(new MyFavoritesPresenter(fragment, new DataRespositoryImpl(MyFavoritesActivity.this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.MyBangumi.class))));
         getSupportFragmentManager().beginTransaction().replace(R.id.contentPanel, fragment).commit();

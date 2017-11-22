@@ -49,7 +49,6 @@
                 android:maxWidth="20dp"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 tools:text="title" />
-
             <TextView
                 android:id="@+id/item_etc_textview"
                 android:layout_width="wrap_content"
