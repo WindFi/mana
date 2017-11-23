@@ -16,7 +16,7 @@
     <string name="title_fragment_login_button">登录</string>
     <string name="title_episode_textview">剧集( %1$s / %2$s )</string>
     <string name="episode_template">第 %1$s 话</string>
-    <string name="title_activity_faviours">收藏</string>
+    <string name="title_activity_favorites">收藏</string>
 
     <string name="title_uncollection_status">未收藏</string>
     <string name="title_wish_status">想看</string>

@@ -88,7 +88,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
         final TextView mTitleTextView, mUpdateDateTextView, mEpisodeNoTextView;
         final ImageView mImageView;
         final ProgressBar mProgressBar;
-
         public ViewHolder(View view) {
             super(view);
             itemView = view;

@@ -32,6 +32,8 @@ public class DataRespositoryImpl implements DataRespository {
                     insert(bangumiDetailWrapperNotification2.getValue()).subscribe();
                     if (bangumiDetailWrapperNotification.getValue() != null)
                         return bangumiDetailWrapperNotification.getValue();
+                    else
+                        return bangumiDetailWrapperNotification2.getValue();
                 }
                 return new BangumiDetailWrapper();
             }
