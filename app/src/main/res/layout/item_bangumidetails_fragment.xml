@@ -30,8 +30,7 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@+id/item_album"
-            app:layout_constraintLeft_toLeftOf="@+id/item_album"
-            app:layout_constraintTop_toBottomOf="@+id/item_album" />
+            app:layout_constraintLeft_toLeftOf="@+id/item_album" />
 
         <android.support.v7.widget.LinearLayoutCompat
             android:layout_width="wrap_content"
