@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -18,22 +19,32 @@ import me.sunzheng.mana.home.HomeContract;
  * Created by Sun on 2017/6/22.
  */
 
-public class FavoriteFragment extends Fragment implements HomeContract.MyBangumi.View {
+public class FavoritesFragment extends Fragment implements HomeContract.MyBangumi.View {
     RecyclerView mRecyclerView;
     SwipeRefreshLayout mSwipeRefreshLayout;
     HomeContract.MyBangumi.Presenter mPresenter;
 
-    public FavoriteFragment() {
+    public FavoritesFragment() {
     }
 
-    public static FavoriteFragment newInstance() {
-        FavoriteFragment fragment = new FavoriteFragment();
+    public static FavoritesFragment newInstance() {
+        FavoritesFragment fragment = new FavoritesFragment();
         return fragment;
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
     }
 
     @Nullable
@@ -45,8 +56,8 @@ public class FavoriteFragment extends Fragment implements HomeContract.MyBangumi
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mSwipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefreshlayout);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
+        mSwipeRefreshLayout = view.findViewById(R.id.swiperefreshlayout);
         mSwipeRefreshLayout.setEnabled(false);
     }
 
@@ -92,9 +103,10 @@ public class FavoriteFragment extends Fragment implements HomeContract.MyBangumi
     public void setAdapter(RecyclerView.Adapter adapter) {
         if (mRecyclerView == null)
             return;
-        if (mRecyclerView.getAdapter() == null)
+        if (mRecyclerView.getAdapter() == null) {
             mRecyclerView.setAdapter(adapter);
-        else
+            mRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        } else
             mRecyclerView.swapAdapter(adapter, true);
         if (mRecyclerView.getLayoutManager() == null)
             mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

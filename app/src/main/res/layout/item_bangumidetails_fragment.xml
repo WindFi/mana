@@ -1,40 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:foreground="?attr/selectableItemBackground"
+    app:contentPaddingBottom="8dp"
+    app:contentPaddingLeft="4dp"
+    app:contentPaddingRight="4dp"
+    app:contentPaddingTop="8dp">
 
-    <ImageView
-        android:id="@+id/ablum_imageview"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:src="@mipmap/ic_launcher"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/episode_no_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/ablum_imageview"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="1" />
+        <ImageView
+            android:id="@+id/item_album"
+            android:layout_width="128dp"
+            android:layout_height="96dp"
+            android:drawingCacheQuality="high"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:src="@mipmap/ic_launcher" />
 
-    <TextView
-        android:id="@+id/episode_title_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/ablum_imageview"
-        app:layout_constraintTop_toBottomOf="@id/episode_no_textview"
-        tools:text="abcd" />
+        <ProgressBar
+            android:id="@+id/item_progressbar"
+            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:layout_width="128dp"
+            android:layout_height="3dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@+id/item_album"
+            app:layout_constraintEnd_toEndOf="@+id/item_album"
+            app:layout_constraintLeft_toLeftOf="@+id/item_album" />
 
-    <TextView
-        android:id="@+id/episode_airdate_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/ablum_imageview"
-        app:layout_constraintTop_toBottomOf="@id/episode_title_textview"
-        tools:text="1111-111-111" />
-</android.support.constraint.ConstraintLayout>
+        <TextView
+            android:id="@+id/item_title_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:maxLength="40"
+            android:maxLines="2"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@android:color/black"
+            app:layout_constraintStart_toEndOf="@+id/item_album"
+            app:layout_constraintTop_toTopOf="@+id/item_album"
+            tools:text="title" />
+
+        <TextView
+            android:id="@+id/item_subtitle_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxEms="20"
+            android:maxLines="2"
+            android:maxWidth="20dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            app:layout_constraintStart_toStartOf="@+id/item_title_textview"
+            app:layout_constraintTop_toBottomOf="@+id/item_title_textview"
+            tools:text="title" />
+
+        <TextView
+            android:id="@+id/item_etc_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/TextAppearance.AppCompat.Small"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/item_title_textview"
+            tools:text="subtitle" />
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

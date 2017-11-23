@@ -4,8 +4,6 @@ import android.os.IBinder;
 
 import java.util.List;
 
-import me.sunzheng.mana.home.episode.Record;
-
 /**
  * Created by Sun on 2017/7/26.
  */
@@ -20,8 +18,10 @@ public interface RemotePlayer extends IBinder {
 
     PlayService.PlayItem moveToNext();
 
-    void logWatchProcess(Record record);
+    void logWatchProcess(float currentPosition, float duration);
 
     void onDisconnect();
 
+
+    PlayService.PlayItem getCurrentPlayItem();
 }

@@ -8,14 +8,25 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
+
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 import me.sunzheng.mana.VideoPlayerActivity;
-import me.sunzheng.mana.home.bangumi.WatchProgress;
+import me.sunzheng.mana.home.HomeApiService;
+import me.sunzheng.mana.home.bangumi.Response;
 import me.sunzheng.mana.home.bangumi.wrapper.Episode;
+import me.sunzheng.mana.home.bangumi.wrapper.WatchProgress;
+import me.sunzheng.mana.home.bangumi.wrapper.request.SynchronizeEpisodeHistoryWrapper;
 import me.sunzheng.mana.home.episode.Record;
+import me.sunzheng.mana.utils.App;
 
 public class PlayService extends Service {
     public final static String ARGS_ITEMS_PARCEL = "items";
@@ -24,6 +35,7 @@ public class PlayService extends Service {
     public final static String ACTION_FINISH_PARCEL = "process";
     List<PlayItem> playList;
     RemotePlayer playerProxy = new RemotePlayerStub();
+    HomeApiService.Bangumi apiService;
     private int current;
 
     // TODO: 2017/7/25  implement playlist
@@ -42,7 +54,8 @@ public class PlayService extends Service {
 
     public static PlayItem parsePlayItem(Episode episode) {
         PlayItem item = new PlayItem();
-        item.id = episode.getId();
+        item.setId(episode.getId());
+        item.setBangumiId(episode.getBangumiId());
         item.episodeNo = episode.getEpisodeNo();
         item.name = episode.getName();
         item.nameCn = episode.getNameCn();
@@ -66,6 +79,7 @@ public class PlayService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        apiService = ((App) getApplication()).getRetrofit().create(HomeApiService.Bangumi.class);
     }
 
     @Override
@@ -123,19 +137,22 @@ public class PlayService extends Service {
                 return new PlayItem[size];
             }
         };
-        public String id;
-        public String thumbnail;
-        public int episodeNo;
-        public String name;
-        public String nameCn;
-        public long lastWatchTime;
-        public long lastWatchPosition;
+        private UUID id;
+        private UUID bangumiId;
+        private String thumbnail;
+        private int episodeNo;
+        private String name;
+        private String nameCn;
+        private long lastWatchTime;
+        private long lastWatchPosition;
 
         public PlayItem() {
         }
 
         protected PlayItem(Parcel in) {
-            id = in.readString();
+            id = UUID.fromString(in.readString());
+            bangumiId = UUID.fromString(in.readString());
+            ;
             thumbnail = in.readString();
             episodeNo = in.readInt();
             name = in.readString();
@@ -144,9 +161,74 @@ public class PlayService extends Service {
             lastWatchPosition = in.readLong();
         }
 
+        public String getId() {
+            return id.toString();
+        }
+
+        public void setId(String id) {
+            this.id = UUID.fromString(id);
+        }
+
+        public String getBangumiId() {
+            return bangumiId.toString();
+        }
+
+        public void setBangumiId(String bangumiId) {
+            this.bangumiId = UUID.fromString(bangumiId);
+        }
+
+        public String getThumbnail() {
+            return thumbnail;
+        }
+
+        public void setThumbnail(String thumbnail) {
+            this.thumbnail = thumbnail;
+        }
+
+        public int getEpisodeNo() {
+            return episodeNo;
+        }
+
+        public void setEpisodeNo(int episodeNo) {
+            this.episodeNo = episodeNo;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getNameCn() {
+            return nameCn;
+        }
+
+        public void setNameCn(String nameCn) {
+            this.nameCn = nameCn;
+        }
+
+        public long getLastWatchTime() {
+            return lastWatchTime;
+        }
+
+        public void setLastWatchTime(long lastWatchTime) {
+            this.lastWatchTime = lastWatchTime;
+        }
+
+        public long getLastWatchPosition() {
+            return lastWatchPosition;
+        }
+
+        public void setLastWatchPosition(long lastWatchPosition) {
+            this.lastWatchPosition = lastWatchPosition;
+        }
+
         @Override
         public void writeToParcel(Parcel dest, int flags) {
-            dest.writeString(id);
+            dest.writeString(id.toString());
+            dest.writeString(bangumiId.toString());
             dest.writeString(thumbnail);
             dest.writeInt(episodeNo);
             dest.writeString(name);
@@ -164,8 +246,29 @@ public class PlayService extends Service {
     class RemotePlayerStub extends Binder implements RemotePlayer {
 
         @Override
-        public void logWatchProcess(Record record) {
+        public void logWatchProcess(float currentPosition, float duration) {
+            SynchronizeEpisodeHistoryWrapper request = new SynchronizeEpisodeHistoryWrapper();
+            Record record = new Record();
+            record.setBangumiId(getCurrentPlayItem().getBangumiId());
+            record.setEpisodeId(getCurrentPlayItem().getId());
+            record.setLastWatchPosition(currentPosition);
+            record.setLastWatchTime(System.currentTimeMillis());
+            record.setPercentage(currentPosition / duration);
+            record.setIsFinished(currentPosition >= duration);
 
+            ArrayList<Record> list = new ArrayList<>(1);
+            list.add(record);
+            request.setItem(list);
+            Log.i(getClass().getSimpleName(), new Gson().toJson(request) + "duration:" + duration);
+            apiService.synchronizeEpisodeHistory(request)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new Consumer<Response>() {
+                        @Override
+                        public void accept(Response response) throws Exception {
+
+                        }
+                    });
         }
 
         @Override
@@ -191,6 +294,11 @@ public class PlayService extends Service {
         @Override
         public PlayItem moveToNext() {
             return hasNext() ? playList.get(++current) : null;
+        }
+
+        @Override
+        public PlayItem getCurrentPlayItem() {
+            return playList.get(PlayService.this.getPosition());
         }
     }
 }

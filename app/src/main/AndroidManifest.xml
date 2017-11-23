@@ -68,7 +68,7 @@
 
         <activity
             android:name=".MyFavoritesActivity"
-            android:label="@string/title_activity_faviours"
+            android:label="@string/title_activity_favorites"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LaunchActivity"

@@ -2,6 +2,8 @@ package me.sunzheng.mana.home.bangumi;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
@@ -9,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -17,6 +20,7 @@ import java.util.List;
 
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.home.bangumi.wrapper.Episode;
+import me.sunzheng.mana.home.bangumi.wrapper.WatchProgress;
 import me.sunzheng.mana.home.episode.service.PlayService;
 
 /**
@@ -33,7 +37,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_onairfragment, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_bangumidetails_fragment, parent, false);
         return new ViewHolder(view);
     }
 
@@ -60,10 +64,18 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
         } else {
             holder.itemView.setClickable(false);
         }
-        Glide.with(holder.itemView.getContext()).load(item.getThumbnail()).into(holder.mImageView);
+        Glide.with(holder.itemView.getContext()).load(item.getThumbnail()).placeholder(new ColorDrawable(Color.parseColor(item.getThumbnailColor()))).into(holder.mImageView);
         holder.mEpisodeNoTextView.setText(holder.itemView.getContext().getString(R.string.episode_template, item.getEpisodeNo() + ""));
         holder.mTitleTextView.setText(TextUtils.isEmpty(item.getNameCn()) ? item.getName() : item.getNameCn());
         holder.mUpdateDateTextView.setText(item.getAirdate());
+        WatchProgress watchProgress = item.getWatchProgress();
+        if (watchProgress == null) {
+            holder.mProgressBar.setVisibility(View.GONE);
+        } else {
+            holder.mProgressBar.setVisibility(View.VISIBLE);
+            holder.mProgressBar.setMax(100);
+            holder.mProgressBar.setProgress(item.getWatchProgress().getPercentage() * 100 < 1 ? 1 : (int) (item.getWatchProgress().getPercentage() * 100.0));
+        }
     }
 
     @Override
@@ -75,14 +87,15 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
         final View itemView;
         final TextView mTitleTextView, mUpdateDateTextView, mEpisodeNoTextView;
         final ImageView mImageView;
-
+        final ProgressBar mProgressBar;
         public ViewHolder(View view) {
             super(view);
             itemView = view;
-            mEpisodeNoTextView = (TextView) view.findViewById(R.id.item_title_textview);
-            mTitleTextView = (TextView) view.findViewById(R.id.item_subtitle_textview);
-            mUpdateDateTextView = (TextView) view.findViewById(R.id.item_etc_textview);
-            mImageView = (ImageView) view.findViewById(R.id.item_album);
+            mEpisodeNoTextView = view.findViewById(R.id.item_title_textview);
+            mTitleTextView = view.findViewById(R.id.item_subtitle_textview);
+            mUpdateDateTextView = view.findViewById(R.id.item_etc_textview);
+            mImageView = view.findViewById(R.id.item_album);
+            mProgressBar = view.findViewById(R.id.item_progressbar);
         }
     }
 }

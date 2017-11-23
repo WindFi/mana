@@ -14,9 +14,9 @@ android {
     defaultConfig {
         applicationId "me.sunzheng.mana"
         minSdkVersion 17
-        targetSdkVersion 25
-        versionCode 9
-        versionName "1.2.05"
+        targetSdkVersion 27
+        versionCode 11
+        versionName "1.2.07"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.release
@@ -61,5 +61,7 @@ dependencies {
     compile "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
     compile "com.android.support:support-core-utils:$rootProject.supportLibraryVersion"
     compile "com.google.android.exoplayer:exoplayer:$rootProject.exoplayerVersion"
+    compile "com.j256.ormlite:ormlite-core:$rootProject.ormliteVersion"
+    compile "com.j256.ormlite:ormlite-android:$rootProject.ormliteVersion"
     testCompile 'junit:junit:4.12'
 }

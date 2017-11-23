@@ -1,11 +1,13 @@
 
-package me.sunzheng.mana.home.bangumi;
+package me.sunzheng.mana.home.bangumi.wrapper;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+
+import java.util.UUID;
 
 public class WatchProgress implements Parcelable {
 
@@ -22,19 +24,19 @@ public class WatchProgress implements Parcelable {
     };
     @SerializedName("user_id")
     @Expose
-    private String userId;
+    private UUID userId;
     @SerializedName("last_watch_position")
     @Expose
     private double lastWatchPosition;
     @SerializedName("bangumi_id")
     @Expose
-    private String bangumiId;
+    private UUID bangumiId;
     @SerializedName("watch_status")
     @Expose
     private long watchStatus;
     @SerializedName("episode_id")
     @Expose
-    private String episodeId;
+    private UUID episodeId;
     @SerializedName("percentage")
     @Expose
     private double percentage;
@@ -43,29 +45,29 @@ public class WatchProgress implements Parcelable {
     private double lastWatchTime;
     @SerializedName("id")
     @Expose
-    private String id;
+    private UUID id;
 
     protected WatchProgress(Parcel in) {
-        userId = in.readString();
+        userId = UUID.fromString(in.readString());
         lastWatchPosition = in.readDouble();
-        bangumiId = in.readString();
+        bangumiId = UUID.fromString(in.readString());
         watchStatus = in.readLong();
-        episodeId = in.readString();
+        episodeId = UUID.fromString(in.readString());
         percentage = in.readDouble();
         lastWatchTime = in.readDouble();
-        id = in.readString();
+        id = UUID.fromString(in.readString());
     }
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(userId);
+        dest.writeString(userId.toString());
         dest.writeDouble(lastWatchPosition);
-        dest.writeString(bangumiId);
+        dest.writeString(bangumiId.toString());
         dest.writeLong(watchStatus);
-        dest.writeString(episodeId);
+        dest.writeString(episodeId.toString());
         dest.writeDouble(percentage);
         dest.writeDouble(lastWatchTime);
-        dest.writeString(id);
+        dest.writeString(id.toString());
     }
 
     @Override
@@ -74,11 +76,11 @@ public class WatchProgress implements Parcelable {
     }
 
     public String getUserId() {
-        return userId;
+        return userId.toString();
     }
 
     public void setUserId(String userId) {
-        this.userId = userId;
+        this.userId = UUID.fromString(userId);
     }
 
     public double getLastWatchPosition() {
@@ -90,11 +92,11 @@ public class WatchProgress implements Parcelable {
     }
 
     public String getBangumiId() {
-        return bangumiId;
+        return bangumiId.toString();
     }
 
     public void setBangumiId(String bangumiId) {
-        this.bangumiId = bangumiId;
+        this.bangumiId = UUID.fromString(bangumiId);
     }
 
     public long getWatchStatus() {
@@ -106,11 +108,11 @@ public class WatchProgress implements Parcelable {
     }
 
     public String getEpisodeId() {
-        return episodeId;
+        return episodeId.toString();
     }
 
     public void setEpisodeId(String episodeId) {
-        this.episodeId = episodeId;
+        this.episodeId = UUID.fromString(episodeId);
     }
 
     public double getPercentage() {
@@ -130,11 +132,11 @@ public class WatchProgress implements Parcelable {
     }
 
     public String getId() {
-        return id;
+        return id.toString();
     }
 
     public void setId(String id) {
-        this.id = id;
+        this.id = UUID.fromString(id);
     }
 
 }
