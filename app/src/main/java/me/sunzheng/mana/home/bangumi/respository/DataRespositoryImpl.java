@@ -3,9 +3,8 @@ package me.sunzheng.mana.home.bangumi.respository;
 import android.content.Context;
 
 import io.reactivex.Completable;
-import io.reactivex.Notification;
 import io.reactivex.Observable;
-import io.reactivex.functions.BiFunction;
+import io.reactivex.functions.Consumer;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.bangumi.respository.local.LocalDataRespository;
 import me.sunzheng.mana.home.bangumi.respository.remote.RemoteDataRespository;
@@ -25,17 +24,23 @@ public class DataRespositoryImpl implements DataRespository {
 
     @Override
     public Observable<BangumiDetailWrapper> query() {
-        return Observable.zip(local.query().materialize(), remote.query().materialize(), new BiFunction<Notification<BangumiDetailWrapper>, Notification<BangumiDetailWrapper>, BangumiDetailWrapper>() {
+//        return Observable.zip(local.query().materialize(), remote.query().materialize(), new BiFunction<Notification<BangumiDetailWrapper>, Notification<BangumiDetailWrapper>, BangumiDetailWrapper>() {
+//            @Override
+//            public BangumiDetailWrapper apply(Notification<BangumiDetailWrapper> bangumiDetailWrapperNotification, Notification<BangumiDetailWrapper> bangumiDetailWrapperNotification2) throws Exception {
+//                if (bangumiDetailWrapperNotification2.getValue() != null) {
+//                    insert(bangumiDetailWrapperNotification2.getValue()).subscribe();
+//                    if (bangumiDetailWrapperNotification.getValue() != null)
+//                        return bangumiDetailWrapperNotification.getValue();
+//                    else
+//                        return bangumiDetailWrapperNotification2.getValue();
+//                }
+//                return new BangumiDetailWrapper();
+//            }
+//        });
+        return Observable.concat(local.query(), remote.query()).doOnNext(new Consumer<BangumiDetailWrapper>() {
             @Override
-            public BangumiDetailWrapper apply(Notification<BangumiDetailWrapper> bangumiDetailWrapperNotification, Notification<BangumiDetailWrapper> bangumiDetailWrapperNotification2) throws Exception {
-                if (bangumiDetailWrapperNotification2.getValue() != null) {
-                    insert(bangumiDetailWrapperNotification2.getValue()).subscribe();
-                    if (bangumiDetailWrapperNotification.getValue() != null)
-                        return bangumiDetailWrapperNotification.getValue();
-                    else
-                        return bangumiDetailWrapperNotification2.getValue();
-                }
-                return new BangumiDetailWrapper();
+            public void accept(BangumiDetailWrapper bangumiDetailWrapper) throws Exception {
+                local.insert(bangumiDetailWrapper).subscribe();
             }
         });
     }
