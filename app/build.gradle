@@ -15,8 +15,8 @@ android {
         applicationId "me.sunzheng.mana"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 11
-        versionName "1.2.07"
+        versionCode 12
+        versionName "1.2.08"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.release
