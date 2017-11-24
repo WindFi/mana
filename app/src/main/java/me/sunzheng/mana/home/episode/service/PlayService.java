@@ -94,10 +94,15 @@ public class PlayService extends Service {
             playList = null;
         }
         if (intent != null) {
-            playList = intent.getParcelableArrayListExtra(ARGS_ITEMS_PARCEL);
-            current = intent.getIntExtra(ARGS_POSITION_INT, 0);
-            Intent playerIntent = new Intent(PlayService.this, VideoPlayerActivity.class);
-            startActivity(playerIntent);
+            Bundle extras = intent.getExtras();
+            if (extras != null) {
+                playList = extras.getParcelableArrayList(ARGS_ITEMS_PARCEL);
+                current = extras.getInt(ARGS_POSITION_INT, 0);
+                Intent playerIntent = new Intent(PlayService.this, VideoPlayerActivity.class);
+                startActivity(playerIntent);
+            } else {
+                throw new IllegalArgumentException("Argument is null");
+            }
         }
         return super.onStartCommand(intent, flags, startId);
     }
