@@ -57,7 +57,7 @@ public interface HomeContract {
         interface View extends IView<Presenter> {
             void showProgressIntractor(boolean active);
 
-            void empty(String message);
+            void empty();
 
             void setAdapter(RecyclerView.Adapter adapter);
 

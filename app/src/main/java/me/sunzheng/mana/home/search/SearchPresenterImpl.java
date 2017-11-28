@@ -52,7 +52,11 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
                     @Override
                     public void accept(SearchResultWrapper searchResultWrapper) throws Exception {
                         list = searchResultWrapper.getData();
-                        mView.setAdapter(new SearchResultAdapter(list));
+                        if (list == null || list.isEmpty()) {
+                            mView.empty();
+                        } else {
+                            mView.setAdapter(new SearchResultAdapter(list));
+                        }
                     }
                 }, new Consumer<Throwable>() {
                     @Override
