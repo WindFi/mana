@@ -8,6 +8,7 @@ import android.provider.SearchRecentSuggestions;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +16,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
@@ -29,6 +31,7 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
     ContentLoadingProgressBar progressBar;
     SwipeRefreshLayout mSwipeRefreshLayout;
     boolean isLoading = false;
+    View emptyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,11 +51,12 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
                 }
             }
         });
+        emptyView = findViewById(R.id.empty_content_textview);
 //        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.search_swiperefreshlayout);
 //        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 //            @Override
 //            public void onRefresh() {
-//
+//                mPresenter.query();
 //            }
 //        });
 //        mSwipeRefreshLayout.setProgressViewOffset(true, 1900, 200);
@@ -76,10 +80,14 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
     private void handleIntent(Intent intent) {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String key = intent.getStringExtra(SearchManager.QUERY);
-            mPresenter.query(key);
             SearchRecentSuggestions searchRecentSuggestions = new SearchRecentSuggestions(this, HistorySuggestionProvider.AUTHORITY, HistorySuggestionProvider.MODE);
             searchRecentSuggestions.saveRecentQuery(key, null);
+            query(key);
         }
+    }
+
+    private void query(String key) {
+        mPresenter.query(key);
     }
 
     @Override
@@ -113,12 +121,16 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
     }
 
     @Override
-    public void empty(String message) {
-
+    public void empty() {
+        showEmptyView(true);
+        AppCompatTextView messageTextView = (AppCompatTextView) findViewById(R.id.empty_content_textview);
+        if (messageTextView != null)
+            messageTextView.setText("No result");
     }
 
     @Override
     public void setAdapter(RecyclerView.Adapter adapter) {
+        showEmptyView(false);
         if (mRecyclerView.getLayoutManager() == null) {
             mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             mRecyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL));
@@ -137,10 +149,13 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
 
     @Override
     public void showProgressIntractor(boolean active) {
-        if (active)
+        if (active) {
             progressBar.show();
-        else
+            mRecyclerView.setVisibility(View.GONE);
+        } else {
+            mRecyclerView.setVisibility(View.VISIBLE);
             progressBar.hide();
+        }
     }
 
     @Override
@@ -154,5 +169,10 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
     @Override
     public Context getContext() {
         return this;
+    }
+
+    private void showEmptyView(boolean active) {
+        emptyView.setVisibility(active ? View.VISIBLE : View.GONE);
+        mRecyclerView.setVisibility(active ? View.GONE : View.VISIBLE);
     }
 }
