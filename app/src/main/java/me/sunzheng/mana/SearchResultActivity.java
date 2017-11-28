@@ -52,7 +52,7 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
             }
         });
         emptyView = findViewById(R.id.empty_content_textview);
-//        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.search_swiperefreshlayout);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.search_swiperefreshlayout);
 //        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
 //            @Override
 //            public void onRefresh() {
@@ -149,13 +149,7 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
 
     @Override
     public void showProgressIntractor(boolean active) {
-        if (active) {
-            progressBar.show();
-            mRecyclerView.setVisibility(View.GONE);
-        } else {
-            mRecyclerView.setVisibility(View.VISIBLE);
-            progressBar.hide();
-        }
+        mSwipeRefreshLayout.setRefreshing(active);
     }
 
     @Override
