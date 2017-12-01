@@ -1,12 +1,8 @@
 package me.sunzheng.mana.home.onair.respository.remote;
 
-import java.util.ArrayList;
-
 import io.reactivex.Completable;
-import io.reactivex.Maybe;
 import io.reactivex.Observable;
 import io.reactivex.functions.Action;
-import io.reactivex.functions.Function;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.onair.respository.DataRepository;
 import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
@@ -24,14 +20,7 @@ public class RemoteDataRepository implements DataRepository {
 
     @Override
     public Observable<AirWrapper> query(int type) {
-        return Maybe.fromSingle(apiService.listAll(type)).flattenAsObservable(new Function<AirWrapper, Iterable<? extends AirWrapper>>() {
-            @Override
-            public Iterable<? extends AirWrapper> apply(AirWrapper airWrapper) throws Exception {
-                ArrayList<AirWrapper> a = new ArrayList<>();
-                a.add(airWrapper);
-                return a;
-            }
-        });
+        return apiService.listAll(type).toObservable();
     }
 
     @Override

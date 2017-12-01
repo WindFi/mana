@@ -1,5 +1,6 @@
 package me.sunzheng.mana.home.onair;
 
+import android.text.TextUtils;
 import android.util.Log;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -52,6 +53,8 @@ public class OnAirPresenterImpl implements HomeContract.OnAir.Presenter {
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
+                        if (TextUtils.isEmpty(throwable.getLocalizedMessage()))
+                            return;
                         Log.i("e:", throwable.getLocalizedMessage());
                         view.showToast(throwable.getLocalizedMessage());
                         view.showProgressIntractor(false);
