@@ -12,16 +12,16 @@ public class SearchResultWrapper {
 
     @SerializedName("total")
     @Expose
-    private Long total;
+    private int total;
     @SerializedName("data")
     @Expose
     private List<BangumiModel> data = null;
 
-    public Long getTotal() {
+    public int getTotal() {
         return total;
     }
 
-    public void setTotal(Long total) {
+    public void setTotal(int total) {
         this.total = total;
     }
 

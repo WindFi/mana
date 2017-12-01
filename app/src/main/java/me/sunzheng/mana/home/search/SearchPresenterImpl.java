@@ -46,6 +46,7 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
     @Override
     public void query(String key) {
         mView.showProgressIntractor(true);
+        mView.loadMoreable(true);
         data = new QueryData(INT_DEFAULT_PAGE, INT_DEFAULT_PAGESIZE, "air_date", "desc", key);
         Disposable disposable = query(data)
                 .subscribe(new Consumer<SearchResultWrapper>() {
@@ -54,8 +55,10 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
                         list = searchResultWrapper.getData();
                         if (list == null || list.isEmpty()) {
                             mView.empty();
+                            mView.loadMoreable(false);
                         } else {
                             mView.setAdapter(new SearchResultAdapter(list));
+                            mView.loadMoreable(list.size() < searchResultWrapper.getTotal());
                         }
                     }
                 }, new Consumer<Throwable>() {
@@ -88,6 +91,7 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
                         if (searchResultWrapper != null && searchResultWrapper.getTotal() > 0L) {
                             list.addAll(searchResultWrapper.getData());
                             mView.notifyDataSetChanged();
+                            mView.loadMoreable(list.size() < searchResultWrapper.getTotal());
                         }
                     }
                 }, new Consumer<Throwable>() {

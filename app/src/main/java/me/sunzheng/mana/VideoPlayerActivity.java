@@ -1,18 +1,23 @@
 package me.sunzheng.mana;
 
 import android.app.ActionBar;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
 import android.media.AudioManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.EventLog;
 import android.view.View;
@@ -54,9 +59,10 @@ import me.sunzheng.mana.home.episode.service.PlayService;
 import me.sunzheng.mana.home.episode.service.RemotePlayer;
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
 import me.sunzheng.mana.utils.App;
+import me.sunzheng.mana.widget.AttendtionDialogFragment;
 
 // TODO: 2017/6/1  VideoPlayer
-public class VideoPlayerActivity extends Activity {
+public class VideoPlayerActivity extends AppCompatActivity implements AttendtionDialogFragment.NegativeClickListener, AttendtionDialogFragment.PositiveClickListener {
     SimpleExoPlayerView playerView;
     SimpleExoPlayer player;
 
@@ -74,6 +80,21 @@ public class VideoPlayerActivity extends Activity {
             if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
                 if (player != null && player.getPlayWhenReady())
                     playerPlay();
+            } else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
+                if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
+                    return;
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+                if (activeNetworkInfo == null)
+                    return;
+                switch (activeNetworkInfo.getType()) {
+                    case ConnectivityManager.TYPE_MOBILE:
+                        if (activeNetworkInfo.isConnected())
+//                            showAttendtionDialogAndPause();
+                            break;
+                    default:
+                        break;
+                }
             }
         }
     };
@@ -82,6 +103,9 @@ public class VideoPlayerActivity extends Activity {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
             remote = (RemotePlayer) service;
+            intentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+            intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(broadcastReceiver, intentFilter);
             loopAndStartPlay();
         }
 
@@ -90,8 +114,6 @@ public class VideoPlayerActivity extends Activity {
             remote = null;
         }
     };
-
-    Observable timer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,13 +128,10 @@ public class VideoPlayerActivity extends Activity {
         Intent serviceIntent = new Intent(this, PlayService.class);
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
         initAudioManager();
-
         compositeDisposable = new CompositeDisposable();
     }
 
     private void initAudioManager() {
-        intentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-        registerReceiver(broadcastReceiver, intentFilter);
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
         audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
@@ -142,7 +161,7 @@ public class VideoPlayerActivity extends Activity {
     }
 
     private void initPlayer() {
-        playerView = findViewById(R.id.player);
+        playerView = (SimpleExoPlayerView) findViewById(R.id.player);
         BandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
         TrackSelection.Factory videoTrackSelectionFactory = new AdaptiveTrackSelection.Factory(bandwidthMeter);
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
@@ -237,6 +256,7 @@ public class VideoPlayerActivity extends Activity {
         audioManager.abandonAudioFocus(audioFocusChangeListener);
         super.onDestroy();
     }
+
     private void playerPlay() {
         if (player != null && !player.getPlayWhenReady())
             player.setPlayWhenReady(true);
@@ -262,7 +282,8 @@ public class VideoPlayerActivity extends Activity {
     }
 
     private void logWatchProgress() {
-        remote.logWatchProcess(player.getCurrentPosition(), player.getDuration());
+        if (player != null && remote != null)
+            remote.logWatchProcess(player.getCurrentPosition(), player.getDuration());
     }
 
     private void playerPause() {
@@ -289,5 +310,31 @@ public class VideoPlayerActivity extends Activity {
         } else {
             finish();
         }
+    }
+
+    private void showAttendtionDialogAndPause() {
+        playerPause();
+        showDialog();
+    }
+
+    private void showDialog() {
+        Fragment fragment = getSupportFragmentManager().findFragmentByTag("dialog");
+        if (fragment == null) {
+            DialogFragment dialogFragment = new AttendtionDialogFragment();
+            dialogFragment.show(getSupportFragmentManager(), "dialog");
+        } else {
+            //do nothing
+//            getFragmentManager().beginTransaction().addToBackStack(null);
+        }
+    }
+
+    @Override
+    public void onPositiveClick(DialogInterface dialog, int which) {
+        playerPlay();
+    }
+
+    @Override
+    public void onNegativeClick(DialogInterface dialog, int which) {
+        finish();
     }
 }

@@ -78,6 +78,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         super.onViewCreated(view, savedInstanceState);
         initToolbar(view);
         initContent(view);
+        mPresenter.load();
     }
 
     private ActionBar getSupportActionBar() {
@@ -96,9 +97,9 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     }
 
     private void initToolbar(View view) {
-        mToolbar = (Toolbar) view.findViewById(R.id.toolbar);
-        mBannerImageView = (ImageView) view.findViewById(R.id.banner_imageview);
-        mHeaderCollapsingToolbarLayout = (CollapsingToolbarLayout) view.findViewById(R.id.header_collaspingtoolbarlayout);
+        mToolbar = view.findViewById(R.id.toolbar);
+        mBannerImageView = view.findViewById(R.id.banner_imageview);
+        mHeaderCollapsingToolbarLayout = view.findViewById(R.id.header_collaspingtoolbarlayout);
         Glide.with(this).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mBannerImageView);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -106,14 +107,14 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     }
 
     private void initContent(View view) {
-        mImageView = (ImageView) view.findViewById(R.id.bangumidetails_ablum_imageview);
-        mCNTitleTextView = (AppCompatTextView) view.findViewById(R.id.bangumidetails_name_textview);
-        mOriginTitleTextView = (AppCompatTextView) view.findViewById(R.id.bangumidetails_originname_textview);
-        mSummaryTextView = (AppCompatTextView) view.findViewById(R.id.bangumidetails_summary_textview);
-        mRecyclerView = (RecyclerView) view.findViewById(R.id.recycler_view);
-        mFavoriteStatusButton = (AppCompatButton) view.findViewById(R.id.bangumidetails_faviortestatus_textview);
-        mEpisodeLabelTextView = (AppCompatTextView) view.findViewById(R.id.bangumidetails_episode_label_textview);
-        mProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.bangumidetails_progreassbar);
+        mImageView = view.findViewById(R.id.bangumidetails_ablum_imageview);
+        mCNTitleTextView = view.findViewById(R.id.bangumidetails_name_textview);
+        mOriginTitleTextView = view.findViewById(R.id.bangumidetails_originname_textview);
+        mSummaryTextView = view.findViewById(R.id.bangumidetails_summary_textview);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
+        mFavoriteStatusButton = view.findViewById(R.id.bangumidetails_faviortestatus_textview);
+        mEpisodeLabelTextView = view.findViewById(R.id.bangumidetails_episode_label_textview);
+        mProgressBar = view.findViewById(R.id.bangumidetails_progreassbar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
@@ -152,13 +153,13 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
             }
         });
         mRecyclerView.setNestedScrollingEnabled(false);
-        mPresenter.load();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        mPresenter.subscribe();
+        if (mPresenter != null)
+            mPresenter.subscribe();
     }
 
     @Override

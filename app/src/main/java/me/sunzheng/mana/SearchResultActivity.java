@@ -32,6 +32,12 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
     SwipeRefreshLayout mSwipeRefreshLayout;
     boolean isLoading = false;
     View emptyView;
+    boolean loadMoreable = true;
+
+    @Override
+    public void loadMoreable(boolean loadMoreable) {
+        this.loadMoreable = loadMoreable;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,26 +52,14 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
             @Override
             public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 LinearLayoutManager layoutManager = (LinearLayoutManager) recyclerView.getLayoutManager();
-                if (!isLoading && layoutManager.findFirstCompletelyVisibleItemPosition() + layoutManager.getChildCount() >= layoutManager.getItemCount()) {
+                if (!isLoading && layoutManager.findFirstCompletelyVisibleItemPosition() + layoutManager.getChildCount() >= layoutManager.getItemCount() && loadMoreable) {
                     mPresenter.loadMore();
                 }
             }
         });
         emptyView = findViewById(R.id.empty_content_textview);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.search_swiperefreshlayout);
-//        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-//            @Override
-//            public void onRefresh() {
-//                mPresenter.query();
-//            }
-//        });
-//        mSwipeRefreshLayout.setProgressViewOffset(true, 1900, 200);
-//        mSwipeRefreshLayout.setOnChildScrollUpCallback(new SwipeRefreshLayout.OnChildScrollUpCallback() {
-//            @Override
-//            public boolean canChildScrollUp(SwipeRefreshLayout parent, @Nullable View child) {
-//                return true;
-//            }
-//        });
+        mSwipeRefreshLayout.setEnabled(false);
         mPresenter = new SearchPresenterImpl(this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Bangumi.class));
         setPresenter(mPresenter);
         handleIntent(getIntent());

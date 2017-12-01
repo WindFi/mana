@@ -1,6 +1,7 @@
 package me.sunzheng.mana.home.bangumi.respository;
 
 import android.content.Context;
+import android.util.Log;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
@@ -37,10 +38,14 @@ public class DataRespositoryImpl implements DataRespository {
 //                return new BangumiDetailWrapper();
 //            }
 //        });
-        return Observable.concat(local.query(), remote.query()).doOnNext(new Consumer<BangumiDetailWrapper>() {
+        return queryRemoteAndCache().firstOrError().toObservable().onErrorResumeNext(queryFromLocal());
+    }
+
+    private Observable<BangumiDetailWrapper> queryFromLocal() {
+        return local.query().firstOrError().toObservable().doOnError(new Consumer<Throwable>() {
             @Override
-            public void accept(BangumiDetailWrapper bangumiDetailWrapper) throws Exception {
-                local.insert(bangumiDetailWrapper).subscribe();
+            public void accept(Throwable throwable) throws Exception {
+                Log.e(DataRespositoryImpl.this.getClass().getSimpleName(), "no cached");
             }
         });
     }
@@ -58,5 +63,14 @@ public class DataRespositoryImpl implements DataRespository {
     @Override
     public Completable delete() {
         return local.delete();
+    }
+
+    private Observable<BangumiDetailWrapper> queryRemoteAndCache() {
+        return remote.query().doOnNext(new Consumer<BangumiDetailWrapper>() {
+            @Override
+            public void accept(BangumiDetailWrapper bangumiDetailWrapper) throws Exception {
+                local.insert(bangumiDetailWrapper).subscribe();
+            }
+        });
     }
 }
