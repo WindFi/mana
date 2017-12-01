@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.home.HomeContract;
+import me.sunzheng.mana.widget.EmptyAdapter;
 
 /**
  * A fragment representing a list of Items.
@@ -55,8 +56,8 @@ public class OnAirFragment extends android.support.v4.app.Fragment implements Ho
     public android.view.View onCreateView(LayoutInflater inflater, ViewGroup container,
                                           Bundle savedInstanceState) {
         android.view.View view = inflater.inflate(R.layout.fragment_item_list, container, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.list);
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefreshlayout);
+        recyclerView = view.findViewById(R.id.list);
+        swipeRefreshLayout = view.findViewById(R.id.swiperefreshlayout);
         return view;
     }
 
@@ -105,7 +106,7 @@ public class OnAirFragment extends android.support.v4.app.Fragment implements Ho
 
     @Override
     public void setAdapter(RecyclerView.Adapter adapter) {
-        if (recyclerView.getAdapter() == null)
+        if (recyclerView.getAdapter() == null || recyclerView.getAdapter() instanceof EmptyAdapter)
             recyclerView.setAdapter(adapter);
         else
             recyclerView.swapAdapter(adapter, true);

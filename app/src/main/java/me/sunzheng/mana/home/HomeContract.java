@@ -55,6 +55,7 @@ public interface HomeContract {
 
     interface Search {
         interface View extends IView<Presenter> {
+            void loadMoreable(boolean loadMoreable);
             void showProgressIntractor(boolean active);
 
             void empty();

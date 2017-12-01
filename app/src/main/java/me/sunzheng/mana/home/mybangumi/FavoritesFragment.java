@@ -64,17 +64,20 @@ public class FavoritesFragment extends Fragment implements HomeContract.MyBangum
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        if (mPresenter != null)
+            mPresenter.subscribe();
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        if (mPresenter != null)
+            mPresenter.unsubscribe();
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mPresenter.unsubscribe();
     }
 
     @Override

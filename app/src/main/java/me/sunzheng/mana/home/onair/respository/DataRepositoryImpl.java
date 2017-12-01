@@ -7,11 +7,8 @@ import java.util.Map;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import io.reactivex.functions.Predicate;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.onair.respository.local.LocalDataRepository;
 import me.sunzheng.mana.home.onair.respository.remote.RemoteDataRepository;
@@ -38,17 +35,7 @@ public class DataRepositoryImpl implements DataRepository {
         if (!map.containsKey(type))
             map.put(type, new LocalDataRepository(mContext, type));
         final Observable<AirWrapper> local = map.get(type).query(type);
-        return queryRemoteAndCache(type).firstOrError().toObservable().concatMapDelayError(new Function<AirWrapper, ObservableSource<? extends AirWrapper>>() {
-            @Override
-            public ObservableSource<? extends AirWrapper> apply(AirWrapper airWrapper) throws Exception {
-                return local.filter(new Predicate<AirWrapper>() {
-                    @Override
-                    public boolean test(AirWrapper airWrapper) throws Exception {
-                        return airWrapper != null;
-                    }
-                });
-            }
-        });
+        return queryRemoteAndCache(type).firstOrError().toObservable().onErrorResumeNext(local);
     }
 
 

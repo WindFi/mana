@@ -1,12 +1,16 @@
 package me.sunzheng.mana.widget;
 
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import me.sunzheng.mana.R;
 
@@ -33,17 +37,25 @@ public class AttendtionDialogFragment extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (positiveClickListener != null)
-                            positiveClickListener.onClick(dialogInterface, i);
+                            positiveClickListener.onPositiveClick(dialogInterface, i);
                     }
                 })
                 .setNegativeButton(negativeTitle, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         if (negativeClickListener != null)
-                            negativeClickListener.onClick(dialogInterface, i);
+                            negativeClickListener.onNegativeClick(dialogInterface, i);
                     }
                 });
+        builder.setCancelable(false);
         return builder.create();
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        getDialog().setCanceledOnTouchOutside(false);
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
@@ -64,9 +76,11 @@ public class AttendtionDialogFragment extends DialogFragment {
         this.negativeClickListener = null;
     }
 
-    interface PositiveClickListener extends DialogInterface.OnClickListener {
+    public interface PositiveClickListener {
+        void onPositiveClick(DialogInterface dialog, int which);
     }
 
-    interface NegativeClickListener extends DialogInterface.OnClickListener {
+    public interface NegativeClickListener {
+        void onNegativeClick(DialogInterface dialog, int which);
     }
 }
