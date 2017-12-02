@@ -1,4 +1,4 @@
-package me.sunzheng.mana.home.bangumi.wrapper;
+package me.sunzheng.mana.home.onair.wrapper;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -8,7 +8,7 @@ import com.google.gson.annotations.SerializedName;
  * Created by Sun on 2017/11/14.
  */
 
-public class ImageInfo {
+public class CoverImage {
     @SerializedName("url")
     @Expose
     public String url;

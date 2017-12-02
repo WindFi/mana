@@ -37,7 +37,7 @@ public class RemoteDataRespository implements DataRespository {
     @Override
     public Completable update(BangumiDetailWrapper bangumiDetailWrapper) {
         final FavoriteStatusRequest request = new FavoriteStatusRequest();
-        request.status = (int) bangumiDetailWrapper.getData().getFavoriteStatus();
+        request.status = (int) bangumiDetailWrapper.getBangumiDetails().getFavoriteStatus();
         return Completable.create(new CompletableOnSubscribe() {
             @Override
             public void subscribe(final CompletableEmitter e) throws Exception {

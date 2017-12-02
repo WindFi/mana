@@ -29,108 +29,108 @@ public class BangumiModel implements Parcelable {
         }
     };
     @DatabaseField(generatedId = true)
-    private long _id;
+    protected long _id;
     @DatabaseField(columnName = "id", dataType = DataType.UUID)
     @SerializedName("id")
     @Expose
-    private UUID id;
+    protected UUID id;
     @DatabaseField(columnName = "bgm_id", dataType = DataType.INTEGER)
     @SerializedName("bgm_id")
     @Expose
-    private int bgmId;
+    protected int bgmId;
     @DatabaseField(columnName = "name")
     @SerializedName("name")
     @Expose
-    private String name;
+    protected String name;
     @DatabaseField(columnName = "name_cn")
     @SerializedName("name_cn")
     @Expose
-    private String nameCn;
+    protected String nameCn;
     @DatabaseField(columnName = "summary")
     @SerializedName("summary")
     @Expose
-    private String summary;
+    protected String summary;
     @DatabaseField(columnName = "image")
     @SerializedName("image")
     @Expose
-    private String image;
+    protected String image;
     @DatabaseField(columnName = "cover")
     @SerializedName("cover")
     @Expose
-    private String cover;
+    protected String cover;
     @DatabaseField(columnName = "cover_color")
     @SerializedName("cover_color")
     @Expose
-    private String cover_color;
+    protected String cover_color;
     @DatabaseField(columnName = "create_time", dataType = DataType.LONG)
     @SerializedName("create_time")
     @Expose
-    private long createTime;
+    protected long createTime;
     @DatabaseField(columnName = "update_time", dataType = DataType.LONG)
     @SerializedName("update_time")
     @Expose
-    private long updateTime;
+    protected long updateTime;
     @DatabaseField(columnName = "eps_no_offset", dataType = DataType.LONG)
     @SerializedName("eps_no_offset")
     @Expose
-    private long epsNoOffset;
+    protected long epsNoOffset;
     @DatabaseField(columnName = "bangumi_moe")
     @SerializedName("bangumi_moe")
     @Expose
-    private String bangumiMoe;
+    protected String bangumiMoe;
     @DatabaseField(columnName = "libyk_so")
     @SerializedName("libyk_so")
     @Expose
-    private String libykSo;
+    protected String libykSo;
     @DatabaseField(columnName = "dmhy")
     @SerializedName("dmhy")
     @Expose
-    private String dmhy;
+    protected String dmhy;
     @DatabaseField(columnName = "type", dataType = DataType.INTEGER)
     @SerializedName("type")
     @Expose
-    private int type;
+    protected int type;
     @DatabaseField(columnName = "status", dataType = DataType.INTEGER)
     @SerializedName("status")
     @Expose
-    private int status;
+    protected int status;
     @DatabaseField(columnName = "air_date")
     @SerializedName("air_date")
     @Expose
-    private String airDate;
+    protected String airDate;
     @DatabaseField(columnName = "air_weekday", dataType = DataType.LONG)
     @SerializedName("air_weekday")
     @Expose
-    private long airWeekday;
+    protected long airWeekday;
     @DatabaseField(columnName = "delete_mark", dataType = DataType.LONG)
     @SerializedName("delete_mark")
     @Expose
-    private long deleteMark;
+    protected long deleteMark;
     @DatabaseField(columnName = "acg_rip")
     @SerializedName("acg_rip")
     @Expose
-    private String acgRip;
+    protected String acgRip;
     @DatabaseField(columnName = "rss")
     @SerializedName("rss")
     @Expose
-    private String rss;
+    protected String rss;
     @DatabaseField(columnName = "eps_regex")
     @SerializedName("eps_regex")
     @Expose
-    private String epsRegex;
+    protected String epsRegex;
     @DatabaseField(columnName = "eps", dataType = DataType.INTEGER)
     @SerializedName("eps")
     @Expose
-    private int eps;
+    protected int eps;
     @DatabaseField(columnName = "favorite_status", dataType = DataType.INTEGER)
     @SerializedName("favorite_status")
     @Expose
-    private int favoriteStatus;
+    protected int favoriteStatus;
 
     @DatabaseField(columnName = "unwatched_count", dataType = DataType.INTEGER)
     @SerializedName("unwatched_count")
     @Expose
-    private int unwatched_count;
+    protected int unwatched_count;
 
     public BangumiModel() {
     }

@@ -1,5 +1,5 @@
 
-package me.sunzheng.mana.home.episode.wrapper;
+package me.sunzheng.mana.home.onair.wrapper;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;

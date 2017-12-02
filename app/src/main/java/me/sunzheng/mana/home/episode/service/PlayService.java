@@ -22,10 +22,10 @@ import io.reactivex.schedulers.Schedulers;
 import me.sunzheng.mana.VideoPlayerActivity;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.bangumi.Response;
-import me.sunzheng.mana.home.bangumi.wrapper.Episode;
-import me.sunzheng.mana.home.bangumi.wrapper.WatchProgress;
 import me.sunzheng.mana.home.bangumi.wrapper.request.SynchronizeEpisodeHistoryWrapper;
 import me.sunzheng.mana.home.episode.Record;
+import me.sunzheng.mana.home.onair.wrapper.Episode;
+import me.sunzheng.mana.home.onair.wrapper.WatchProgress;
 import me.sunzheng.mana.utils.App;
 
 public class PlayService extends Service {
