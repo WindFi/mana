@@ -57,7 +57,7 @@
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
 
-            <meta-bangumiDetails
+            <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
