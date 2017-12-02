@@ -233,7 +233,7 @@ public class VideoPlayerActivity extends AppCompatActivity implements Attendtion
         ExtractorsFactory extractorFactory = new DefaultExtractorsFactory();
         MediaSource videoSource = new ExtractorMediaSource(uri, dataSourceFactory, extractorFactory, null, null);
         player.prepare(videoSource);
-        player.seekTo(lastWatchPosition);
+//        player.seekTo(lastWatchPosition);
         playerPlay();
     }
 

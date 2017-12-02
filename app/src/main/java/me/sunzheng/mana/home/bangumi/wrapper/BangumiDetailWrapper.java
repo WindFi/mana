@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 public class BangumiDetailWrapper {
 
-    @SerializedName("bangumiDetails")
+    @SerializedName("data")
     @Expose
     private BangumiDetails bangumiDetails;
 
