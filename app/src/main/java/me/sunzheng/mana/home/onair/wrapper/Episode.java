@@ -1,5 +1,5 @@
 
-package me.sunzheng.mana.home.bangumi.wrapper;
+package me.sunzheng.mana.home.onair.wrapper;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -54,13 +54,13 @@ public class Episode {
     private WatchProgress watchProgress;
     @SerializedName("thumbnail_image")
     @Expose
-    private ImageInfo thumbnailImage;
+    private CoverImage thumbnailImage;
 
-    public ImageInfo getThumbnailImage() {
+    public CoverImage getThumbnailImage() {
         return thumbnailImage;
     }
 
-    public void setThumbnailImage(ImageInfo thumbnailImage) {
+    public void setThumbnailImage(CoverImage thumbnailImage) {
         this.thumbnailImage = thumbnailImage;
     }
 

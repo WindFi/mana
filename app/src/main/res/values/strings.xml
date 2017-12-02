@@ -34,7 +34,7 @@
         <item>-1</item>
     </string-array>
 
-    <!-- Example settings for Data & Sync -->
+    <!-- Example settings BangumiDetailsData & Sync -->
     <string name="pref_header_data_sync">Data &amp; sync</string>
 
     <string name="pref_title_sync_frequency" translatable="false">Sync frequency</string>

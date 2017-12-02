@@ -57,12 +57,12 @@
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
 
-            <meta-data
+            <meta-bangumiDetails
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
 
-        <meta-data
+        <meta-bangumiDetails
             android:name="android.app.default_searchable"
             android:value=".SearchResultActivity" />
 

@@ -19,9 +19,9 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import me.sunzheng.mana.R;
-import me.sunzheng.mana.home.bangumi.wrapper.Episode;
-import me.sunzheng.mana.home.bangumi.wrapper.WatchProgress;
 import me.sunzheng.mana.home.episode.service.PlayService;
+import me.sunzheng.mana.home.onair.wrapper.Episode;
+import me.sunzheng.mana.home.onair.wrapper.WatchProgress;
 
 /**
  * Created by Sun on 2017/7/14.

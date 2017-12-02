@@ -6,16 +6,16 @@ import com.google.gson.annotations.SerializedName;
 
 public class BangumiDetailWrapper {
 
-    @SerializedName("data")
+    @SerializedName("bangumiDetails")
     @Expose
-    private Data data;
+    private BangumiDetails bangumiDetails;
 
-    public Data getData() {
-        return data;
+    public BangumiDetails getBangumiDetails() {
+        return bangumiDetails;
     }
 
-    public void setData(Data data) {
-        this.data = data;
+    public void setBangumiDetails(BangumiDetails bangumiDetails) {
+        this.bangumiDetails = bangumiDetails;
     }
 
 }

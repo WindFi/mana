@@ -12,16 +12,16 @@ public class FavoriteWrapper {
 
     @SerializedName("status")
     @Expose
-    private Long status;
+    private long status;
     @SerializedName("data")
     @Expose
     private List<BangumiModel> data = null;
 
-    public Long getStatus() {
+    public long getStatus() {
         return status;
     }
 
-    public void setStatus(Long status) {
+    public void setStatus(long status) {
         this.status = status;
     }
 

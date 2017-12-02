@@ -18,8 +18,8 @@ import io.reactivex.schedulers.Schedulers;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.bangumi.respository.DataRespository;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
-import me.sunzheng.mana.home.bangumi.wrapper.Data;
-import me.sunzheng.mana.home.bangumi.wrapper.Episode;
+import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetails;
+import me.sunzheng.mana.home.onair.wrapper.Episode;
 
 /**
  * Created by Sun on 2017/5/27.
@@ -67,15 +67,15 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                 .doOnNext(new Consumer<BangumiDetailWrapper>() {
                     @Override
                     public void accept(BangumiDetailWrapper bangumiDetailWrapper) throws Exception {
-                        final Data mData = bangumiDetailWrapper.getData();
-                        if (mData == null)
+                        final BangumiDetails mBangumiDetails = bangumiDetailWrapper.getBangumiDetails();
+                        if (mBangumiDetails == null)
                             return;
                         data = bangumiDetailWrapper;
-                        mView.setAirDate(mData.getAirDate());
-                        mView.setSummary(mData.getSummary());
-                        mView.setFavouriteStatus(mData.getFavoriteStatus());
-                        mView.setOriginName(TextUtils.isEmpty(mData.getName()) ? mData.getNameCn() : mData.getName());
-                        Observable.fromIterable(mData.getEpisodes()).filter(new Predicate<Episode>() {
+                        mView.setAirDate(mBangumiDetails.getAirDate());
+                        mView.setSummary(mBangumiDetails.getSummary());
+                        mView.setFavouriteStatus(mBangumiDetails.getFavoriteStatus());
+                        mView.setOriginName(TextUtils.isEmpty(mBangumiDetails.getName()) ? mBangumiDetails.getNameCn() : mBangumiDetails.getName());
+                        Observable.fromIterable(mBangumiDetails.getEpisodes()).filter(new Predicate<Episode>() {
                             @Override
                             public boolean test(Episode episode) throws Exception {
                                 return episode.getStatus() != 0L;
@@ -93,7 +93,7 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
 
                             @Override
                             public void onSuccess(List<Episode> value) {
-                                mView.setEpisode(value.size(), mData.getEps());
+                                mView.setEpisode(value.size(), mBangumiDetails.getEps());
                                 mView.setAdapter(new EpisodeAdapter(value));
                             }
 
@@ -110,21 +110,21 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
 
     @Override
     public void changeBangumiFavoriteState(int status) {
-        final long originStatus = data.getData().getFavoriteStatus();
-        data.getData().setFavoriteStatus(status);
+        final int originStatus = data.getBangumiDetails().getFavoriteStatus();
+        data.getBangumiDetails().setFavoriteStatus(status);
         Disposable disposable = dataRespository.update(data)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Action() {
                     @Override
                     public void run() throws Exception {
-                        mView.setFavouriteStatus(data.getData().getFavoriteStatus());
+                        mView.setFavouriteStatus(data.getBangumiDetails().getFavoriteStatus());
                     }
                 }, new Consumer<Throwable>() {
                     @Override
                     public void accept(Throwable throwable) throws Exception {
                         Log.e(TAG, throwable.getLocalizedMessage());
-                        data.getData().setStatus(originStatus);
+                        data.getBangumiDetails().setStatus(originStatus);
                     }
                 });
         completable.add(disposable);
