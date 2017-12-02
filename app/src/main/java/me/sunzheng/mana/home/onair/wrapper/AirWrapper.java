@@ -8,6 +8,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.List;
 
+import me.sunzheng.mana.core.BangumiModel;
+
 public class AirWrapper {
 
     @SerializedName("data")

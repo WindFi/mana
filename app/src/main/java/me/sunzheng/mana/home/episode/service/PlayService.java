@@ -20,12 +20,12 @@ import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 import me.sunzheng.mana.VideoPlayerActivity;
+import me.sunzheng.mana.core.Episode;
+import me.sunzheng.mana.core.WatchProgress;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.bangumi.Response;
 import me.sunzheng.mana.home.bangumi.wrapper.request.SynchronizeEpisodeHistoryWrapper;
 import me.sunzheng.mana.home.episode.Record;
-import me.sunzheng.mana.home.onair.wrapper.Episode;
-import me.sunzheng.mana.home.onair.wrapper.WatchProgress;
 import me.sunzheng.mana.utils.App;
 
 public class PlayService extends Service {

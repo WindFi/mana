@@ -17,7 +17,7 @@ import java.util.List;
 
 import me.sunzheng.mana.BangumiDetailsActivity;
 import me.sunzheng.mana.R;
-import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
+import me.sunzheng.mana.core.BangumiModel;
 
 /**
  * Created by Sun on 2017/6/20.

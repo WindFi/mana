@@ -4,7 +4,7 @@ import java.util.List;
 
 import io.reactivex.Completable;
 import io.reactivex.Observable;
-import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
+import me.sunzheng.mana.core.BangumiModel;
 
 /**
  * Created by Sun on 2017/11/7.

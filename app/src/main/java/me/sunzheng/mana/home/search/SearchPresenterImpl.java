@@ -11,9 +11,9 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import me.sunzheng.mana.core.BangumiModel;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
-import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
 
 /**
  * Created by Sun on 2017/6/15.

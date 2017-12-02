@@ -15,9 +15,9 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Function;
+import me.sunzheng.mana.core.BangumiModel;
 import me.sunzheng.mana.home.mybangumi.respository.AppDbHelper;
 import me.sunzheng.mana.home.mybangumi.respository.DataRespository;
-import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
 
 /**
  * Created by Sun on 2017/11/11.

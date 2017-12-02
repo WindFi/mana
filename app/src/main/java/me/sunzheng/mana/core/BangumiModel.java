@@ -1,5 +1,5 @@
 
-package me.sunzheng.mana.home.onair.wrapper;
+package me.sunzheng.mana.core;
 
 import android.os.Parcel;
 import android.os.Parcelable;

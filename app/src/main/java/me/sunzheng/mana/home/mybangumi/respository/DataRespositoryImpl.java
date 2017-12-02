@@ -8,10 +8,10 @@ import io.reactivex.Completable;
 import io.reactivex.Observable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Predicate;
+import me.sunzheng.mana.core.BangumiModel;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.mybangumi.respository.local.LocalDataRepository;
 import me.sunzheng.mana.home.mybangumi.respository.remote.RemoteRespository;
-import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
 
 /**
  * Created by Sun on 2017/11/13.

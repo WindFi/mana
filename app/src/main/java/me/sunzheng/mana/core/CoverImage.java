@@ -1,4 +1,4 @@
-package me.sunzheng.mana.home.onair.wrapper;
+package me.sunzheng.mana.core;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
