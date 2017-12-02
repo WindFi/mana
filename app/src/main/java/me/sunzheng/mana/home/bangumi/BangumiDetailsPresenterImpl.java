@@ -15,11 +15,11 @@ import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Predicate;
 import io.reactivex.schedulers.Schedulers;
+import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.bangumi.respository.DataRespository;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetails;
-import me.sunzheng.mana.home.onair.wrapper.Episode;
 
 /**
  * Created by Sun on 2017/5/27.

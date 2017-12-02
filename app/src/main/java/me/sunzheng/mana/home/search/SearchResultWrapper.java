@@ -6,7 +6,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
+import me.sunzheng.mana.core.BangumiModel;
 
 public class SearchResultWrapper {
 

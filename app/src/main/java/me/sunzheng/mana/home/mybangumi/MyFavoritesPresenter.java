@@ -10,10 +10,10 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Action;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
+import me.sunzheng.mana.core.BangumiModel;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.mybangumi.respository.DataRespository;
 import me.sunzheng.mana.home.onair.OnAirItemRecyclerViewAdapter;
-import me.sunzheng.mana.home.onair.wrapper.BangumiModel;
 
 /**
  * Created by Sun on 2017/7/17.
