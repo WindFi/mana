@@ -83,10 +83,10 @@ public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItem
         public ViewHolder(View view) {
             super(view);
             mView = (CardView) view;
-            mTitleTextView = (TextView) view.findViewById(R.id.item_title_textview);
-            mImageView = (ImageView) view.findViewById(R.id.item_album);
-            mSummaryTextView = (TextView) view.findViewById(R.id.item_subtitle_textview);
-            mEtcTextView = (TextView) view.findViewById(R.id.item_etc_textview);
+            mTitleTextView = view.findViewById(R.id.item_title_textview);
+            mImageView = view.findViewById(R.id.item_album);
+            mSummaryTextView = view.findViewById(R.id.item_subtitle_textview);
+            mEtcTextView = view.findViewById(R.id.item_etc_textview);
         }
     }
 }

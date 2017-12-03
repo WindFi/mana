@@ -31,27 +31,23 @@
 
             <TextView
                 android:id="@+id/item_title_textview"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:maxLength="40"
-                android:maxLines="2"
+                android:maxLines="3"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
                 android:textColor="@android:color/black"
                 tools:text="title" />
-
             <TextView
                 android:id="@+id/item_subtitle_textview"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
-                android:maxEms="20"
-                android:maxLines="2"
-                android:maxWidth="20dp"
+                android:maxLines="3"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 tools:text="title" />
             <TextView
                 android:id="@+id/item_etc_textview"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="@style/TextAppearance.AppCompat.Small"
                 tools:text="subtitle" />

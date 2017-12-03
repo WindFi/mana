@@ -3,6 +3,7 @@ package me.sunzheng.mana.home.onair;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,7 +19,7 @@ import me.sunzheng.mana.widget.EmptyAdapter;
 /**
  * A fragment representing a list of Items.
  */
-public class OnAirFragment extends android.support.v4.app.Fragment implements HomeContract.OnAir.View {
+public class OnAirFragment extends Fragment implements HomeContract.OnAir.View {
     public static final int INT_TYPE_ANIMATION = 2;
     public static final int INT_TYPE_DRAMA = 6;
     public static final String INT_ARGS_TYPE = "air_type";
