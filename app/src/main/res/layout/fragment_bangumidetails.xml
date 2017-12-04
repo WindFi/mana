@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     tools:context="me.sunzheng.mana.BangumiDetailsActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -17,6 +18,7 @@
             android:id="@+id/header_collaspingtoolbarlayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
             app:contentScrim="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlwaysCollapsed|enterAlways">
 
@@ -24,6 +26,7 @@
                 android:id="@+id/banner_imageview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
                 app:layout_collapseMode="parallax" />
 
@@ -31,14 +34,19 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                app:layout_collapseMode="pin" />
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/AppTheme.PopupOverlay" />
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
@@ -59,8 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/bangumidetails_ablum_imageview"
                 android:layout_toEndOf="@+id/bangumidetails_ablum_imageview"
-                android:ellipsize="marquee"
-                android:maxLines="1"
+                android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
                 tools:layout_editor_absoluteX="48dp"
                 tools:text="name" />
@@ -71,8 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/bangumidetails_name_textview"
                 android:layout_toEndOf="@+id/bangumidetails_ablum_imageview"
-                android:ellipsize="marquee"
-                android:maxLines="1"
+                android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Widget.TextView.SpinnerItem"
                 tools:text="name" />
 
