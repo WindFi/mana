@@ -8,12 +8,17 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="autoCompleteTextViewStyle">@style/SuggestionAutoCompleteTextViewStyle</item>
         <item name="textAppearanceSearchResultTitle">@style/SuggestionTitleStyle</item>
+        <item name="colorButtonNormal">@color/colorPrimary</item>
+        <item name="colorControlHighlight">@android:color/darker_gray</item>
+        <item name="android:textAppearanceButton">@style/TextAppearance.Button</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+
+    <style name="AppTheme.NoActionBar.NoStatusBar" />
 
     <style name="AppTheme.NoActionBar.FullScreen" parent="AppTheme.NoActionBar">
         <!--<item name="android:windowTranslucentStatus">false</item>-->
@@ -56,5 +61,11 @@
 
     <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
         <item name="android:dropDownItemStyle">@style/DropDownListItemStyle</item>
+    </style>
+
+    <style name="TextAppearance" parent="TextAppearance.AppCompat" />
+
+    <style name="TextAppearance.Button" parent="TextAppearance.AppCompat.Button">
+        <item name="android:textColor">@android:color/white</item>
     </style>
 </resources>

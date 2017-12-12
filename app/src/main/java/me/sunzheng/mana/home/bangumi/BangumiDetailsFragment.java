@@ -2,6 +2,8 @@ package me.sunzheng.mana.home.bangumi;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -21,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
 
@@ -46,7 +49,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     AppCompatTextView mEpisodeLabelTextView;
     ContentLoadingProgressBar mProgressBar;
     RecyclerView mRecyclerView;
-
+    RelativeLayout mContent;
     HomeContract.Bangumi.Presenter mPresenter;
     SharedPreferences sharedPreferences;
 
@@ -153,6 +156,16 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
             }
         });
         mRecyclerView.setNestedScrollingEnabled(false);
+        //add padding buttom
+        mContent = getView().findViewById(R.id.bangumidetails_header_constraint);
+        mContent.setPadding(0, 0, 0, getNavigationBarHeight(getResources().getConfiguration().orientation));
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (mContent != null)
+            mContent.setPadding(0, 0, 0, getNavigationBarHeight(newConfig.orientation));
     }
 
     @Override
@@ -240,5 +253,17 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
             mProgressBar.hide();
             isLoaded = true;
         }
+    }
+
+    private int getNavigationBarHeight(int orientation) {
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE)
+            return 0;
+        Resources resources = getContext().getResources();
+        int id = resources.getIdentifier(
+                orientation == Configuration.ORIENTATION_PORTRAIT ? "navigation_bar_height" : "navigation_bar_height_landscape", "dimen", "android");
+        if (id > 0) {
+            return resources.getDimensionPixelSize(id);
+        }
+        return 0;
     }
 }

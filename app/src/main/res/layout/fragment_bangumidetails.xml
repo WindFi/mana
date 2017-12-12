@@ -97,8 +97,7 @@
                 android:layout_alignStart="@+id/bangumidetails_originname_textview"
                 android:layout_below="@+id/bangumidetails_originname_textview"
                 android:ems="10"
-                android:text="@string/title_uncollection_status"
-                android:textColor="@android:color/white" />
+                android:text="@string/title_uncollection_status" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/bangumidetails_episode_label_textview"
@@ -115,7 +114,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/bangumidetails_episode_label_textview" />
-
             <android.support.v4.widget.ContentLoadingProgressBar
                 android:id="@+id/bangumidetails_progreassbar"
                 style="?android:attr/progressBarStyleLarge"
