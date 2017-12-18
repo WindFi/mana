@@ -27,6 +27,7 @@ import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
@@ -173,7 +174,27 @@ public class VideoPlayerActivity extends AppCompatActivity implements Attendtion
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
                 | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
                 | View.SYSTEM_UI_FLAG_IMMERSIVE);
-        player.addListener(new ExoPlayer.EventListener() {
+        player.addListener(new Player.EventListener() {
+            @Override
+            public void onPositionDiscontinuity(int reason) {
+
+            }
+
+            @Override
+            public void onRepeatModeChanged(int repeatMode) {
+
+            }
+
+            @Override
+            public void onShuffleModeEnabledChanged(boolean shuffleModeEnabled) {
+
+            }
+
+            @Override
+            public void onSeekProcessed() {
+
+            }
+
             @Override
             public void onTimelineChanged(Timeline timeline, Object manifest) {
 
@@ -215,12 +236,6 @@ public class VideoPlayerActivity extends AppCompatActivity implements Attendtion
             public void onPlayerError(ExoPlaybackException error) {
 
             }
-
-            @Override
-            public void onPositionDiscontinuity() {
-
-            }
-
             @Override
             public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
             }
