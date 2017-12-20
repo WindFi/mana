@@ -30,7 +30,6 @@ import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
 
-import me.sunzheng.mana.widget.PlayListExoPlayerView;
 
 /**
  * version 2
@@ -38,7 +37,6 @@ import me.sunzheng.mana.widget.PlayListExoPlayerView;
  */
 
 public class VideoPlayActivity extends AppCompatActivity {
-    PlayListExoPlayerView playListExoPlayerView;
     MediaSessionCompat mSession;
     MediaSessionConnector connector;
     SimpleExoPlayer player;
@@ -60,7 +58,6 @@ public class VideoPlayActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState, persistentState);
         mSession = new MediaSessionCompat(this, "hello");
         setContentView(R.layout.activity_video_play);
-        playListExoPlayerView = (PlayListExoPlayerView) findViewById(R.id.player);
 
         mSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
         mSession.setMediaButtonReceiver(null);
