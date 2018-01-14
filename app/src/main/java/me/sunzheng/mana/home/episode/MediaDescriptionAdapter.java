@@ -67,8 +67,8 @@ public class MediaDescriptionAdapter extends BaseAdapter {
                 return false;
             }
         }).into(viewHolder.imageView);
-        viewHolder.titleTextView.setText(dataRepository.getItemByPosition(position).getTitle());
-        viewHolder.seqTextView.setText(position + "");
+        viewHolder.titleTextView.setText(dataRepository.getItemByPosition(position).getDescription());
+        viewHolder.seqTextView.setText(dataRepository.getItemByPosition(position).getTitle());
         return convertView;
     }
 

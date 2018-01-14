@@ -95,6 +95,7 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
                         MediaSource source = new ExtractorMediaSource(Uri.parse(videoFile.getUrl()), dataSourceFactory, extractorFactory, null, null);
                         player.prepare(source);
                         play();
+                        mView.setMediaTitle(dataRepository.getCurrentPosition() + "");
                     }
                 });
         compositeDisposable.add(disposable);

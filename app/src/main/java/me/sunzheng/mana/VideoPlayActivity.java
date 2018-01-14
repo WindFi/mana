@@ -103,7 +103,9 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     private static MediaDescriptionCompat parseMediaDescriptionFromEpisode(Episode episode) {
-        return new MediaDescriptionCompat.Builder().setTitle(episode.getNameCn())
+//        holder.itemView.getContext().getString(R.string.episode_template, item.getEpisodeNo() + "")
+        return new MediaDescriptionCompat.Builder().setTitle(episode.getEpisodeNo() + "")
+                .setDescription(episode.getNameCn())
                 .setIconUri(Uri.parse(episode.getThumbnailImage() == null ? episode.getThumbnail() : episode.getThumbnailImage().url))
                 .setMediaId(episode.getId()).build();
     }
@@ -433,6 +435,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (broadcastReceiver != null)
+            unregisterReceiver(broadcastReceiver);
         if (presenter != null)
             presenter.release();
     }
