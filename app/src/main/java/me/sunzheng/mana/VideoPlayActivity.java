@@ -1,34 +1,47 @@
 package me.sunzheng.mana;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.media.AudioManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.os.ResultReceiver;
+import android.os.Handler;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.media.MediaDescriptionCompat;
-import android.support.v4.media.session.MediaSessionCompat;
-import android.support.v4.media.session.PlaybackStateCompat;
+import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.GestureDetector;
+import android.view.Menu;
+import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.ListView;
 
 import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.ext.mediasession.DefaultPlaybackController;
-import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector;
-import com.google.android.exoplayer2.ext.mediasession.TimelineQueueEditor;
-import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.extractor.ExtractorsFactory;
-import com.google.android.exoplayer2.source.DynamicConcatenatingMediaSource;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.ShuffleOrder;
-import com.google.android.exoplayer2.upstream.DataSource;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.ui.PlaybackControlView;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 
-import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import me.sunzheng.mana.core.Episode;
+import me.sunzheng.mana.home.HomeApiService;
+import me.sunzheng.mana.home.HomeContract;
+import me.sunzheng.mana.home.episode.EpisodePresenterImpl;
+import me.sunzheng.mana.home.episode.LocalDataRepository;
+import me.sunzheng.mana.utils.App;
 
 
 /**
@@ -36,161 +49,391 @@ import java.util.ArrayList;
  * Created by Sun on 2017/12/14.
  */
 
-public class VideoPlayActivity extends AppCompatActivity {
-    MediaSessionCompat mSession;
-    MediaSessionConnector connector;
-    SimpleExoPlayer player;
-    DynamicConcatenatingMediaSource mediaSource;
-    TimelineQueueEditor.MediaSourceFactory mediaSourceFactory = new TimelineQueueEditor.MediaSourceFactory() {
-        @Nullable
+public class VideoPlayActivity extends AppCompatActivity implements HomeContract.VideoPlayer.View, GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+    public final static String TAG = VideoPlayActivity.class.getSimpleName();
+    public final static String STR_CURRINT_INT = "current";
+    public final static String STR_ITEMS_PARCEL = "items";
+    SimpleExoPlayerView playerView;
+    Toolbar toolbar;
+    ListView mListView;
+    HomeContract.VideoPlayer.Presenter presenter;
+    Handler mHnadler = new Handler();
+    Runnable hideListViewRunnable = new Runnable() {
         @Override
-        public MediaSource createMediaSource(MediaDescriptionCompat description) {
-            DefaultBandwidthMeter mDefaultBandwidthMeter = new DefaultBandwidthMeter();
-            DataSource.Factory dataSourceFactory = new DefaultDataSourceFactory(VideoPlayActivity.this, Util.getUserAgent(VideoPlayActivity.this, getPackageName()), mDefaultBandwidthMeter);
-            ExtractorsFactory extractorFactory = new DefaultExtractorsFactory();
-            MediaSource source = new ExtractorMediaSource(description.getMediaUri(), dataSourceFactory, extractorFactory, null, null);
-            return source;
+        public void run() {
+            if (mListView == null || mListView.getVisibility() != View.VISIBLE)
+                return;
+            mListView.setVisibility(View.GONE);
+        }
+    };
+    AudioManager audioManager;
+    AudioManager.OnAudioFocusChangeListener audioFocusChangeListener;
+    BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
+                if (presenter != null)
+                    presenter.play();
+            } else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
+                if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
+                    return;
+                ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+                NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+                if (activeNetworkInfo == null)
+                    return;
+                switch (activeNetworkInfo.getType()) {
+                    case ConnectivityManager.TYPE_MOBILE:
+                        if (activeNetworkInfo.isConnected())
+//                            showAttendtionDialogAndPause();
+                            break;
+                    default:
+                        break;
+                }
+            }
         }
     };
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
-        mSession = new MediaSessionCompat(this, "hello");
-        setContentView(R.layout.activity_video_play);
+    public static Intent newInstance(Context context, int position, List<Episode> items) {
+        Intent intent = new Intent(context, VideoPlayActivity.class);
+        Bundle extras = new Bundle();
+        extras.putInt(STR_CURRINT_INT, position);
+        extras.putParcelableArray(STR_ITEMS_PARCEL, parseMediaDescriptionFromEpisode(items));
+        intent.putExtras(extras);
+        return intent;
+    }
 
-        mSession.setFlags(MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS | MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS);
-        mSession.setMediaButtonReceiver(null);
-        PlaybackStateCompat.Builder builder = new PlaybackStateCompat.Builder().setActions(PlaybackStateCompat.ACTION_PLAY | PlaybackStateCompat.ACTION_PLAY_PAUSE);
-        mSession.setPlaybackState(builder.build());
-        mediaSource = new DynamicConcatenatingMediaSource(new ShuffleOrder.UnshuffledShuffleOrder(5));
-        connector = new MediaSessionConnector(mSession, new DefaultPlaybackController());
-        connector.setPlayer(player, new PlaybackPreparerImpl());
-        connector.setQueueEditor(new TimelineQueueEditor(mSession.getController(), mediaSource, new QueueAdapter(), mediaSourceFactory));
+    private static MediaDescriptionCompat parseMediaDescriptionFromEpisode(Episode episode) {
+        return new MediaDescriptionCompat.Builder().setTitle(episode.getNameCn())
+                .setIconUri(Uri.parse(episode.getThumbnailImage() == null ? episode.getThumbnail() : episode.getThumbnailImage().url))
+                .setMediaId(episode.getId()).build();
+    }
+
+    private static MediaDescriptionCompat[] parseMediaDescriptionFromEpisode(List<Episode> episodes) {
+        MediaDescriptionCompat[] arrs = new MediaDescriptionCompat[episodes.size()];
+        Collections.sort(episodes, new Comparator<Episode>() {
+            @Override
+            public int compare(Episode o1, Episode o2) {
+                return o1.getEpisodeNo() - o2.getEpisodeNo();
+            }
+        });
+        for (int i = 0; i < arrs.length; i++) {
+            arrs[i] = parseMediaDescriptionFromEpisode(episodes.get(i));
+        }
+        return arrs;
+    }
+
+    private void initAudioManager() {
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        audioFocusChangeListener = new AudioManager.OnAudioFocusChangeListener() {
+            @Override
+            public void onAudioFocusChange(int focusChange) {
+                if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
+                    presenter.pause();
+                } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
+                    // Pause playback
+                    presenter.pause();
+                } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
+
+                } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
+                    presenter.play();
+                }
+            }
+        };
+        audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+    }
+
+    @Override
+    public void setPlayItemChecked(int position, boolean isChecked) {
+        if (mListView == null || position >= mListView.getCount())
+            return;
+        mListView.setItemChecked(position, isChecked);
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_video_play);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+
+        savedInstanceState = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
+        int current = savedInstanceState.getInt(STR_CURRINT_INT, 0);
+
+        Parcelable[] parcelableArray = savedInstanceState.getParcelableArray(STR_ITEMS_PARCEL);
+        MediaDescriptionCompat[] items = convertFromParcelable(parcelableArray);
+
+        playerView = findViewById(R.id.player);
+        mListView = findViewById(R.id.list);
+
+        final GestureDetectorCompat gestureDetectorCompat = new GestureDetectorCompat(this, this);
+        gestureDetectorCompat.setOnDoubleTapListener(this);
+
+        presenter = new EpisodePresenterImpl(this, ((App) getApplication()).getRetrofit().create(HomeApiService.Episode.class), ((App) getApplication()).getRetrofit().create(HomeApiService.Bangumi.class), new LocalDataRepository(items, current));
+        playerView.setControllerVisibilityListener(new PlaybackControlView.VisibilityListener() {
+            @Override
+            public void onVisibilityChange(int visibility) {
+                if (visibility == View.VISIBLE) {
+                    showControllView();
+                } else {
+                    hideControlView();
+                }
+            }
+        });
+        playerView.setPlayer(presenter.getPlayer());
+        playerView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                return gestureDetectorCompat.onTouchEvent(event);
+            }
+        });
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                presenter.tryPlayItem(((ListView) parent).getCheckedItemPosition());
+                hideEpisodeListView();
+            }
+
+        });
+        // TODO: 2018/1/4 choice
+        presenter.tryPlayItem(current);
+//        ----------test code-----------
+//        mListView.performItemClick()
+//        ------------------------------
+        initAudioManager();
+        presenter.getPlayer().addListener(new Player.DefaultEventListener() {
+            @Override
+            public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+                super.onPlayerStateChanged(playWhenReady, playbackState);
+                switch (playbackState) {
+                    case Player.STATE_ENDED:
+                        if (isAutoPlay() && isListEnd())
+                            presenter.tryPlayItem(mListView.getCheckedItemPosition() + 1);
+                        else
+                            finish();
+                        break;
+                    default:
+
+                }
+            }
+        });
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
+        registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    private boolean isAutoPlay() {
+        // TODO: 2018/1/12  auto play switcher
+        return true;
+    }
+
+    private boolean isListEnd() {
+        return mListView.getCheckedItemPosition() < mListView.getCount() - 1;
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        Log.i(TAG, "onTouchEvent:" + event.getAction());
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent e) {
+        Log.i(TAG, "onDoubleTap:" + System.currentTimeMillis());
+        return true;
+    }
+
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        Log.i(TAG, "onSingleTapConfirmed" + System.currentTimeMillis());
+        return false;
+    }
+
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent e) {
+        Log.i(TAG, "onDoubleTapEvent" + System.currentTimeMillis());
+        presenter.doubleClick();
+        return true;
+    }
+
+    @Override
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
+    public void setPresenter(HomeContract.VideoPlayer.Presenter presenter) {
+        this.presenter = presenter;
+    }
+
+    @Override
+    public void setAdapter(BaseAdapter adapter) {
+        mListView.setAdapter(adapter);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            mSession.setActive(true);
+            return;
+        presenter.play();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
-            mSession.setActive(true);
+            return;
+        presenter.play();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            mSession.setActive(false);
+            return;
+        presenter.pause();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
-            mSession.setActive(false);
+            return;
+        presenter.pause();
+    }
+
+    void hideControlView() {
+        getSupportActionBar().hide();
+        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+    }
+
+    void showControllView() {
+        getSupportActionBar().show();
+        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                | View.SYSTEM_UI_FLAG_FULLSCREEN);// hide status bar
+    }
+
+    void showEpisodeListView() {
+        mListView.setVisibility(View.VISIBLE);
+    }
+
+    boolean consumeEpisodeListView() {
+        if (mListView.getVisibility() == View.VISIBLE) {
+            hideEpisodeListView();
+            return true;
+        }
+        return false;
+    }
+
+    void hideEpisodeListView() {
+        hideEpisodeListView(0);
+    }
+
+    void hideEpisodeListView(long delayMillisecond) {
+        mHnadler.postDelayed(hideListViewRunnable, delayMillisecond);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.video_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        long itemId = item.getItemId();
+        if (itemId == R.id.action_list) {
+            showEpisodeListView();
+            return true;
+        } else if (itemId == android.R.id.home) {
+            super.onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!consumeEpisodeListView())
+            super.onBackPressed();
+    }
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        Log.i(TAG, "onSingleTapUp:" + System.currentTimeMillis());
+        return consumeEpisodeListView();
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return false;
+    }
+
+    private MediaDescriptionCompat[] convertFromParcelable(Parcelable[] parcelables) {
+        MediaDescriptionCompat[] _items = new MediaDescriptionCompat[parcelables.length];
+        for (int i = 0; i < _items.length; i++) {
+            _items[i] = (MediaDescriptionCompat) parcelables[i];
+        }
+        return _items;
+    }
+
+    @Override
+    public void setMediaTitle(CharSequence title) {
+        getSupportActionBar().setTitle(title);
+    }
+
+    @Override
+    public void showVolumeVal(int val) {
+        Log.i(TAG, "not implements");
+    }
+
+    @Override
+    public void showProgressDetaVal(int detaVal) {
+        Log.i(TAG, "not implements");
+    }
+
+    @Override
+    public void showLightVal(int val) {
+        Log.i(TAG, "not implements");
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mSession.release();
-    }
-
-    public final static class PlaybackPreparerImpl implements MediaSessionConnector.PlaybackPreparer {
-        @Override
-        public long getSupportedPrepareActions() {
-            return 0;
-        }
-
-        @Override
-        public void onPrepare() {
-
-        }
-
-        @Override
-        public void onPrepareFromMediaId(String mediaId, Bundle extras) {
-
-        }
-
-        @Override
-        public void onPrepareFromSearch(String query, Bundle extras) {
-
-        }
-
-        @Override
-        public void onPrepareFromUri(Uri uri, Bundle extras) {
-
-        }
-
-        @Override
-        public void onCommand(Player player, String s, Bundle bundle, ResultReceiver resultReceiver) {
-
-        }
-
-        @Override
-        public String[] getCommands() {
-            return new String[0];
-        }
-    }
-
-    public final static class QueueNavigatorImpl extends TimelineQueueNavigator {
-
-        public QueueNavigatorImpl(MediaSessionCompat mediaSession) {
-            super(mediaSession);
-        }
-
-        public QueueNavigatorImpl(MediaSessionCompat mediaSession, int maxQueueSize) {
-            super(mediaSession, maxQueueSize);
-        }
-
-        @Override
-        public MediaDescriptionCompat getMediaDescription(int windowIndex) {
-//            MediaDescriptionCompat mediaDescription = new MediaDescriptionCompat();
-//            return mediaDescription;
-            return null;
-        }
-    }
-
-    public final static class QueueAdapter implements TimelineQueueEditor.QueueDataAdapter {
-        ArrayList<MediaDescriptionCompat> mQueue;
-
-        public QueueAdapter() {
-            this(new ArrayList<MediaDescriptionCompat>(2));
-        }
-
-        public QueueAdapter(ArrayList<MediaDescriptionCompat> queue) {
-            this.mQueue = mQueue;
-        }
-
-        @Override
-        public MediaDescriptionCompat getMediaDescription(int position) {
-            if (mQueue == null || mQueue.isEmpty() || mQueue.size() + 1 < position)
-                return null;
-            return mQueue.get(position);
-        }
-
-        @Override
-        public void add(int position, MediaDescriptionCompat description) {
-            mQueue.add(position, description);
-        }
-
-        @Override
-        public void remove(int position) {
-            mQueue.remove(position);
-        }
-
-        @Override
-        public void move(int from, int to) {
-            MediaDescriptionCompat value = mQueue.get(from);
-            mQueue.remove(from);
-            mQueue.add(to, value);
-        }
+        if (presenter != null)
+            presenter.release();
     }
 }

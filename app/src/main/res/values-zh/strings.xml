@@ -17,7 +17,7 @@
     <string name="title_episode_textview">剧集( %1$s / %2$s )</string>
     <string name="episode_template">第 %1$s 话</string>
     <string name="title_activity_favorites">收藏</string>
-
+    <string name="title_video_list">选集</string>
     <string name="title_uncollection_status">未收藏</string>
     <string name="title_wish_status">想看</string>
     <string name="title_watched_status">看过</string>

@@ -20,9 +20,9 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import me.sunzheng.mana.R;
+import me.sunzheng.mana.VideoPlayActivity;
 import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.core.WatchProgress;
-import me.sunzheng.mana.home.episode.service.PlayService;
 import me.sunzheng.mana.utils.RegexUtils;
 
 /**
@@ -55,8 +55,8 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Intent service = PlayService.newInstance(context, values, position);
-                            context.startService(service);
+                            Intent intent = VideoPlayActivity.newInstance(context, position, values);
+                            context.startActivity(intent);
                         }
                     }, 300);
 
@@ -70,6 +70,8 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
         if (item.getThumbnailImage() != null && !TextUtils.isEmpty(item.getThumbnailImage().dominantColor)
                 && item.getThumbnailImage().dominantColor.matches(RegexUtils.ColorPattern)) {
             request.placeholder(new ColorDrawable(Color.parseColor(item.getThumbnailImage().dominantColor)));
+        } else if (!TextUtils.isEmpty(item.getThumbnailColor()) && item.getThumbnailColor().matches(RegexUtils.ColorPattern)) {
+            request.placeholder(new ColorDrawable(Color.parseColor(item.getThumbnailColor())));
         }
         request.into(holder.mImageView);
         holder.mEpisodeNoTextView.setText(holder.itemView.getContext().getString(R.string.episode_template, item.getEpisodeNo() + ""));

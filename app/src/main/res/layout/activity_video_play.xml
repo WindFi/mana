@@ -1,21 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <me.sunzheng.mana.widget.PlayListExoPlayerView
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
         android:id="@+id/player"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:controller_layout_id="@layout/view_playback_controllerview" />
 
-    <android.support.v7.widget.AppCompatSeekBar
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="10dp"
-        android:layout_gravity="bottom"
-        android:progress="50" />
+        android:layout_height="wrap_content"
+        android:alpha="0.9"
+        android:background="@android:color/black"
+        android:elevation="0dp"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.AppBarOverlay"
+        app:elevation="0dp">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:popupTheme="@style/AppTheme.PopupOverlay" />
+    </android.support.design.widget.AppBarLayout>
 
     <ListView
+        android:id="@+id/list"
         android:layout_width="240dp"
         android:layout_height="match_parent"
-        android:layout_gravity="end" />
+        android:layout_gravity="end"
+        android:background="#77000000"
+        android:choiceMode="singleChoice"
+        android:visibility="gone" />
 </android.support.design.widget.CoordinatorLayout>
