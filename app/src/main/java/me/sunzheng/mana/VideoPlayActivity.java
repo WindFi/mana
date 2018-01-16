@@ -58,6 +58,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     ListView mListView;
     HomeContract.VideoPlayer.Presenter presenter;
     Handler mHnadler = new Handler();
+
     Runnable hideListViewRunnable = new Runnable() {
         @Override
         public void run() {
@@ -381,8 +382,12 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         super.onDestroy();
         if (broadcastReceiver != null)
             unregisterReceiver(broadcastReceiver);
-        if (presenter != null)
+        if (presenter != null) {
             presenter.release();
+            presenter.unsubscribe();
+        }
+        // TODO: 2018/1/16 Need version compation for api 26
+        audioManager.abandonAudioFocus(audioFocusChangeListener);
     }
 
     public final class PresenterGestureDetector extends GestureDetector.SimpleOnGestureListener {

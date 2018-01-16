@@ -70,6 +70,7 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
 
     @Override
     public void unsubscribe() {
+        compositeDisposable.dispose();
         compositeDisposable.clear();
         if (watchProgressLoggerDelegator != null)
             watchProgressLoggerDelegator.recycle();
@@ -114,6 +115,11 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
                         player.prepare(source);
                         play();
                         mView.setMediaTitle(episodeWrapper.getEpisodeNo() + "");
+                    }
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        Log.i(TAG, throwable.getLocalizedMessage());
                     }
                 });
         compositeDisposable.add(disposable);
@@ -209,6 +215,11 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
                 public void accept(Response response) throws Exception {
 
                 }
+            }, new Consumer<Throwable>() {
+                @Override
+                public void accept(Throwable throwable) throws Exception {
+                    Log.i(TAG, throwable.getLocalizedMessage());
+                }
             });
             return disposable;
         }
@@ -256,6 +267,7 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
         }
 
         public void recycle() {
+            stop();
             apiService = null;
             player = null;
         }
