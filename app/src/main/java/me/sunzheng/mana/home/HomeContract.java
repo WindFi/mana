@@ -116,13 +116,11 @@ public interface HomeContract {
         }
 
         interface Presenter extends IPresenter {
-            void doubleClick();
+            boolean doubleClick();
 
             void addPlayQueue(Episode episode);
 
             SimpleExoPlayer getPlayer();
-
-            void syncWatchLog(String episodeId, long position, long duration);
 
             boolean isEndOfList();
 

@@ -49,7 +49,7 @@ import me.sunzheng.mana.utils.App;
  * Created by Sun on 2017/12/14.
  */
 
-public class VideoPlayActivity extends AppCompatActivity implements HomeContract.VideoPlayer.View, GestureDetector.OnGestureListener, GestureDetector.OnDoubleTapListener {
+public class VideoPlayActivity extends AppCompatActivity implements HomeContract.VideoPlayer.View {
     public final static String TAG = VideoPlayActivity.class.getSimpleName();
     public final static String STR_CURRINT_INT = "current";
     public final static String STR_ITEMS_PARCEL = "items";
@@ -173,8 +173,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         playerView = findViewById(R.id.player);
         mListView = findViewById(R.id.list);
 
-        final GestureDetectorCompat gestureDetectorCompat = new GestureDetectorCompat(this, this);
-        gestureDetectorCompat.setOnDoubleTapListener(this);
+        final GestureDetectorCompat gestureDetectorCompat = new GestureDetectorCompat(this, new PresenterGestureDetector());
 
         presenter = new EpisodePresenterImpl(this, ((App) getApplication()).getRetrofit().create(HomeApiService.Episode.class), ((App) getApplication()).getRetrofit().create(HomeApiService.Bangumi.class), new LocalDataRepository(items, current));
         playerView.setControllerVisibilityListener(new PlaybackControlView.VisibilityListener() {
@@ -236,31 +235,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     private boolean isListEnd() {
         return mListView.getCheckedItemPosition() < mListView.getCount() - 1;
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        Log.i(TAG, "onTouchEvent:" + event.getAction());
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public boolean onDoubleTap(MotionEvent e) {
-        Log.i(TAG, "onDoubleTap:" + System.currentTimeMillis());
-        return true;
-    }
-
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        Log.i(TAG, "onSingleTapConfirmed" + System.currentTimeMillis());
-        return false;
-    }
-
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent e) {
-        Log.i(TAG, "onDoubleTapEvent" + System.currentTimeMillis());
-        presenter.doubleClick();
-        return true;
     }
 
     @Override
@@ -373,36 +347,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             super.onBackPressed();
     }
 
-    @Override
-    public boolean onDown(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public void onShowPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent e) {
-        Log.i(TAG, "onSingleTapUp:" + System.currentTimeMillis());
-        return consumeEpisodeListView();
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent e) {
-
-    }
-
-    @Override
-    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        return false;
-    }
 
     private MediaDescriptionCompat[] convertFromParcelable(Parcelable[] parcelables) {
         MediaDescriptionCompat[] _items = new MediaDescriptionCompat[parcelables.length];
@@ -439,5 +383,52 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             unregisterReceiver(broadcastReceiver);
         if (presenter != null)
             presenter.release();
+    }
+
+    public final class PresenterGestureDetector extends GestureDetector.SimpleOnGestureListener {
+
+        @Override
+        public boolean onDown(MotionEvent e) {
+            return consumeEpisodeListView();
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            return true;
+        }
+
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if (Math.abs(velocityX) > Math.abs(velocityY)) {
+                // TODO: 2018/1/15  seek
+            } else {
+                if (e1.getRawX() < 100 / 2) {
+                    // TODO: 2018/1/15 light 
+                } else {
+                    // TODO: 2018/1/15 volume
+                }
+            }
+            return true;
+        }
+
+
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            Log.i(TAG, "onDoubleTap:" + System.currentTimeMillis());
+            return presenter.doubleClick();
+        }
+
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            Log.i(TAG, "onSingleTapConfirmed" + System.currentTimeMillis());
+            return false;
+        }
+
+        @Override
+        public boolean onDoubleTapEvent(MotionEvent e) {
+            Log.i(TAG, "onDoubleTapEvent" + System.currentTimeMillis());
+            return false;
+        }
+
     }
 }

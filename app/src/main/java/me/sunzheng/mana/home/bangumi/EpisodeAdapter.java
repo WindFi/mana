@@ -55,7 +55,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Intent intent = VideoPlayActivity.newInstance(context, position, values);
+                            Intent intent = VideoPlayActivity.newInstance(context, values.size() - (position + 1), values);
                             context.startActivity(intent);
                         }
                     }, 300);
