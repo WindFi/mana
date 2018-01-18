@@ -61,7 +61,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     boolean isResume = false, isAudioFouced = false, isControlViewVisibility;
     HomeContract.VideoPlayer.Presenter presenter;
     Handler mHnadler = new Handler();
-    SharedPreferences sharedPreferences;
     Runnable hideListViewRunnable = new Runnable() {
         @Override
         public void run() {
@@ -77,7 +76,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         public void onReceive(Context context, Intent intent) {
             if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
                 if (presenter != null && presenter.getPlayer().getPlayWhenReady()) {
-                    tryPlay();
+                    playerPlay();
                 }
             } else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
                 if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
@@ -146,7 +145,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
                 } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
                     isAudioFouced = true;
-                    tryPlay();
+                    playerPlay();
                 }
             }
         };
@@ -166,7 +165,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         setContentView(R.layout.activity_video_play);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
 
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
@@ -267,7 +266,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             return;
         isResume = true;
-        tryPlay();
+        playerPlay();
     }
 
     @Override
@@ -276,7 +275,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
             return;
         isResume = true;
-        tryPlay();
+        playerPlay();
     }
 
     @Override
@@ -385,7 +384,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         Log.i(TAG, "not implements");
     }
 
-    void tryPlay() {
+    void playerPlay() {
         if (isPlayerFocusedAndResume())
             presenter.play();
     }

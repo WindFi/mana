@@ -38,7 +38,7 @@
         <activity
             android:name=".BangumiDetailsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
+            android:theme="@style/AppTheme.NoActionBar.NoStatusBar" />
         <activity
             android:name=".VideoPlayerActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
@@ -47,6 +47,7 @@
             android:theme="@style/AppTheme.NoActionBar.FullScreen" />
         <activity
             android:name=".SearchResultActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -61,16 +62,14 @@
                 android:resource="@xml/searchable" />
         </activity>
 
-        <meta-data
-            android:name="android.app.default_searchable"
-            android:value=".SearchResultActivity" />
-
         <activity
             android:name=".MyFavoritesActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_favorites"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LaunchActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -85,6 +84,9 @@
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar.FullScreen" />
 
+        <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".SearchResultActivity" />
         <service
             android:name=".home.episode.service.PlayService"
             android:enabled="true"
