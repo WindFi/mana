@@ -17,7 +17,7 @@
     <string name="title_episode_textview">剧集( %1$s / %2$s )</string>
     <string name="episode_template">第 %1$s 话</string>
     <string name="title_activity_favorites">收藏</string>
-
+    <string name="title_video_list">选集</string>
     <string name="title_uncollection_status">未收藏</string>
     <string name="title_wish_status">想看</string>
     <string name="title_watched_status">看过</string>
@@ -33,4 +33,8 @@
     <string name="text_fragment_remember">记住并自动登录</string>
     <string name="title_all">全部</string>
     <string name="error_invalid_host">域名无效</string>
+
+    <string name="pref_header_playback">播放</string>
+    <string name="pref_title_autoplay">自动播放</string>
+    <string name="pref_description_auto_play">当前播放完成后自动播放下一集</string>
 </resources>

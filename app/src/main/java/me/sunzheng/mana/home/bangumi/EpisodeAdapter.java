@@ -14,14 +14,16 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
 
 import java.util.List;
 
 import me.sunzheng.mana.R;
+import me.sunzheng.mana.VideoPlayActivity;
 import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.core.WatchProgress;
-import me.sunzheng.mana.home.episode.service.PlayService;
+import me.sunzheng.mana.utils.RegexUtils;
 
 /**
  * Created by Sun on 2017/7/14.
@@ -53,8 +55,8 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
                     mHandler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Intent service = PlayService.newInstance(context, values, position);
-                            context.startService(service);
+                            Intent intent = VideoPlayActivity.newInstance(context, values.size() - (position + 1), values);
+                            context.startActivity(intent);
                         }
                     }, 300);
 
@@ -64,7 +66,14 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
         } else {
             holder.itemView.setClickable(false);
         }
-        Glide.with(holder.itemView.getContext()).load(item.getThumbnail()).placeholder(new ColorDrawable(Color.parseColor(item.getThumbnailColor()))).into(holder.mImageView);
+        DrawableTypeRequest request = Glide.with(holder.itemView.getContext()).load(item.getThumbnail());
+        if (item.getThumbnailImage() != null && !TextUtils.isEmpty(item.getThumbnailImage().dominantColor)
+                && item.getThumbnailImage().dominantColor.matches(RegexUtils.ColorPattern)) {
+            request.placeholder(new ColorDrawable(Color.parseColor(item.getThumbnailImage().dominantColor)));
+        } else if (!TextUtils.isEmpty(item.getThumbnailColor()) && item.getThumbnailColor().matches(RegexUtils.ColorPattern)) {
+            request.placeholder(new ColorDrawable(Color.parseColor(item.getThumbnailColor())));
+        }
+        request.into(holder.mImageView);
         holder.mEpisodeNoTextView.setText(holder.itemView.getContext().getString(R.string.episode_template, item.getEpisodeNo() + ""));
         holder.mTitleTextView.setText(TextUtils.isEmpty(item.getNameCn()) ? item.getName() : item.getNameCn());
         holder.mUpdateDateTextView.setText(item.getAirdate());
@@ -88,6 +97,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
         final TextView mTitleTextView, mUpdateDateTextView, mEpisodeNoTextView;
         final ImageView mImageView;
         final ProgressBar mProgressBar;
+
         public ViewHolder(View view) {
             super(view);
             itemView = view;

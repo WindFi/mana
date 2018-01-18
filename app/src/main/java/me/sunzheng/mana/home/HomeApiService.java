@@ -81,7 +81,7 @@ public interface HomeApiService {
         Single<Response> changeBangumiFavoriteStatus(@Path("id") String id, @Body FavoriteStatusRequest request);
 
         @POST("/api/watch/history/synchronize")
-        Single<Response> synchronizeEpisodeHistory(@Body SynchronizeEpisodeHistoryWrapper request);
+        Observable<Response> synchronizeEpisodeHistory(@Body SynchronizeEpisodeHistoryWrapper request);
     }
 
     interface Episode {

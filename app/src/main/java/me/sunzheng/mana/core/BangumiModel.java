@@ -188,12 +188,12 @@ public class BangumiModel implements Parcelable {
         return 0;
     }
 
-    public UUID getId() {
-        return id;
+    public String getId() {
+        return id.toString();
     }
 
-    public void setId(UUID id) {
-        this.id = id;
+    public void setId(String id) {
+        this.id = UUID.fromString(id);
     }
 
     public int getBgmId() {

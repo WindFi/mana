@@ -43,14 +43,14 @@ ext {
     supportMultidexVersion = '1.0.1'
     retrofitMockVersion = '2.2.0'
     retrofitAdapterVersion = '2.2.0'
-    supportLibraryVersion = '25.3.1'
+    supportLibraryVersion = '27.0.+'
     okhttpUrlConnectionVersion = '3.6.0'
     constraintlayoutVersion = '1.0.2'
     junitVersion = '4.12'
     espressoVersion='2.2.2'
     guavaVersion='21.0'
     daggerVersion='2.10'
-    exoplayerVersion='r2.4.0'
+    exoplayerVersion='2.6.0'
     ormliteVersion='5.0'
 }
 

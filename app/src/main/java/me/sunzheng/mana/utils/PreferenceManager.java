@@ -14,4 +14,9 @@ public interface PreferenceManager {
         String STR_USERNAME="username";
         String STR_PASSWORD="password";
     }
+
+    interface PlayerPolicy {
+        String STR_SP_NAME = "policy";
+        String BOOL_KEY_AUTOPLAY = "is_autoplay_next";
+    }
 }

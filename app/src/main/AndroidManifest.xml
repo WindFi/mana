@@ -8,10 +8,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <!--<uses-permission android:name="android.permission.GET_ACCOUNTS" />-->
-    <!--<uses-permission android:name="android.permission.READ_PROFILE" />-->
-    <!--<uses-permission android:name="android.permission.READ_CONTACTS" />-->
-
+    <!-- <uses-permission android:name="android.permission.GET_ACCOUNTS" /> -->
+    <!-- <uses-permission android:name="android.permission.READ_PROFILE" /> -->
+    <!-- <uses-permission android:name="android.permission.READ_CONTACTS" /> -->
     <application
         android:name=".utils.App"
         android:allowBackup="true"
@@ -39,15 +38,10 @@
         <activity
             android:name=".BangumiDetailsActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
-        <activity
-            android:name=".VideoPlayerActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTop"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
+            android:theme="@style/AppTheme.NoActionBar.NoStatusBar" />
         <activity
             android:name=".SearchResultActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -62,16 +56,14 @@
                 android:resource="@xml/searchable" />
         </activity>
 
-        <meta-data
-            android:name="android.app.default_searchable"
-            android:value=".SearchResultActivity" />
-
         <activity
             android:name=".MyFavoritesActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:label="@string/title_activity_favorites"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LaunchActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -79,14 +71,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".VideoPlayActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:launchMode="singleTop"
+            android:screenOrientation="landscape"
+            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
 
-        <service
-            android:name=".home.episode.service.PlayService"
-            android:enabled="true"
-            android:exported="false" />
+        <meta-data
+            android:name="android.app.default_searchable"
+            android:value=".SearchResultActivity" />
+
         <provider
             android:name=".home.search.HistorySuggestionProvider"
             android:authorities="me.sunzheng.mana.historysugestionprovider" />
+
     </application>
 
 </manifest>
