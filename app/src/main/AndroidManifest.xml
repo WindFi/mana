@@ -40,12 +40,6 @@
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:theme="@style/AppTheme.NoActionBar.NoStatusBar" />
         <activity
-            android:name=".VideoPlayerActivity"
-            android:configChanges="keyboardHidden|orientation|screenSize"
-            android:launchMode="singleTop"
-            android:screenOrientation="landscape"
-            android:theme="@style/AppTheme.NoActionBar.FullScreen" />
-        <activity
             android:name=".SearchResultActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:launchMode="singleTask"
@@ -87,10 +81,6 @@
         <meta-data
             android:name="android.app.default_searchable"
             android:value=".SearchResultActivity" />
-        <service
-            android:name=".home.episode.service.PlayService"
-            android:enabled="true"
-            android:exported="false" />
 
         <provider
             android:name=".home.search.HistorySuggestionProvider"

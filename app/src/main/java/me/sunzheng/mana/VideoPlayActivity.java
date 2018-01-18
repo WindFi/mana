@@ -242,7 +242,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     private boolean isListEnd() {
-        return mListView.getCheckedItemPosition() < mListView.getCount() - 1;
+        return mListView.getCheckedItemPosition() >= mListView.getCount() - 1;
     }
 
     @Override
