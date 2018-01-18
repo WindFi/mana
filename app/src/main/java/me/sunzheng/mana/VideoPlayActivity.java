@@ -17,6 +17,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -43,7 +44,6 @@ import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.episode.EpisodePresenterImpl;
 import me.sunzheng.mana.home.episode.LocalDataRepository;
 import me.sunzheng.mana.utils.App;
-import me.sunzheng.mana.utils.PreferenceManager;
 
 
 /**
@@ -61,7 +61,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     boolean isResume = false, isAudioFouced = false;
     HomeContract.VideoPlayer.Presenter presenter;
     Handler mHnadler = new Handler();
-
+    SharedPreferences sharedPreferences;
     Runnable hideListViewRunnable = new Runnable() {
         @Override
         public void run() {
@@ -237,9 +237,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     private boolean isAutoPlay() {
-        // TODO: 2018/1/12  auto play switcher
-        SharedPreferences sharedPreferences = getSharedPreferences(PreferenceManager.PlayerPolicy.STR_SP_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getBoolean(PreferenceManager.PlayerPolicy.BOOL_KEY_AUTOPLAY, false);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPreferences.getBoolean("isAutoplay", false);
     }
 
     private boolean isListEnd() {
