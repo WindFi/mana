@@ -58,7 +58,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     SimpleExoPlayerView playerView;
     Toolbar toolbar;
     ListView mListView;
-    boolean isResume = false, isAudioFouced = false;
+    boolean isResume = false, isAudioFouced = false, isControlViewVisibility;
     HomeContract.VideoPlayer.Presenter presenter;
     Handler mHnadler = new Handler();
     SharedPreferences sharedPreferences;
@@ -164,7 +164,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_play);
-        toolbar = findViewById(R.id.toolbar);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -178,8 +178,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         Parcelable[] parcelableArray = savedInstanceState.getParcelableArray(STR_ITEMS_PARCEL);
         MediaDescriptionCompat[] items = convertFromParcelable(parcelableArray);
 
-        playerView = findViewById(R.id.player);
-        mListView = findViewById(R.id.list);
+        playerView = (SimpleExoPlayerView) findViewById(R.id.player);
+        mListView = (ListView) findViewById(R.id.list);
 
         final GestureDetectorCompat gestureDetectorCompat = new GestureDetectorCompat(this, new PresenterGestureDetector());
 
@@ -187,6 +187,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         playerView.setControllerVisibilityListener(new PlaybackControlView.VisibilityListener() {
             @Override
             public void onVisibilityChange(int visibility) {
+                isControlViewVisibility = visibility == View.VISIBLE;
                 if (visibility == View.VISIBLE) {
                     showControllView();
                 } else {
@@ -412,10 +413,9 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     public final class PresenterGestureDetector extends GestureDetector.SimpleOnGestureListener {
-
         @Override
         public boolean onDown(MotionEvent e) {
-            return consumeEpisodeListView();
+            return true;
         }
 
         @Override
@@ -447,7 +447,13 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Log.i(TAG, "onSingleTapConfirmed" + System.currentTimeMillis());
-            return false;
+            boolean flag = consumeEpisodeListView();
+            if (!flag && isControlViewVisibility) {
+                playerView.hideController();
+            } else {
+                playerView.showController();
+            }
+            return flag;
         }
 
         @Override
