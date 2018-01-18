@@ -8,10 +8,9 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <!--<uses-permission android:name="android.permission.GET_ACCOUNTS" />-->
-    <!--<uses-permission android:name="android.permission.READ_PROFILE" />-->
-    <!--<uses-permission android:name="android.permission.READ_CONTACTS" />-->
-
+    <!-- <uses-permission android:name="android.permission.GET_ACCOUNTS" /> -->
+    <!-- <uses-permission android:name="android.permission.READ_PROFILE" /> -->
+    <!-- <uses-permission android:name="android.permission.READ_CONTACTS" /> -->
     <application
         android:name=".utils.App"
         android:allowBackup="true"
@@ -85,13 +84,16 @@
             android:launchMode="singleTop"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.NoActionBar.FullScreen" />
+
         <service
             android:name=".home.episode.service.PlayService"
             android:enabled="true"
             android:exported="false" />
+
         <provider
             android:name=".home.search.HistorySuggestionProvider"
             android:authorities="me.sunzheng.mana.historysugestionprovider" />
+
     </application>
 
 </manifest>

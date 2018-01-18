@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -42,6 +43,7 @@ import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.episode.EpisodePresenterImpl;
 import me.sunzheng.mana.home.episode.LocalDataRepository;
 import me.sunzheng.mana.utils.App;
+import me.sunzheng.mana.utils.PreferenceManager;
 
 
 /**
@@ -214,7 +216,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                 super.onPlayerStateChanged(playWhenReady, playbackState);
                 switch (playbackState) {
                     case Player.STATE_ENDED:
-                        if (isAutoPlay() && isListEnd())
+                        if (isAutoPlay() && !isListEnd())
                             presenter.tryPlayItem(mListView.getCheckedItemPosition() + 1);
                         else
                             finish();
@@ -231,7 +233,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     private boolean isAutoPlay() {
         // TODO: 2018/1/12  auto play switcher
-        return true;
+        SharedPreferences sharedPreferences = getSharedPreferences(PreferenceManager.PlayerPolicy.STR_SP_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getBoolean(PreferenceManager.PlayerPolicy.BOOL_KEY_AUTOPLAY, false);
     }
 
     private boolean isListEnd() {

@@ -23,7 +23,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
@@ -181,8 +180,14 @@ public class MainActivity extends AppCompatActivity
         final Intent intent = new Intent();
 
         if (id == R.id.nav_settings) {
-//            intent.setComponent(new ComponentName(this, SettingsActivity.class));
-            Toast.makeText(this, "no support this feature now!", Toast.LENGTH_SHORT).show();
+            intent.setComponent(new ComponentName(this, SettingsActivity.class));
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (intent.getComponent() != null)
+                        startActivity(intent);
+                }
+            }, CLICK_DELAY_MILLIONSECONDS);
         } else if (id == R.id.nav_history) {
             intent.setComponent(new ComponentName(this, MyFavoritesActivity.class));
             handler.postDelayed(new Runnable() {
