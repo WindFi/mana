@@ -58,6 +58,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     SimpleExoPlayerView playerView;
     Toolbar toolbar;
     ListView mListView;
+    boolean isResume = false, isAudioFouced = false;
     HomeContract.VideoPlayer.Presenter presenter;
     Handler mHnadler = new Handler();
 
@@ -75,8 +76,9 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         @Override
         public void onReceive(Context context, Intent intent) {
             if (AudioManager.ACTION_AUDIO_BECOMING_NOISY.equals(intent.getAction())) {
-                if (presenter != null)
-                    presenter.play();
+                if (presenter != null && presenter.getPlayer().getPlayWhenReady()) {
+                    tryPlay();
+                }
             } else if (ConnectivityManager.CONNECTIVITY_ACTION.equals(intent.getAction())) {
                 if (intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false))
                     return;
@@ -134,14 +136,17 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             @Override
             public void onAudioFocusChange(int focusChange) {
                 if (focusChange == AudioManager.AUDIOFOCUS_LOSS) {
-                    presenter.pause();
+                    isAudioFouced = false;
+                    playerPause();
                 } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT) {
                     // Pause playback
-                    presenter.pause();
+                    isAudioFouced = false;
+                    playerPause();
                 } else if (focusChange == AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK) {
 
                 } else if (focusChange == AudioManager.AUDIOFOCUS_GAIN) {
-                    presenter.play();
+                    isAudioFouced = true;
+                    tryPlay();
                 }
             }
         };
@@ -261,7 +266,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         super.onStart();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             return;
-        presenter.play();
+        isResume = true;
+        tryPlay();
     }
 
     @Override
@@ -269,7 +275,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         super.onResume();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
             return;
-        presenter.play();
+        isResume = true;
+        tryPlay();
     }
 
     @Override
@@ -277,7 +284,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         super.onPause();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
             return;
-        presenter.pause();
+        isResume = false;
+        playerPause();
     }
 
     @Override
@@ -285,7 +293,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         super.onStop();
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
             return;
-        presenter.pause();
+        isResume = false;
+        playerPause();
     }
 
     void hideControlView() {
@@ -300,10 +309,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     void showControllView() {
         getSupportActionBar().show();
-        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                | View.SYSTEM_UI_FLAG_FULLSCREEN);// hide status bar
     }
 
     void showEpisodeListView() {
@@ -380,6 +385,20 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         Log.i(TAG, "not implements");
     }
 
+    void tryPlay() {
+        if (isPlayerFocusedAndResume())
+            presenter.play();
+    }
+
+    void playerPause() {
+        if (presenter != null && presenter.getPlayer().getPlayWhenReady())
+            presenter.pause();
+    }
+
+    boolean isPlayerFocusedAndResume() {
+        return isResume && isAudioFouced;
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -437,6 +456,5 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             Log.i(TAG, "onDoubleTapEvent" + System.currentTimeMillis());
             return false;
         }
-
     }
 }
