@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.view.GestureDetectorCompat;
@@ -25,7 +27,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -167,10 +168,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-
         savedInstanceState = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
         int current = savedInstanceState.getInt(STR_CURRINT_INT, 0);
 
@@ -195,6 +192,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             }
         });
         playerView.setPlayer(presenter.getPlayer());
+        playerView.setKeepScreenOn(true);
         playerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -209,11 +207,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             }
 
         });
-        // TODO: 2018/1/4 choice
         presenter.tryPlayItem(current);
-//        ----------test code-----------
-//        mListView.performItemClick()
-//        ------------------------------
+//        mListView.performItemClick(mListView.getAdapter().getView(current,null,null),current,0);
         initAudioManager();
         presenter.getPlayer().addListener(new Player.DefaultEventListener() {
             @Override
@@ -364,6 +359,29 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         return _items;
     }
 
+    void setVolume(int detaVal) {
+        int currentVol = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        currentVol += detaVal;
+        currentVol = currentVol > maxVol ? maxVol : currentVol;
+        currentVol = currentVol > -1 ? currentVol : 0;
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVol, 0);
+        showVolumeVal(currentVol);
+    }
+
+    void setLight(int detaVal) {
+        try {
+            int currentBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
+            currentBrightness += detaVal;
+            currentBrightness = currentBrightness < 256 ? currentBrightness : 255;
+            currentBrightness = currentBrightness > -1 ? currentBrightness : 0;
+            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, currentBrightness);
+            showVolumeVal(currentBrightness);
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
     @Override
     public void setMediaTitle(CharSequence title) {
         getSupportActionBar().setTitle(title);
@@ -412,6 +430,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     public final class PresenterGestureDetector extends GestureDetector.SimpleOnGestureListener {
+        boolean isFling, isVertical, isLeft;
+
         @Override
         public boolean onDown(MotionEvent e) {
             return true;
@@ -419,20 +439,36 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (!isFling) {
+                isVertical = Math.abs(distanceX) < Math.abs(distanceY);
+                if (isVertical) {
+                    Point p = new Point();
+                    getWindowManager().getDefaultDisplay().getSize(p);
+                    isLeft = e1.getX() < p.x / 2;
+                }
+            } else {
+                if (isVertical) {
+                    // TODO: 2018/1/19 seek drawing
+                } else {
+                    if (isLeft) {
+                        // TODO: 2018/1/19 Light
+                        setLight(0);
+                    } else {
+                        // TODO: 2018/1/19 Vol
+                        setVolume(0);
+                    }
+                }
+            }
             return true;
         }
 
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            if (Math.abs(velocityX) > Math.abs(velocityY)) {
-                // TODO: 2018/1/15  seek
-            } else {
-                if (e1.getRawX() < 100 / 2) {
-                    // TODO: 2018/1/15 light 
-                } else {
-                    // TODO: 2018/1/15 volume
-                }
+            if (isVertical) {
+                // TODO: 2018/1/19  seek to
             }
+            isFling = false;
+            isVertical = false;
             return true;
         }
 
