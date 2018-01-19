@@ -58,7 +58,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     SimpleExoPlayerView playerView;
     Toolbar toolbar;
     ListView mListView;
-    boolean isResume = false, isAudioFouced = false, isControlViewVisibility;
+    boolean isResume = false, isAudioFouced = false, isControlViewVisibile;
     HomeContract.VideoPlayer.Presenter presenter;
     Handler mHnadler = new Handler();
     Runnable hideListViewRunnable = new Runnable() {
@@ -186,7 +186,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         playerView.setControllerVisibilityListener(new PlaybackControlView.VisibilityListener() {
             @Override
             public void onVisibilityChange(int visibility) {
-                isControlViewVisibility = visibility == View.VISIBLE;
+                isControlViewVisibile = visibility == View.VISIBLE;
                 if (visibility == View.VISIBLE) {
                     showControllView();
                 } else {
@@ -447,10 +447,10 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Log.i(TAG, "onSingleTapConfirmed" + System.currentTimeMillis());
             boolean flag = consumeEpisodeListView();
-            if (!flag && isControlViewVisibility) {
-                playerView.hideController();
-            } else {
+            if (!flag && !isControlViewVisibile) {
                 playerView.showController();
+            } else {
+                playerView.hideController();
             }
             return flag;
         }
