@@ -187,7 +187,7 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
     }
 
     @Override
-    public void setLightVal(int val) {
+    public void setBrightnessVal(int val) {
         Log.i(TAG, "not implements yet");
     }
 

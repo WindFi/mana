@@ -112,7 +112,7 @@ public interface HomeContract {
 
             void showProgressDetaVal(int detaVal);
 
-            void showLightVal(int val);
+            void showBrightnessVal(int val);
         }
 
         interface Presenter extends IPresenter {
@@ -134,7 +134,7 @@ public interface HomeContract {
 
             void setVolumeVal(int val);
 
-            void setLightVal(int val);
+            void setBrightnessVal(int val);
 
             void seekTo(long detaVal);
         }

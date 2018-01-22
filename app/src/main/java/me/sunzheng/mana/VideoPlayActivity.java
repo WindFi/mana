@@ -14,7 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.view.GestureDetectorCompat;
@@ -27,9 +26,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
@@ -56,6 +57,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     public final static String TAG = VideoPlayActivity.class.getSimpleName();
     public final static String STR_CURRINT_INT = "current";
     public final static String STR_ITEMS_PARCEL = "items";
+    boolean isScrolling;
     SimpleExoPlayerView playerView;
     Toolbar toolbar;
     ListView mListView;
@@ -196,6 +198,9 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         playerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    isScrolling = false;
+                }
                 return gestureDetectorCompat.onTouchEvent(event);
             }
         });
@@ -307,6 +312,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     void showEpisodeListView() {
         mListView.setVisibility(View.VISIBLE);
+        playerView.hideController();
     }
 
     boolean consumeEpisodeListView() {
@@ -369,17 +375,16 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         showVolumeVal(currentVol);
     }
 
-    void setLight(int detaVal) {
-        try {
-            int currentBrightness = Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS);
-            currentBrightness += detaVal;
-            currentBrightness = currentBrightness < 256 ? currentBrightness : 255;
-            currentBrightness = currentBrightness > -1 ? currentBrightness : 0;
-            Settings.System.putInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, currentBrightness);
-            showVolumeVal(currentBrightness);
-        } catch (Settings.SettingNotFoundException e) {
-            e.printStackTrace();
-        }
+    void setBrightness(int detaVal) {
+        float currentBrightness = getWindow().getAttributes().screenBrightness * 255.f;
+        currentBrightness += detaVal;
+        currentBrightness = currentBrightness < 256 ? currentBrightness : 255;
+        currentBrightness = currentBrightness > -1 ? currentBrightness : 0;
+
+        WindowManager.LayoutParams layoutpars = getWindow().getAttributes();
+        layoutpars.screenBrightness = currentBrightness / 255.0f;
+        getWindow().setAttributes(layoutpars);
+        showBrightnessVal((int) currentBrightness);
     }
 
     @Override
@@ -389,7 +394,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     @Override
     public void showVolumeVal(int val) {
-        Log.i(TAG, "not implements");
+        Toast.makeText(this, "vol:" + val, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -398,8 +403,9 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     @Override
-    public void showLightVal(int val) {
+    public void showBrightnessVal(int val) {
         Log.i(TAG, "not implements");
+        Toast.makeText(this, "Brightness:" + val, Toast.LENGTH_SHORT).show();
     }
 
     void playerPlay() {
@@ -430,7 +436,10 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     public final class PresenterGestureDetector extends GestureDetector.SimpleOnGestureListener {
-        boolean isFling, isVertical, isLeft;
+        final static float MIN_VELOCITY = 320.0f;
+        final static int PIXEL_TO_UNIT = 1;
+        boolean isVertical, isLeft;
+        float sourceX, sourceY;
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -439,27 +448,39 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            if (!isFling) {
+            if (!isScrolling) {
                 isVertical = Math.abs(distanceX) < Math.abs(distanceY);
+                isScrolling = true;
+                sourceX = e1.getX();
+                sourceY = e1.getY();
                 if (isVertical) {
                     Point p = new Point();
                     getWindowManager().getDefaultDisplay().getSize(p);
                     isLeft = e1.getX() < p.x / 2;
                 }
             } else {
-                if (isVertical) {
-                    // TODO: 2018/1/19 seek drawing
+                if (!isVertical) {
+                    // TODO: 2018/1/19 seek to
                 } else {
+                    int unit = pixelToUnit(sourceY - e2.getY());
                     if (isLeft) {
-                        // TODO: 2018/1/19 Light
-                        setLight(0);
+                        // 2018/1/20  2018/1/19 brightness
+                        setBrightness(unit);
                     } else {
-                        // TODO: 2018/1/19 Vol
-                        setVolume(0);
+                        // 2018/1/19 Vol
+                        setVolume(unit);
                     }
                 }
             }
             return true;
+        }
+
+        private int pixelToUnit(float velocity) {
+            int result = (int) (velocity / MIN_VELOCITY * PIXEL_TO_UNIT);
+            if (Math.abs(result) > 0) {
+                sourceY += result * MIN_VELOCITY;
+            }
+            return result;
         }
 
         @Override
@@ -467,7 +488,9 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             if (isVertical) {
                 // TODO: 2018/1/19  seek to
             }
-            isFling = false;
+            sourceY = 0;
+            sourceX = 0;
+            isScrolling = false;
             isVertical = false;
             return true;
         }
@@ -489,12 +512,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                 playerView.hideController();
             }
             return flag;
-        }
-
-        @Override
-        public boolean onDoubleTapEvent(MotionEvent e) {
-            Log.i(TAG, "onDoubleTapEvent" + System.currentTimeMillis());
-            return false;
         }
     }
 }
