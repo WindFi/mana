@@ -113,6 +113,7 @@ public interface HomeContract {
             void showProgressDetaVal(int detaVal);
 
             void showBrightnessVal(int val);
+
         }
 
         interface Presenter extends IPresenter {

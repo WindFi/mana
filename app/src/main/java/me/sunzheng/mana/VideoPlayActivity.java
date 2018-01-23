@@ -19,6 +19,7 @@ import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -26,6 +27,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -35,10 +37,13 @@ import android.widget.Toast;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.util.Util;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
 
 import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.home.HomeApiService;
@@ -57,12 +62,28 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     public final static String TAG = VideoPlayActivity.class.getSimpleName();
     public final static String STR_CURRINT_INT = "current";
     public final static String STR_ITEMS_PARCEL = "items";
+    public final static long DEFAULT_HIDE_TIME = 500;
     SimpleExoPlayerView playerView;
     Toolbar toolbar;
     ListView mListView;
     boolean isResume = false, isAudioFouced = false, isControlViewVisibile;
+
+    ViewGroup progressViewGroup;
+    AppCompatTextView textViewPosition, textViewDuration;
+
+    StringBuilder formatBuilder = new StringBuilder();
+    Formatter formatter = new Formatter(formatBuilder, Locale.getDefault());
     HomeContract.VideoPlayer.Presenter presenter;
     Handler mHnadler = new Handler();
+    Runnable hideProgressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (progressViewGroup == null || progressViewGroup.getVisibility() != View.VISIBLE) {
+                return;
+            }
+            progressViewGroup.setVisibility(View.GONE);
+        }
+    };
     Runnable hideListViewRunnable = new Runnable() {
         @Override
         public void run() {
@@ -178,6 +199,10 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         playerView = (SimpleExoPlayerView) findViewById(R.id.player);
         mListView = (ListView) findViewById(R.id.list);
 
+        progressViewGroup = (ViewGroup) findViewById(R.id.progress_viewgroup);
+        textViewDuration = (AppCompatTextView) findViewById(R.id.exo_duration_textview);
+        textViewPosition = (AppCompatTextView) findViewById(R.id.exo_position_textview);
+
         final GestureDetectorCompat gestureDetectorCompat = new GestureDetectorCompat(this, new PresenterGestureDetector());
 
         presenter = new EpisodePresenterImpl(this, ((App) getApplication()).getRetrofit().create(HomeApiService.Episode.class), ((App) getApplication()).getRetrofit().create(HomeApiService.Bangumi.class), new LocalDataRepository(items, current));
@@ -185,7 +210,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             @Override
             public void onVisibilityChange(int visibility) {
                 isControlViewVisibile = visibility == View.VISIBLE;
-                if (visibility == View.VISIBLE) {
+                if (isControlViewVisibile) {
                     showControllView();
                 } else {
                     hideControlView();
@@ -294,6 +319,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     void hideControlView() {
         getSupportActionBar().hide();
+        playerView.hideController();
         playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -304,11 +330,12 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     void showControllView() {
         getSupportActionBar().show();
+        playerView.showController();
     }
 
     void showEpisodeListView() {
         mListView.setVisibility(View.VISIBLE);
-        playerView.hideController();
+        hideControlView();
     }
 
     boolean consumeEpisodeListView() {
@@ -371,6 +398,11 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         showVolumeVal(currentVol);
     }
 
+    void setCurrentPosition(float detaVal) {
+        long position = playerView.getPlayer().getCurrentPosition() + (long) detaVal * 5000;
+        playerView.getPlayer().seekTo(position);
+        showProgressDetaVal(0);
+    }
     void setBrightness(float detaVal) {
         float per = detaVal / 16 * 255.0f;
         float currentBrightness = getWindow().getAttributes().screenBrightness * 255.f;
@@ -396,7 +428,11 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     @Override
     public void showProgressDetaVal(int detaVal) {
-        Log.i(TAG, "not implements");
+        mHnadler.removeCallbacks(hideProgressRunnable);
+        progressViewGroup.setVisibility(View.VISIBLE);
+        textViewPosition.setText(getStringForTime(playerView.getPlayer().getCurrentPosition()));
+        textViewDuration.setText(getStringForTime(playerView.getPlayer().getDuration()));
+        mHnadler.postDelayed(hideProgressRunnable, DEFAULT_HIDE_TIME);
     }
 
     @Override
@@ -432,6 +468,10 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         audioManager.abandonAudioFocus(audioFocusChangeListener);
     }
 
+    private String getStringForTime(long timeMs) {
+        return Util.getStringForTime(formatBuilder, formatter, timeMs);
+    }
+
     public final class PresenterGestureDetector extends GestureDetector.SimpleOnGestureListener {
         final static float MEASURE_LENGTH = 72.0f;
         //max 16
@@ -461,7 +501,11 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             } else {
                 if (!isVertical) {
                     // TODO: 2018/1/19 seek to
-
+                    float unit = (int) ((e2.getX() - sourceX) / MEASURE_LENGTH);
+                    if (Math.abs(unit) > 0) {
+                        sourceX = e2.getX();
+                    }
+                    setCurrentPosition(unit);
                 } else {
                     float unit = (int) ((sourceY - e2.getY()) / MEASURE_LENGTH);
                     if (Math.abs(unit) > 0) {
@@ -478,6 +522,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             }
             return true;
         }
+
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             if (isVertical) {
@@ -502,9 +547,9 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             Log.i(TAG, "onSingleTapConfirmed" + System.currentTimeMillis());
             boolean flag = consumeEpisodeListView();
             if (!flag && !isControlViewVisibile) {
-                playerView.showController();
+                showControllView();
             } else {
-                playerView.hideController();
+                hideControlView();
             }
             return flag;
         }
