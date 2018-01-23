@@ -57,7 +57,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     public final static String TAG = VideoPlayActivity.class.getSimpleName();
     public final static String STR_CURRINT_INT = "current";
     public final static String STR_ITEMS_PARCEL = "items";
-    boolean isScrolling;
     SimpleExoPlayerView playerView;
     Toolbar toolbar;
     ListView mListView;
@@ -198,9 +197,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         playerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_UP) {
-                    isScrolling = false;
-                }
                 return gestureDetectorCompat.onTouchEvent(event);
             }
         });
@@ -365,7 +361,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         return _items;
     }
 
-    void setVolume(int detaVal) {
+    void setVolume(float detaVal) {
         int currentVol = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
         int maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         currentVol += detaVal;
@@ -375,9 +371,10 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         showVolumeVal(currentVol);
     }
 
-    void setBrightness(int detaVal) {
+    void setBrightness(float detaVal) {
+        float per = detaVal / 16 * 255.0f;
         float currentBrightness = getWindow().getAttributes().screenBrightness * 255.f;
-        currentBrightness += detaVal;
+        currentBrightness += per;
         currentBrightness = currentBrightness < 256 ? currentBrightness : 255;
         currentBrightness = currentBrightness > -1 ? currentBrightness : 0;
 
@@ -436,13 +433,16 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     public final class PresenterGestureDetector extends GestureDetector.SimpleOnGestureListener {
-        final static float MIN_VELOCITY = 320.0f;
-        final static int PIXEL_TO_UNIT = 1;
+        final static float MEASURE_LENGTH = 72.0f;
+        //max 16
+        final static int SPLITE_UNIT = 1;
         boolean isVertical, isLeft;
-        float sourceX, sourceY;
+        volatile float sourceX, sourceY;
+        boolean isScrolling;
 
         @Override
         public boolean onDown(MotionEvent e) {
+            isScrolling = false;
             return true;
         }
 
@@ -461,8 +461,12 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             } else {
                 if (!isVertical) {
                     // TODO: 2018/1/19 seek to
+
                 } else {
-                    int unit = pixelToUnit(sourceY - e2.getY());
+                    float unit = (int) ((sourceY - e2.getY()) / MEASURE_LENGTH);
+                    if (Math.abs(unit) > 0) {
+                        sourceY = e2.getY();
+                    }
                     if (isLeft) {
                         // 2018/1/20  2018/1/19 brightness
                         setBrightness(unit);
@@ -474,15 +478,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             }
             return true;
         }
-
-        private int pixelToUnit(float velocity) {
-            int result = (int) (velocity / MIN_VELOCITY * PIXEL_TO_UNIT);
-            if (Math.abs(result) > 0) {
-                sourceY += result * MIN_VELOCITY;
-            }
-            return result;
-        }
-
         @Override
         public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
             if (isVertical) {

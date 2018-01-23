@@ -8,4 +8,5 @@
     <color name="favorite_watching">@color/blue</color>
     <color name="favorite_pause">@color/brow</color>
     <color name="favorite_abanoned">@color/grey</color>
+    <color name="colorLightPrimary">#d78f8c</color>
 </resources>
