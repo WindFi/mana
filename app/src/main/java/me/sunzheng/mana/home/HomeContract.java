@@ -133,11 +133,8 @@ public interface HomeContract {
 
             void tryPlayItem(int position);
 
-            void setVolumeVal(int val);
+            void seekTo(float detaVal);
 
-            void setBrightnessVal(int val);
-
-            void seekTo(long detaVal);
         }
     }
 }

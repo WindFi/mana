@@ -104,8 +104,10 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
                 .subscribe(new Consumer<EpisodeWrapper>() {
                     @Override
                     public void accept(EpisodeWrapper episodeWrapper) throws Exception {
-                        if (watchProgressLoggerDelegator != null)
+                        if (watchProgressLoggerDelegator != null) {
+                            compositeDisposable.add(watchProgressLoggerDelegator.logWatchProgressNow());
                             watchProgressLoggerDelegator.recycle();
+                        }
                         compositeDisposable.clear();
 
                         watchProgressLoggerDelegator = new WatchProgressLoggerDelegator(episodeWrapper.getBangumiId(), episodeWrapper.getId(), bApiService, player);
@@ -182,18 +184,10 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
     }
 
     @Override
-    public void setVolumeVal(int val) {
-        Log.i(TAG, "not implements yet");
-    }
-
-    @Override
-    public void setBrightnessVal(int val) {
-        Log.i(TAG, "not implements yet");
-    }
-
-    @Override
-    public void seekTo(long detaVal) {
-        player.seekTo(player.getCurrentPosition() + detaVal);
+    public void seekTo(float detaVal) {
+        long position = player.getCurrentPosition() + (long) detaVal * 5000;
+        player.seekTo(position);
+        mView.showProgressDetaVal(0);
     }
 
     final class WatchProgressLoggerDelegator {

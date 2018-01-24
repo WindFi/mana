@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Point;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -194,7 +195,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         savedInstanceState = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
         int current = savedInstanceState.getInt(STR_CURRINT_INT, 0);
 
-        Parcelable[] parcelableArray = savedInstanceState.getParcelableArray(STR_ITEMS_PARCEL);
+        final Parcelable[] parcelableArray = savedInstanceState.getParcelableArray(STR_ITEMS_PARCEL);
         MediaDescriptionCompat[] items = convertFromParcelable(parcelableArray);
 
         playerView = (SimpleExoPlayerView) findViewById(R.id.player);
@@ -229,13 +230,13 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                presenter.tryPlayItem(((ListView) parent).getCheckedItemPosition());
+                if (((ListView) parent).getCheckedItemPosition() != position) {
+                    presenter.tryPlayItem(((ListView) parent).getCheckedItemPosition());
+                }
                 hideEpisodeListView();
             }
-
         });
         presenter.tryPlayItem(current);
-//        mListView.performItemClick(mListView.getAdapter().getView(current,null,null),current,0);
         initAudioManager();
         presenter.getPlayer().addListener(new Player.DefaultEventListener() {
             @Override
@@ -249,13 +250,17 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                             finish();
                         break;
                     default:
-
                 }
             }
         });
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(broadcastReceiver, intentFilter);
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     private boolean isAutoPlay() {
@@ -380,7 +385,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             super.onBackPressed();
     }
 
-
     private MediaDescriptionCompat[] convertFromParcelable(Parcelable[] parcelables) {
         MediaDescriptionCompat[] _items = new MediaDescriptionCompat[parcelables.length];
         for (int i = 0; i < _items.length; i++) {
@@ -400,9 +404,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     void setCurrentPosition(float detaVal) {
-        long position = playerView.getPlayer().getCurrentPosition() + (long) detaVal * 5000;
-        playerView.getPlayer().seekTo(position);
-        showProgressDetaVal(0);
+        presenter.seekTo(detaVal);
     }
 
     void setBrightness(float detaVal) {
@@ -469,7 +471,13 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             presenter.unsubscribe();
         }
         // TODO: 2018/1/16 Need version compation for api 26
-        audioManager.abandonAudioFocus(audioFocusChangeListener);
+        if (Build.VERSION.SDK_INT < 26) {
+            audioManager.abandonAudioFocus(audioFocusChangeListener);
+        } else {
+            AudioFocusRequest.Builder builder = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN);
+            builder.setOnAudioFocusChangeListener(audioFocusChangeListener);
+            audioManager.abandonAudioFocusRequest(builder.build());
+        }
     }
 
     private String getStringForTime(long timeMs) {
@@ -524,19 +532,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             }
             return true;
         }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            if (isVertical) {
-                // TODO: 2018/1/19  seek to
-            }
-            sourceY = 0;
-            sourceX = 0;
-            isScrolling = false;
-            isVertical = false;
-            return true;
-        }
-
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
