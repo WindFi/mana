@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.view.GestureDetectorCompat;
@@ -403,9 +404,13 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         playerView.getPlayer().seekTo(position);
         showProgressDetaVal(0);
     }
+
     void setBrightness(float detaVal) {
         float per = detaVal / 16 * 255.0f;
         float currentBrightness = getWindow().getAttributes().screenBrightness * 255.f;
+        if (currentBrightness < 0) {
+            currentBrightness = (float) Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 0);
+        }
         currentBrightness += per;
         currentBrightness = currentBrightness < 256 ? currentBrightness : 255;
         currentBrightness = currentBrightness > -1 ? currentBrightness : 0;
@@ -423,7 +428,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     @Override
     public void showVolumeVal(int val) {
-        Toast.makeText(this, "vol:" + val, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, String.format(getString(R.string.vol), String.valueOf(val)), Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -437,8 +442,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     @Override
     public void showBrightnessVal(int val) {
-        Log.i(TAG, "not implements");
-        Toast.makeText(this, "Brightness:" + val, Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, String.format(getString(R.string.brightness), String.valueOf(val)), Toast.LENGTH_SHORT).show();
     }
 
     void playerPlay() {

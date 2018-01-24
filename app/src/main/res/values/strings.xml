@@ -142,4 +142,7 @@
         <item>@string/title_abanoned_status</item>
     </string-array>
     <string name="title_start">getstart</string>
+
+    <string name="vol">Vol : %1$s</string>
+    <string name="brightness">Brightness : %1$s</string>
 </resources>
