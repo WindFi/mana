@@ -109,10 +109,10 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
                             watchProgressLoggerDelegator.recycle();
                         }
                         compositeDisposable.clear();
-
                         watchProgressLoggerDelegator = new WatchProgressLoggerDelegator(episodeWrapper.getBangumiId(), episodeWrapper.getId(), bApiService, player);
                         compositeDisposable.add(watchProgressLoggerDelegator.logWatchProgressWithInternal(5000));
                         VideoFile videoFile = episodeWrapper.getVideoFiles().get(0);
+
                         MediaSource source = new ExtractorMediaSource(Uri.parse(videoFile.getUrl()), dataSourceFactory, extractorFactory, null, null);
                         player.prepare(source);
                         play();
