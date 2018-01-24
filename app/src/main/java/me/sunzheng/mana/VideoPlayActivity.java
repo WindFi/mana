@@ -482,7 +482,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         final static int SPLITE_UNIT = 1;
         boolean isVertical, isLeft;
         volatile float sourceX, sourceY;
-        boolean isScrolling;
+        boolean isScrolling, isValid;
 
         @Override
         public boolean onDown(MotionEvent e) {
@@ -497,14 +497,14 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                 isScrolling = true;
                 sourceX = e1.getX();
                 sourceY = e1.getY();
-                if (isVertical) {
-                    Point p = new Point();
-                    getWindowManager().getDefaultDisplay().getSize(p);
-                    isLeft = e1.getX() < p.x / 2;
-                }
+                Point p = new Point();
+                getWindowManager().getDefaultDisplay().getSize(p);
+                isValid = e1.getX() > 21 && e1.getX() < p.x - 21;
+                isLeft = isVertical && e1.getX() < p.x / 2;
             } else {
                 if (!isVertical) {
-                    // TODO: 2018/1/19 seek to
+                    if (!isValid)
+                        return true;
                     float unit = (int) ((e2.getX() - sourceX) / MEASURE_LENGTH);
                     if (Math.abs(unit) > 0) {
                         sourceX = e2.getX();
@@ -516,10 +516,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                         sourceY = e2.getY();
                     }
                     if (isLeft) {
-                        // 2018/1/20  2018/1/19 brightness
                         setBrightness(unit);
                     } else {
-                        // 2018/1/19 Vol
                         setVolume(unit);
                     }
                 }
