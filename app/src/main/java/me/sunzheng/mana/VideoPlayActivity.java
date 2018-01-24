@@ -174,7 +174,13 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                 }
             }
         };
-        audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if (Build.VERSION.SDK_INT < 26) {
+            audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        } else {
+            AudioFocusRequest.Builder builder = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN);
+            builder.setOnAudioFocusChangeListener(audioFocusChangeListener);
+            audioManager.requestAudioFocus(builder.build());
+        }
     }
 
     @Override
