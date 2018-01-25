@@ -31,6 +31,8 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -91,7 +93,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         public void run() {
             if (mListView == null || mListView.getVisibility() != View.VISIBLE)
                 return;
-            mListView.setVisibility(View.GONE);
+            hideViewWithAnimation(mListView);
         }
     };
     AudioManager audioManager;
@@ -188,6 +190,24 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         if (mListView == null || position >= mListView.getCount())
             return;
         mListView.setItemChecked(position, isChecked);
+    }
+
+    void showViewWithAnimation(View view) {
+        if (view == null || view.getVisibility() == View.VISIBLE) {
+            return;
+        }
+        view.setVisibility(View.GONE);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
+        view.setAnimation(animation);
+    }
+
+    void hideViewWithAnimation(View view) {
+        if (view == null || view.getVisibility() != View.VISIBLE) {
+            return;
+        }
+        view.setVisibility(View.GONE);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_right);
+        view.setAnimation(animation);
     }
 
     @Override
@@ -289,8 +309,13 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     @Override
-    public void setAdapter(BaseAdapter adapter) {
+    public void setEpisodeAdapter(BaseAdapter adapter) {
         mListView.setAdapter(adapter);
+    }
+
+    @Override
+    public void setLabelsAdapter(BaseAdapter adapter) {
+        Log.i(TAG, "not implements");
     }
 
     @Override
@@ -348,6 +373,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     void showEpisodeListView() {
         mListView.setVisibility(View.VISIBLE);
         hideControlView();
+        showViewWithAnimation(mListView);
     }
 
     boolean consumeEpisodeListView() {

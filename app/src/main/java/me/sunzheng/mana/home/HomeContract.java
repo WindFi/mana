@@ -104,7 +104,7 @@ public interface HomeContract {
         interface View extends IView<Presenter> {
             void setPlayItemChecked(int position, boolean isChecked);
 
-            void setAdapter(BaseAdapter adapter);
+            void setEpisodeAdapter(BaseAdapter adapter);
 
             void setMediaTitle(CharSequence title);
 
@@ -113,6 +113,8 @@ public interface HomeContract {
             void showProgressDetaVal(int detaVal);
 
             void showBrightnessVal(int val);
+
+            void setLabelsAdapter(BaseAdapter adapter);
 
         }
 

@@ -82,7 +82,7 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         player = ExoPlayerFactory.newSimpleInstance(mView.getContext(), trackSelector);
         dataSourceFactory = new DefaultDataSourceFactory(mView.getContext(), Util.getUserAgent(mView.getContext(), mView.getContext().getPackageName()), mDefaultBandwidthMeter);
-        mView.setAdapter(new MediaDescriptionAdapter(mView.getContext(), dataRepository));
+        mView.setEpisodeAdapter(new MediaDescriptionAdapter(mView.getContext(), dataRepository));
     }
 
     @Override
