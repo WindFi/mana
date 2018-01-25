@@ -112,7 +112,9 @@ public interface HomeContract {
 
             void showBrightnessVal(int val);
 
-            void setLabelsAdapter(BaseAdapter adapter);
+            void setSourceItemChecked(int position, boolean isChecked);
+
+            void setSourceAdapter(BaseAdapter adapter);
 
         }
 

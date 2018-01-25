@@ -8,7 +8,8 @@
     <string name="title_activity_settings">@string/action_settings</string>
     <string name="title_activity_favorites">Favorites</string>
     <string name="title_settings">@string/action_settings</string>
-    <string name="title_video_list">Episodes</string>
+    <string name="title_action_video_list">Episodes</string>
+    <string name="title_action_source">S</string>
     <!-- Strings related to Settings -->
 
     <!-- Example General settings -->
