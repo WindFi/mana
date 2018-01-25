@@ -31,7 +31,16 @@
     </android.support.design.widget.AppBarLayout>
 
     <ListView
-        android:id="@+id/list"
+        android:id="@+id/video_episode_list"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:background="#77000000"
+        android:choiceMode="singleChoice"
+        android:visibility="gone" />
+
+    <ListView
+        android:id="@+id/video_source_list"
         android:layout_width="240dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"

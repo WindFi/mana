@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/action_list"
-        android:title="@string/title_video_list"
+        android:orderInCategory="100"
+        android:title="@string/title_action_video_list"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_source"
+        android:orderInCategory="99"
+        android:title="@string/title_action_source"
+        app:actionProviderClass="android.support.v7.widget.AppCompatTextView"
         app:showAsAction="always" />
 </menu>
