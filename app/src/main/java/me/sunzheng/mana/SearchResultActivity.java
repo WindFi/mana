@@ -62,6 +62,7 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
         });
         emptyView = findViewById(R.id.empty_content_textview);
         mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.search_swiperefreshlayout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         mSwipeRefreshLayout.setEnabled(false);
         mPresenter = new SearchPresenterImpl(this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Bangumi.class));
         setPresenter(mPresenter);

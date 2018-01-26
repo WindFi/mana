@@ -92,7 +92,7 @@
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
-    <style name="AppTheme.MyFavoritesActivity" />
+    <style name="AppTheme.MyFavoritesActivity" parent="AppTheme.NoActionBar" />
 
     <style name="AppTheme.LaunchActivity" />
 

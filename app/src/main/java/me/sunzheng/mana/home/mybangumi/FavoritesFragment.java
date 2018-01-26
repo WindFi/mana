@@ -58,6 +58,7 @@ public class FavoritesFragment extends Fragment implements HomeContract.MyBangum
         super.onViewCreated(view, savedInstanceState);
         mRecyclerView = view.findViewById(R.id.recycler_view);
         mSwipeRefreshLayout = view.findViewById(R.id.swiperefreshlayout);
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary);
         mSwipeRefreshLayout.setEnabled(false);
     }
 
