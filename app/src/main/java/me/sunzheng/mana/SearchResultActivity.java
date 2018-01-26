@@ -3,6 +3,7 @@ package me.sunzheng.mana;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.provider.SearchRecentSuggestions;
 import android.support.v4.view.MenuItemCompat;
@@ -100,11 +101,30 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
                     @Override
                     public boolean onQueryTextSubmit(String query) {
                         MenuItemCompat.collapseActionView(searchItem);
+                        mSearchView.setQuery(query, false);
                         return false;
                     }
 
                     @Override
                     public boolean onQueryTextChange(String newText) {
+                        return false;
+                    }
+                });
+                mSearchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
+                    @Override
+                    public boolean onSuggestionSelect(int position) {
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onSuggestionClick(int position) {
+                        Cursor c = mSearchView.getSuggestionsAdapter().getCursor();
+                        if (c == null || !c.moveToPosition(position))
+                            return false;
+                        int index = c.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1);
+                        if (index == -1)
+                            return false;
+                        mSearchView.setQuery(c.getString(index), false);
                         return false;
                     }
                 });
