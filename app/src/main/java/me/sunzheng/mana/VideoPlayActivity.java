@@ -196,7 +196,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         if (view == null || view.getVisibility() == View.VISIBLE) {
             return;
         }
-        view.setVisibility(View.GONE);
+        view.setVisibility(View.VISIBLE);
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
         view.setAnimation(animation);
     }
@@ -210,6 +210,9 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         view.setAnimation(animation);
     }
 
+    boolean listViewIsShowing() {
+        return mListView.getVisibility() == View.VISIBLE;
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -371,7 +374,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     void showEpisodeListView() {
-        mListView.setVisibility(View.VISIBLE);
         hideControlView();
         showViewWithAnimation(mListView);
     }
@@ -532,6 +534,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            if (listViewIsShowing())
+                return true;
             if (!isScrolling) {
                 isVertical = Math.abs(distanceX) < Math.abs(distanceY);
                 isScrolling = true;
