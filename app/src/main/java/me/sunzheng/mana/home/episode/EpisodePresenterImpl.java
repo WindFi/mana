@@ -178,6 +178,8 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
 
     @Override
     public void tryPlayItem(int position) {
+        if (position == dataRepository.getCurrentPosition())
+            return;
         mView.setPlayItemChecked(position, true);
         dataRepository.setCurrentPosition(position);
         playMediaFromEpisodeId(dataRepository.getItemByPosition(position).getMediaId());

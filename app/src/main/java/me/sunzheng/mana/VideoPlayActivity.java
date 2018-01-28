@@ -213,6 +213,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     boolean listViewIsShowing() {
         return mListView.getVisibility() == View.VISIBLE;
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -236,7 +237,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
         final GestureDetectorCompat gestureDetectorCompat = new GestureDetectorCompat(this, new PresenterGestureDetector());
 
-        presenter = new EpisodePresenterImpl(this, ((App) getApplication()).getRetrofit().create(HomeApiService.Episode.class), ((App) getApplication()).getRetrofit().create(HomeApiService.Bangumi.class), new LocalDataRepository(items, current));
+        presenter = new EpisodePresenterImpl(this, ((App) getApplication()).getRetrofit().create(HomeApiService.Episode.class), ((App) getApplication()).getRetrofit().create(HomeApiService.Bangumi.class), new LocalDataRepository(items));
         playerView.setControllerVisibilityListener(new PlaybackControlView.VisibilityListener() {
             @Override
             public void onVisibilityChange(int visibility) {
@@ -259,9 +260,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (((ListView) parent).getCheckedItemPosition() != position) {
-                    presenter.tryPlayItem(((ListView) parent).getCheckedItemPosition());
-                }
+                presenter.tryPlayItem(((ListView) parent).getCheckedItemPosition());
                 hideEpisodeListView();
             }
         });

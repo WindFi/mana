@@ -8,11 +8,10 @@ import android.support.v4.media.MediaDescriptionCompat;
 
 public class LocalDataRepository implements DataRepository {
     MediaDescriptionCompat[] items;
-    int current;
+    int current = -1;
 
-    public LocalDataRepository(MediaDescriptionCompat[] items, int current) {
+    public LocalDataRepository(MediaDescriptionCompat[] items) {
         this.items = items;
-        this.current = current;
     }
 
     @Override
