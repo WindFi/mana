@@ -34,7 +34,7 @@ task clean(type: Delete) {
 }
 ext {
     compileSdkVersion=27
-    buildToolsVersion = '26.0.3'
+    buildToolsVersion = '27.0.2'
     targetSdkVersion=27
     rxandroid2Version = '2.0.1'
     retrofit2Version = '2.3.0'
@@ -43,7 +43,7 @@ ext {
     supportMultidexVersion = '1.0.1'
     retrofitMockVersion = '2.2.0'
     retrofitAdapterVersion = '2.2.0'
-    supportLibraryVersion = '25.0.+'
+    supportLibraryVersion = '25.3.+'
     okhttpUrlConnectionVersion = '3.6.0'
     constraintlayoutVersion = '1.0.2'
     junitVersion = '4.12'
