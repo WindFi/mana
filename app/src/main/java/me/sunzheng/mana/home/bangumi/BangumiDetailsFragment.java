@@ -72,7 +72,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
 
     @Nullable
     @Override
-    public android.view.View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_bangumidetails, container, false);
     }
 
