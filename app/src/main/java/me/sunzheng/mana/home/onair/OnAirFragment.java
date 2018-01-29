@@ -57,8 +57,8 @@ public class OnAirFragment extends Fragment implements HomeContract.OnAir.View {
     public android.view.View onCreateView(LayoutInflater inflater, ViewGroup container,
                                           Bundle savedInstanceState) {
         android.view.View view = inflater.inflate(R.layout.fragment_item_list, container, false);
-        recyclerView = view.findViewById(R.id.list);
-        swipeRefreshLayout = view.findViewById(R.id.swiperefreshlayout);
+        recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.swiperefreshlayout);
         return view;
     }
 
