@@ -23,7 +23,6 @@
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
             android:theme="@style/AppTheme.MainActivity" />
         <activity
             android:name=".SettingsActivity"
@@ -66,7 +65,6 @@
         <activity
             android:name=".LaunchActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:launchMode="singleTask"
             android:theme="@style/AppTheme.LaunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -77,7 +75,7 @@
         <activity
             android:name=".VideoPlayActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:screenOrientation="landscape"
             android:theme="@style/AppTheme.VideoPlayActivity" />
 
