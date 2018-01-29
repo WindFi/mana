@@ -185,13 +185,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         }
     }
 
-    @Override
-    public void setPlayItemChecked(int position, boolean isChecked) {
-        if (mListView == null || position >= mListView.getCount())
-            return;
-        mListView.setItemChecked(position, isChecked);
-    }
-
     void showViewWithAnimation(View view) {
         if (view == null || view.getVisibility() == View.VISIBLE) {
             return;
@@ -264,7 +257,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                 hideEpisodeListView();
             }
         });
-        presenter.tryPlayItem(current);
+
         initAudioManager();
         presenter.getPlayer().addListener(new Player.DefaultEventListener() {
             @Override
@@ -272,10 +265,13 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                 super.onPlayerStateChanged(playWhenReady, playbackState);
                 switch (playbackState) {
                     case Player.STATE_ENDED:
-                        if (isAutoPlay() && !isListEnd())
-                            presenter.tryPlayItem(mListView.getCheckedItemPosition() + 1);
-                        else
+                        presenter.logWatchProgress();
+                        if (isAutoPlay() && !isListEnd()) {
+                            int position = mListView.getCheckedItemPosition() + 1;
+                            performItemClick(position);
+                        } else {
                             finish();
+                        }
                         break;
                     default:
                 }
@@ -284,6 +280,14 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(broadcastReceiver, intentFilter);
+        performItemClick(current);
+    }
+
+    void performItemClick(int position) {
+        if (mListView == null || mListView.getAdapter() == null) {
+            return;
+        }
+        mListView.performItemClick(mListView.getAdapter().getView(position, null, null), position, mListView.getAdapter().getItemId(position));
     }
 
     @Override
@@ -500,6 +504,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         if (broadcastReceiver != null)
             unregisterReceiver(broadcastReceiver);
         if (presenter != null) {
+            presenter.logWatchProgress();
             presenter.release();
             presenter.unsubscribe();
         }

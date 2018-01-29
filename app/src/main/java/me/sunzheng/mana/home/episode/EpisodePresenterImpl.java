@@ -105,7 +105,6 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
                     @Override
                     public void accept(EpisodeWrapper episodeWrapper) throws Exception {
                         if (watchProgressLoggerDelegator != null) {
-                            compositeDisposable.add(watchProgressLoggerDelegator.logWatchProgressNow());
                             watchProgressLoggerDelegator.recycle();
                         }
                         compositeDisposable.clear();
@@ -138,12 +137,18 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
     }
 
     @Override
+    public void logWatchProgress() {
+        if (watchProgressLoggerDelegator != null) {
+            compositeDisposable.add(watchProgressLoggerDelegator.logWatchProgressNow());
+        }
+    }
+
+    @Override
     public void release() {
         if (player == null)
             return;
         player.release();
         if (watchProgressLoggerDelegator != null) {
-            compositeDisposable.add(watchProgressLoggerDelegator.logWatchProgressNow());
             watchProgressLoggerDelegator.recycle();
         }
     }
@@ -180,7 +185,7 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
     public void tryPlayItem(int position) {
         if (position == dataRepository.getCurrentPosition())
             return;
-        mView.setPlayItemChecked(position, true);
+        logWatchProgress();
         dataRepository.setCurrentPosition(position);
         playMediaFromEpisodeId(dataRepository.getItemByPosition(position).getMediaId());
     }

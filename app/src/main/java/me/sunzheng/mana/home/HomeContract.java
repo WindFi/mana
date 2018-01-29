@@ -102,8 +102,6 @@ public interface HomeContract {
 
     interface VideoPlayer {
         interface View extends IView<Presenter> {
-            void setPlayItemChecked(int position, boolean isChecked);
-
             void setEpisodeAdapter(BaseAdapter adapter);
 
             void setMediaTitle(CharSequence title);
@@ -137,6 +135,7 @@ public interface HomeContract {
 
             void seekTo(float detaVal);
 
+            void logWatchProgress();
         }
     }
 }
