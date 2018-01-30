@@ -20,6 +20,8 @@
             android:layout_height="wrap_content"
             android:ems="16"
             android:hint="@string/hint_fragment_login_username"
+            android:imeOptions="actionNext"
+            android:inputType="text"
             android:maxLines="1" />
     </android.support.design.widget.TextInputLayout>
 
