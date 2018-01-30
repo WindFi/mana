@@ -199,13 +199,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         mSourceListView.setItemChecked(position, isChecked);
     }
 
-    @Override
-    public void setPlayItemChecked(int position, boolean isChecked) {
-        if (mEpisodeListView == null || position >= mEpisodeListView.getCount())
-            return;
-        mEpisodeListView.setItemChecked(position, isChecked);
-    }
-
     void showViewWithAnimation(View view) {
         if (view == null || view.getVisibility() == View.VISIBLE) {
             return;
@@ -247,7 +240,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
         final GestureDetectorCompat gestureDetectorCompat = new GestureDetectorCompat(this, new PresenterGestureDetector());
 
-        presenter = new EpisodePresenterImpl(this, ((App) getApplication()).getRetrofit().create(HomeApiService.Episode.class), ((App) getApplication()).getRetrofit().create(HomeApiService.Bangumi.class), new LocalDataRepository(items, current));
+        presenter = new EpisodePresenterImpl(this, ((App) getApplication()).getRetrofit().create(HomeApiService.Episode.class), ((App) getApplication()).getRetrofit().create(HomeApiService.Bangumi.class), new LocalDataRepository(items));
         playerView.setControllerVisibilityListener(new PlaybackControlView.VisibilityListener() {
             @Override
             public void onVisibilityChange(int visibility) {

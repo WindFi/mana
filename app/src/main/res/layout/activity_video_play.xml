@@ -38,6 +38,7 @@
         android:background="#77000000"
         android:choiceMode="singleChoice"
         android:visibility="gone" />
+
     <ListView
         android:id="@+id/video_source_list"
         android:layout_width="240dp"
