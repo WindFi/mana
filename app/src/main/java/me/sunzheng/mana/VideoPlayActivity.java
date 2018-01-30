@@ -276,7 +276,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                     case Player.STATE_ENDED:
                         presenter.logWatchProgress();
                         if (isAutoPlay() && !isListEnd()) {
-                            int position = mListView.getCheckedItemPosition() + 1;
+                            int position = mEpisodeListView.getCheckedItemPosition() + 1;
                             performItemClick(position);
                         } else {
                             finish();
@@ -293,10 +293,10 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     void performItemClick(int position) {
-        if (mListView == null || mListView.getAdapter() == null) {
+        if (mEpisodeListView == null || mEpisodeListView.getAdapter() == null) {
             return;
         }
-        mListView.performItemClick(mListView.getAdapter().getView(position, null, null), position, mListView.getAdapter().getItemId(position));
+        mEpisodeListView.performItemClick(mEpisodeListView.getAdapter().getView(position, null, null), position, mEpisodeListView.getAdapter().getItemId(position));
     }
 
     @Override
