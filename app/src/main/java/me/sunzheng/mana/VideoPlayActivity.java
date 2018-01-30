@@ -217,6 +217,9 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         view.setAnimation(animation);
     }
 
+    boolean listViewIsShowing() {
+        return mEpisodeListView.getVisibility() == View.VISIBLE;
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -267,7 +270,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                 hideEpisodeListView();
             }
         });
-
+        presenter.tryPlayItem(current);
         initAudioManager();
         presenter.getPlayer().addListener(new Player.DefaultEventListener() {
             @Override
@@ -631,7 +634,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Log.i(TAG, "onSingleTapConfirmed" + System.currentTimeMillis());
-            boolean flag = consumeEpisodeListView();
+            boolean flag = consumeEpisodeListView() || consumeSourceListView();
             if (!flag && !isControlViewVisibile) {
                 showControllView();
             } else {
