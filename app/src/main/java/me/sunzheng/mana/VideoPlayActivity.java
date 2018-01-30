@@ -69,7 +69,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     public final static long DEFAULT_HIDE_TIME = 500;
     SimpleExoPlayerView playerView;
     Toolbar toolbar;
-    ListView mEpisodeListView, mSourceListView;
+    ListView mListView;
     boolean isResume = false, isAudioFouced = false, isControlViewVisibile;
 
     ViewGroup progressViewGroup;
@@ -100,9 +100,9 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     Runnable hideListViewRunnable = new Runnable() {
         @Override
         public void run() {
-            if (mEpisodeListView == null || mEpisodeListView.getVisibility() != View.VISIBLE)
+            if (mListView == null || mListView.getVisibility() != View.VISIBLE)
                 return;
-            hideViewWithAnimation(mEpisodeListView);
+            hideViewWithAnimation(mListView);
         }
     };
     AudioManager audioManager;
@@ -194,11 +194,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         }
     }
 
-    @Override
-    public void setSourceItemChecked(int position, boolean isChecked) {
-        mSourceListView.setItemChecked(position, isChecked);
-    }
-
     void showViewWithAnimation(View view) {
         if (view == null || view.getVisibility() == View.VISIBLE) {
             return;
@@ -218,8 +213,9 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     boolean listViewIsShowing() {
-        return mEpisodeListView.getVisibility() == View.VISIBLE;
+        return mListView.getVisibility() == View.VISIBLE;
     }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -235,8 +231,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         MediaDescriptionCompat[] items = convertFromParcelable(parcelableArray);
 
         playerView = (SimpleExoPlayerView) findViewById(R.id.player);
-        mEpisodeListView = (ListView) findViewById(R.id.video_episode_list);
-        mSourceListView = (ListView) findViewById(R.id.video_source_list);
+        mListView = (ListView) findViewById(R.id.list);
+
         progressViewGroup = (ViewGroup) findViewById(R.id.progress_viewgroup);
         textViewDuration = (AppCompatTextView) findViewById(R.id.exo_duration_textview);
         textViewPosition = (AppCompatTextView) findViewById(R.id.exo_position_textview);
@@ -263,14 +259,14 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                 return gestureDetectorCompat.onTouchEvent(event);
             }
         });
-        mEpisodeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 presenter.tryPlayItem(((ListView) parent).getCheckedItemPosition());
                 hideEpisodeListView();
             }
         });
-        presenter.tryPlayItem(current);
+
         initAudioManager();
         presenter.getPlayer().addListener(new Player.DefaultEventListener() {
             @Override
@@ -314,7 +310,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     private boolean isListEnd() {
-        return mEpisodeListView.getCheckedItemPosition() >= mEpisodeListView.getCount() - 1;
+        return mListView.getCheckedItemPosition() >= mListView.getCount() - 1;
     }
 
     @Override
@@ -329,15 +325,17 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     @Override
     public void setEpisodeAdapter(BaseAdapter adapter) {
-        mEpisodeListView.setAdapter(adapter);
+        mListView.setAdapter(adapter);
+    }
+
+    @Override
+    public void setSourceItemChecked(int position, boolean isChecked) {
+
     }
 
     @Override
     public void setSourceAdapter(BaseAdapter adapter) {
-        Log.i(TAG, "not implements");
-        if (mSourceListView == null)
-            return;
-        mSourceListView.setAdapter(adapter);
+
     }
 
     @Override
@@ -393,22 +391,13 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     void showEpisodeListView() {
-        mEpisodeListView.setVisibility(View.VISIBLE);
         hideControlView();
-        showViewWithAnimation(mEpisodeListView);
+        showViewWithAnimation(mListView);
     }
 
     boolean consumeEpisodeListView() {
-        if (mEpisodeListView.getVisibility() == View.VISIBLE) {
+        if (mListView.getVisibility() == View.VISIBLE) {
             hideEpisodeListView();
-            return true;
-        }
-        return false;
-    }
-
-    boolean consumeSourceListView() {
-        if (mSourceListView.getVisibility() == View.VISIBLE) {
-            hideSourceList();
             return true;
         }
         return false;
@@ -437,24 +426,13 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         } else if (itemId == android.R.id.home) {
             super.onBackPressed();
             return true;
-        } else if (itemId == R.id.action_source) {
-            showSourceList();
-            return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    void showSourceList() {
-        showViewWithAnimation(null);
-    }
-
-    void hideSourceList() {
-        hideViewWithAnimation(null);
-    }
-
     @Override
     public void onBackPressed() {
-        if (!consumeEpisodeListView() || !consumeSourceListView())
+        if (!consumeEpisodeListView())
             super.onBackPressed();
     }
 
@@ -561,6 +539,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             presenter.release();
             presenter.unsubscribe();
         }
+        // TODO: 2018/1/16 Need version compation for api 26
         if (Build.VERSION.SDK_INT < 26) {
             audioManager.abandonAudioFocus(audioFocusChangeListener);
         } else {
@@ -634,7 +613,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         @Override
         public boolean onSingleTapConfirmed(MotionEvent e) {
             Log.i(TAG, "onSingleTapConfirmed" + System.currentTimeMillis());
-            boolean flag = consumeEpisodeListView() || consumeSourceListView();
+            boolean flag = consumeEpisodeListView();
             if (!flag && !isControlViewVisibile) {
                 showControllView();
             } else {
