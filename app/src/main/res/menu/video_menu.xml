@@ -10,6 +10,5 @@
         android:id="@+id/action_source"
         android:orderInCategory="99"
         android:title="@string/title_action_source"
-        app:actionProviderClass="android.support.v7.widget.AppCompatTextView"
         app:showAsAction="always" />
 </menu>
