@@ -97,6 +97,7 @@ public class SearchResultActivity extends AppCompatActivity implements HomeContr
         if (searchItem != null) {
             mSearchView = (SearchView) searchItem.getActionView();
             if (mSearchView != null) {
+                mSearchView.setMaxWidth(Integer.MAX_VALUE);
                 mSearchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
                 mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override

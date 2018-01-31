@@ -125,6 +125,7 @@ public class MainActivity extends AppCompatActivity
         if (searchItem != null) {
             final SearchView searchView = (SearchView) searchItem.getActionView();
             if (searchView != null) {
+                searchView.setMaxWidth(Integer.MAX_VALUE);
                 searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
                 searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                     @Override
