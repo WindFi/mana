@@ -36,7 +36,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
@@ -73,12 +73,21 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     boolean isResume = false, isAudioFouced = false, isControlViewVisibile;
 
     ViewGroup progressViewGroup;
+    View mVolView, mBrightnessView;
     AppCompatTextView textViewPosition, textViewDuration;
 
     StringBuilder formatBuilder = new StringBuilder();
     Formatter formatter = new Formatter(formatBuilder, Locale.getDefault());
     HomeContract.VideoPlayer.Presenter presenter;
     Handler mHnadler = new Handler();
+    Runnable hideHintRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mVolView == null || mVolView.getVisibility() != View.VISIBLE)
+                return;
+            mVolView.setVisibility(View.GONE);
+        }
+    };
     Runnable hideProgressRunnable = new Runnable() {
         @Override
         public void run() {
@@ -227,7 +236,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         progressViewGroup = (ViewGroup) findViewById(R.id.progress_viewgroup);
         textViewDuration = (AppCompatTextView) findViewById(R.id.exo_duration_textview);
         textViewPosition = (AppCompatTextView) findViewById(R.id.exo_position_textview);
-
+        mVolView = findViewById(R.id.videoplay_vol_textview);
         final GestureDetectorCompat gestureDetectorCompat = new GestureDetectorCompat(this, new PresenterGestureDetector());
 
         presenter = new EpisodePresenterImpl(this, ((App) getApplication()).getRetrofit().create(HomeApiService.Episode.class), ((App) getApplication()).getRetrofit().create(HomeApiService.Bangumi.class), new LocalDataRepository(items));
@@ -467,7 +476,15 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     @Override
     public void showVolumeVal(int val) {
-        Toast.makeText(this, String.format(getString(R.string.vol), String.valueOf(val)), Toast.LENGTH_SHORT).show();
+        if (mVolView == null)
+            throw new IllegalAccessError("no implements");
+        mHnadler.removeCallbacks(hideHintRunnable);
+        if (mVolView.getVisibility() != View.VISIBLE)
+            mVolView.setVisibility(View.VISIBLE);
+        if (mVolView instanceof TextView) {
+            ((TextView) mVolView).setText(String.format(getString(R.string.vol), String.valueOf(val)));
+        }
+        mHnadler.postDelayed(hideHintRunnable, DEFAULT_HIDE_TIME);
     }
 
     @Override
@@ -481,7 +498,16 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     @Override
     public void showBrightnessVal(int val) {
-        Toast.makeText(this, String.format(getString(R.string.brightness), String.valueOf(val)), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, String.format(getString(R.string.brightness), String.valueOf(val)), Toast.LENGTH_SHORT).show();
+        if (mVolView == null)
+            throw new IllegalAccessError("no implements");
+        mHnadler.removeCallbacks(hideHintRunnable);
+        if (mVolView.getVisibility() != View.VISIBLE)
+            mVolView.setVisibility(View.VISIBLE);
+        if (mVolView instanceof TextView) {
+            ((TextView) mVolView).setText(String.format(getString(R.string.brightness), String.valueOf(val)));
+        }
+        mHnadler.postDelayed(hideHintRunnable, DEFAULT_HIDE_TIME);
     }
 
     void playerPlay() {
