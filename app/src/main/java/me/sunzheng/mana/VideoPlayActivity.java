@@ -454,7 +454,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     void setBrightness(float detaVal) {
-        float per = detaVal / 16 * 255.0f;
+        float per = detaVal / 17 * 255.0f;
         float currentBrightness = getWindow().getAttributes().screenBrightness * 255.f;
         if (currentBrightness < 0) {
             currentBrightness = (float) Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 0);
@@ -505,7 +505,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         if (mVolView.getVisibility() != View.VISIBLE)
             mVolView.setVisibility(View.VISIBLE);
         if (mVolView instanceof TextView) {
-            ((TextView) mVolView).setText(String.format(getString(R.string.brightness), String.valueOf(val)));
+            ((TextView) mVolView).setText(String.format(getString(R.string.brightness), String.valueOf((int) ((val / 255.0f) * 100))));
         }
         mHnadler.postDelayed(hideHintRunnable, DEFAULT_HIDE_TIME);
     }
