@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Point;
+import android.media.AudioFocusRequest;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -13,11 +15,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.media.MediaDescriptionCompat;
 import android.support.v4.view.GestureDetectorCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.preference.PreferenceManager;
+import android.support.v7.widget.AppCompatTextView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -25,18 +29,25 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.util.Util;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Formatter;
 import java.util.List;
+import java.util.Locale;
 
 import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.home.HomeApiService;
@@ -55,18 +66,43 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     public final static String TAG = VideoPlayActivity.class.getSimpleName();
     public final static String STR_CURRINT_INT = "current";
     public final static String STR_ITEMS_PARCEL = "items";
+    public final static long DEFAULT_HIDE_TIME = 500;
     SimpleExoPlayerView playerView;
     Toolbar toolbar;
     ListView mListView;
     boolean isResume = false, isAudioFouced = false, isControlViewVisibile;
+
+    ViewGroup progressViewGroup;
+    View mVolView, mBrightnessView;
+    AppCompatTextView textViewPosition, textViewDuration;
+
+    StringBuilder formatBuilder = new StringBuilder();
+    Formatter formatter = new Formatter(formatBuilder, Locale.getDefault());
     HomeContract.VideoPlayer.Presenter presenter;
     Handler mHnadler = new Handler();
+    Runnable hideHintRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (mVolView == null || mVolView.getVisibility() != View.VISIBLE)
+                return;
+            mVolView.setVisibility(View.GONE);
+        }
+    };
+    Runnable hideProgressRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (progressViewGroup == null || progressViewGroup.getVisibility() != View.VISIBLE) {
+                return;
+            }
+            progressViewGroup.setVisibility(View.GONE);
+        }
+    };
     Runnable hideListViewRunnable = new Runnable() {
         @Override
         public void run() {
             if (mListView == null || mListView.getVisibility() != View.VISIBLE)
                 return;
-            mListView.setVisibility(View.GONE);
+            hideViewWithAnimation(mListView);
         }
     };
     AudioManager audioManager;
@@ -149,14 +185,35 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                 }
             }
         };
-        audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        if (Build.VERSION.SDK_INT < 26) {
+            audioManager.requestAudioFocus(audioFocusChangeListener, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        } else {
+            AudioFocusRequest.Builder builder = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN);
+            builder.setOnAudioFocusChangeListener(audioFocusChangeListener);
+            audioManager.requestAudioFocus(builder.build());
+        }
     }
 
-    @Override
-    public void setPlayItemChecked(int position, boolean isChecked) {
-        if (mListView == null || position >= mListView.getCount())
+    void showViewWithAnimation(View view) {
+        if (view == null || view.getVisibility() == View.VISIBLE) {
             return;
-        mListView.setItemChecked(position, isChecked);
+        }
+        view.setVisibility(View.VISIBLE);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
+        view.setAnimation(animation);
+    }
+
+    void hideViewWithAnimation(View view) {
+        if (view == null || view.getVisibility() != View.VISIBLE) {
+            return;
+        }
+        view.setVisibility(View.GONE);
+        Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_right);
+        view.setAnimation(animation);
+    }
+
+    boolean listViewIsShowing() {
+        return mListView.getVisibility() == View.VISIBLE;
     }
 
     @Override
@@ -167,27 +224,27 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
-
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
-
         savedInstanceState = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
         int current = savedInstanceState.getInt(STR_CURRINT_INT, 0);
 
-        Parcelable[] parcelableArray = savedInstanceState.getParcelableArray(STR_ITEMS_PARCEL);
+        final Parcelable[] parcelableArray = savedInstanceState.getParcelableArray(STR_ITEMS_PARCEL);
         MediaDescriptionCompat[] items = convertFromParcelable(parcelableArray);
 
         playerView = (SimpleExoPlayerView) findViewById(R.id.player);
         mListView = (ListView) findViewById(R.id.list);
 
+        progressViewGroup = (ViewGroup) findViewById(R.id.progress_viewgroup);
+        textViewDuration = (AppCompatTextView) findViewById(R.id.exo_duration_textview);
+        textViewPosition = (AppCompatTextView) findViewById(R.id.exo_position_textview);
+        mVolView = findViewById(R.id.videoplay_vol_textview);
         final GestureDetectorCompat gestureDetectorCompat = new GestureDetectorCompat(this, new PresenterGestureDetector());
 
-        presenter = new EpisodePresenterImpl(this, ((App) getApplication()).getRetrofit().create(HomeApiService.Episode.class), ((App) getApplication()).getRetrofit().create(HomeApiService.Bangumi.class), new LocalDataRepository(items, current));
+        presenter = new EpisodePresenterImpl(this, ((App) getApplication()).getRetrofit().create(HomeApiService.Episode.class), ((App) getApplication()).getRetrofit().create(HomeApiService.Bangumi.class), new LocalDataRepository(items));
         playerView.setControllerVisibilityListener(new PlaybackControlView.VisibilityListener() {
             @Override
             public void onVisibilityChange(int visibility) {
                 isControlViewVisibile = visibility == View.VISIBLE;
-                if (visibility == View.VISIBLE) {
+                if (isControlViewVisibile) {
                     showControllView();
                 } else {
                     hideControlView();
@@ -195,6 +252,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             }
         });
         playerView.setPlayer(presenter.getPlayer());
+        playerView.setKeepScreenOn(true);
         playerView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -207,13 +265,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                 presenter.tryPlayItem(((ListView) parent).getCheckedItemPosition());
                 hideEpisodeListView();
             }
-
         });
-        // TODO: 2018/1/4 choice
-        presenter.tryPlayItem(current);
-//        ----------test code-----------
-//        mListView.performItemClick()
-//        ------------------------------
+
         initAudioManager();
         presenter.getPlayer().addListener(new Player.DefaultEventListener() {
             @Override
@@ -221,19 +274,34 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                 super.onPlayerStateChanged(playWhenReady, playbackState);
                 switch (playbackState) {
                     case Player.STATE_ENDED:
-                        if (isAutoPlay() && !isListEnd())
-                            presenter.tryPlayItem(mListView.getCheckedItemPosition() + 1);
-                        else
+                        presenter.logWatchProgress();
+                        if (isAutoPlay() && !isListEnd()) {
+                            int position = mListView.getCheckedItemPosition() + 1;
+                            performItemClick(position);
+                        } else {
                             finish();
+                        }
                         break;
                     default:
-
                 }
             }
         });
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(broadcastReceiver, intentFilter);
+        performItemClick(current);
+    }
+
+    void performItemClick(int position) {
+        if (mListView == null || mListView.getAdapter() == null) {
+            return;
+        }
+        mListView.performItemClick(mListView.getAdapter().getView(position, null, null), position, mListView.getAdapter().getItemId(position));
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     private boolean isAutoPlay() {
@@ -256,8 +324,13 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     @Override
-    public void setAdapter(BaseAdapter adapter) {
+    public void setEpisodeAdapter(BaseAdapter adapter) {
         mListView.setAdapter(adapter);
+    }
+
+    @Override
+    public void setLabelsAdapter(BaseAdapter adapter) {
+        Log.i(TAG, "not implements");
     }
 
     @Override
@@ -298,6 +371,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     void hideControlView() {
         getSupportActionBar().hide();
+        playerView.hideController();
         playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -308,10 +382,12 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     void showControllView() {
         getSupportActionBar().show();
+        playerView.showController();
     }
 
     void showEpisodeListView() {
-        mListView.setVisibility(View.VISIBLE);
+        hideControlView();
+        showViewWithAnimation(mListView);
     }
 
     boolean consumeEpisodeListView() {
@@ -355,13 +431,42 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             super.onBackPressed();
     }
 
-
     private MediaDescriptionCompat[] convertFromParcelable(Parcelable[] parcelables) {
         MediaDescriptionCompat[] _items = new MediaDescriptionCompat[parcelables.length];
         for (int i = 0; i < _items.length; i++) {
             _items[i] = (MediaDescriptionCompat) parcelables[i];
         }
         return _items;
+    }
+
+    void setVolume(float detaVal) {
+        int currentVol = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        int maxVol = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        currentVol += detaVal;
+        currentVol = currentVol > maxVol ? maxVol : currentVol;
+        currentVol = currentVol > -1 ? currentVol : 0;
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVol, 0);
+        showVolumeVal(currentVol);
+    }
+
+    void setCurrentPosition(float detaVal) {
+        presenter.seekTo(detaVal);
+    }
+
+    void setBrightness(float detaVal) {
+        float per = detaVal / 17 * 255.0f;
+        float currentBrightness = getWindow().getAttributes().screenBrightness * 255.f;
+        if (currentBrightness < 0) {
+            currentBrightness = (float) Settings.System.getInt(getContentResolver(), Settings.System.SCREEN_BRIGHTNESS, 0);
+        }
+        currentBrightness += per;
+        currentBrightness = currentBrightness < 256 ? currentBrightness : 255;
+        currentBrightness = currentBrightness > -1 ? currentBrightness : 0;
+
+        WindowManager.LayoutParams layoutpars = getWindow().getAttributes();
+        layoutpars.screenBrightness = currentBrightness / 255.0f;
+        getWindow().setAttributes(layoutpars);
+        showBrightnessVal((int) currentBrightness);
     }
 
     @Override
@@ -371,17 +476,38 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     @Override
     public void showVolumeVal(int val) {
-        Log.i(TAG, "not implements");
+        if (mVolView == null)
+            throw new IllegalAccessError("no implements");
+        mHnadler.removeCallbacks(hideHintRunnable);
+        if (mVolView.getVisibility() != View.VISIBLE)
+            mVolView.setVisibility(View.VISIBLE);
+        if (mVolView instanceof TextView) {
+            ((TextView) mVolView).setText(String.format(getString(R.string.vol), String.valueOf(val)));
+        }
+        mHnadler.postDelayed(hideHintRunnable, DEFAULT_HIDE_TIME);
     }
 
     @Override
     public void showProgressDetaVal(int detaVal) {
-        Log.i(TAG, "not implements");
+        mHnadler.removeCallbacks(hideProgressRunnable);
+        progressViewGroup.setVisibility(View.VISIBLE);
+        textViewPosition.setText(getStringForTime(playerView.getPlayer().getCurrentPosition()));
+        textViewDuration.setText(getStringForTime(playerView.getPlayer().getDuration()));
+        mHnadler.postDelayed(hideProgressRunnable, DEFAULT_HIDE_TIME);
     }
 
     @Override
-    public void showLightVal(int val) {
-        Log.i(TAG, "not implements");
+    public void showBrightnessVal(int val) {
+//        Toast.makeText(this, String.format(getString(R.string.brightness), String.valueOf(val)), Toast.LENGTH_SHORT).show();
+        if (mVolView == null)
+            throw new IllegalAccessError("no implements");
+        mHnadler.removeCallbacks(hideHintRunnable);
+        if (mVolView.getVisibility() != View.VISIBLE)
+            mVolView.setVisibility(View.VISIBLE);
+        if (mVolView instanceof TextView) {
+            ((TextView) mVolView).setText(String.format(getString(R.string.brightness), String.valueOf((int) ((val / 255.0f) * 100))));
+        }
+        mHnadler.postDelayed(hideHintRunnable, DEFAULT_HIDE_TIME);
     }
 
     void playerPlay() {
@@ -404,38 +530,74 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         if (broadcastReceiver != null)
             unregisterReceiver(broadcastReceiver);
         if (presenter != null) {
+            presenter.logWatchProgress();
             presenter.release();
             presenter.unsubscribe();
         }
         // TODO: 2018/1/16 Need version compation for api 26
-        audioManager.abandonAudioFocus(audioFocusChangeListener);
+        if (Build.VERSION.SDK_INT < 26) {
+            audioManager.abandonAudioFocus(audioFocusChangeListener);
+        } else {
+            AudioFocusRequest.Builder builder = new AudioFocusRequest.Builder(AudioManager.AUDIOFOCUS_GAIN);
+            builder.setOnAudioFocusChangeListener(audioFocusChangeListener);
+            audioManager.abandonAudioFocusRequest(builder.build());
+        }
+    }
+
+    private String getStringForTime(long timeMs) {
+        return Util.getStringForTime(formatBuilder, formatter, timeMs);
     }
 
     public final class PresenterGestureDetector extends GestureDetector.SimpleOnGestureListener {
+        final static float MEASURE_LENGTH = 72.0f;
+        //max 16
+        final static int SPLITE_UNIT = 1;
+        boolean isVertical, isLeft;
+        volatile float sourceX, sourceY;
+        boolean isScrolling, isValid;
+
         @Override
         public boolean onDown(MotionEvent e) {
+            isScrolling = false;
             return true;
         }
 
         @Override
         public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-            return true;
-        }
-
-        @Override
-        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-            if (Math.abs(velocityX) > Math.abs(velocityY)) {
-                // TODO: 2018/1/15  seek
+            if (listViewIsShowing())
+                return true;
+            if (!isScrolling) {
+                isVertical = Math.abs(distanceX) < Math.abs(distanceY);
+                isScrolling = true;
+                sourceX = e1.getX();
+                sourceY = e1.getY();
+                Point p = new Point();
+                getWindowManager().getDefaultDisplay().getSize(p);
+                isValid = e1.getX() > 21 && e1.getX() < p.x - 21;
+                isLeft = isVertical && e1.getX() < p.x / 2;
             } else {
-                if (e1.getRawX() < 100 / 2) {
-                    // TODO: 2018/1/15 light 
+                if (!isVertical) {
+                    if (!isValid)
+                        return true;
+                    float unit = (int) ((e2.getX() - sourceX) / MEASURE_LENGTH);
+                    if (Math.abs(unit) > 0) {
+                        sourceX = e2.getX();
+                    }
+                    setCurrentPosition(unit);
                 } else {
-                    // TODO: 2018/1/15 volume
+                    float unit = (int) ((sourceY - e2.getY()) / MEASURE_LENGTH);
+                    if (Math.abs(unit) > 0) {
+                        sourceY = e2.getY();
+                    }
+                    if (isLeft) {
+                        setBrightness(unit);
+                    } else {
+                        setVolume(unit);
+                    }
                 }
             }
             return true;
         }
-
 
         @Override
         public boolean onDoubleTap(MotionEvent e) {
@@ -448,17 +610,11 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             Log.i(TAG, "onSingleTapConfirmed" + System.currentTimeMillis());
             boolean flag = consumeEpisodeListView();
             if (!flag && !isControlViewVisibile) {
-                playerView.showController();
+                showControllView();
             } else {
-                playerView.hideController();
+                hideControlView();
             }
             return flag;
-        }
-
-        @Override
-        public boolean onDoubleTapEvent(MotionEvent e) {
-            Log.i(TAG, "onDoubleTapEvent" + System.currentTimeMillis());
-            return false;
         }
     }
 }

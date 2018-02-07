@@ -102,9 +102,7 @@ public interface HomeContract {
 
     interface VideoPlayer {
         interface View extends IView<Presenter> {
-            void setPlayItemChecked(int position, boolean isChecked);
-
-            void setAdapter(BaseAdapter adapter);
+            void setEpisodeAdapter(BaseAdapter adapter);
 
             void setMediaTitle(CharSequence title);
 
@@ -112,7 +110,10 @@ public interface HomeContract {
 
             void showProgressDetaVal(int detaVal);
 
-            void showLightVal(int val);
+            void showBrightnessVal(int val);
+
+            void setLabelsAdapter(BaseAdapter adapter);
+
         }
 
         interface Presenter extends IPresenter {
@@ -132,11 +133,9 @@ public interface HomeContract {
 
             void tryPlayItem(int position);
 
-            void setVolumeVal(int val);
+            void seekTo(float detaVal);
 
-            void setLightVal(int val);
-
-            void seekTo(long detaVal);
+            void logWatchProgress();
         }
     }
 }

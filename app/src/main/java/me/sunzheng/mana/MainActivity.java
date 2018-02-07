@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.NavigationView;
@@ -121,36 +122,43 @@ public class MainActivity extends AppCompatActivity
         getMenuInflater().inflate(R.menu.main, menu);
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-
-        SearchView searchView = null;
         if (searchItem != null) {
-            searchView = (SearchView) searchItem.getActionView();
-        }
-        if (searchView != null) {
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            final SearchView searchView = (SearchView) searchItem.getActionView();
+            if (searchView != null) {
+                searchView.setMaxWidth(Integer.MAX_VALUE);
+                searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        MenuItemCompat.collapseActionView(searchItem);
+
+                        return false;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        return false;
+                    }
+                });
+            }
+            searchView.setOnSuggestionListener(new SearchView.OnSuggestionListener() {
                 @Override
-                public boolean onQueryTextSubmit(String query) {
-                    MenuItemCompat.collapseActionView(searchItem);
+                public boolean onSuggestionSelect(int position) {
                     return false;
                 }
 
                 @Override
-                public boolean onQueryTextChange(String newText) {
+                public boolean onSuggestionClick(int position) {
+                    Cursor c = searchView.getSuggestionsAdapter().getCursor();
+                    if (c == null || !c.moveToPosition(position))
+                        return false;
+                    int index = c.getColumnIndex(SearchManager.SUGGEST_COLUMN_TEXT_1);
+                    if (index == -1)
+                        return false;
+                    searchView.setQuery(c.getString(index), false);
                     return false;
                 }
             });
-//            SearchViewCompat.setOnQueryTextListener(searchView, new SearchViewCompat.OnQueryTextListener() {
-//                @Override
-//                public boolean onQueryTextSubmit(String query) {
-//                    return false;
-//                }
-//
-//                @Override
-//                public boolean onQueryTextChange(String newText) {
-//                    return false;
-//                }
-//            });
         }
         return super.onCreateOptionsMenu(menu);
     }

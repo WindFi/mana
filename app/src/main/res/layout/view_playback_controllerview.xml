@@ -14,7 +14,11 @@
         <com.google.android.exoplayer2.ui.DefaultTimeBar
             android:id="@id/exo_progress"
             android:layout_width="match_parent"
-            android:layout_height="13dp" />
+            android:layout_height="13dp"
+            app:buffered_color="@color/colorLightPrimary"
+            app:played_color="@color/colorPrimaryDark"
+            app:scrubber_color="@color/colorPrimaryDark"
+            app:unplayed_color="@android:color/darker_gray" />
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -23,59 +27,46 @@
             app:layout_constraintTop_toBottomOf="@+id/exo_progress">
 
             <ImageButton
-                android:id="@id/exo_prev"
-                style="@style/ExoMediaButton.Previous"
-                app:layout_constraintStart_toStartOf="parent" />
+                android:id="@id/exo_play"
+                style="@style/ExoMediaButton.Play"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageButton
+                android:id="@id/exo_pause"
+                style="@style/ExoMediaButton.Pause"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <android.support.v7.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintStart_toEndOf="@id/exo_prev">
+                android:layout_height="match_parent"
+                android:paddingEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent">
 
-                <ImageButton
-                    android:id="@id/exo_play"
-                    style="@style/ExoMediaButton.Play" />
-
-                <ImageButton
-                    android:id="@id/exo_pause"
-                    style="@style/ExoMediaButton.Pause" />
-
-                <android.support.v7.widget.LinearLayoutCompat
-                    android:layout_width="match_parent"
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@id/exo_position"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_gravity="end|right|center_vertical"
-                    android:gravity="end|right">
+                    android:gravity="center_vertical"
+                    android:textColor="@android:color/white"
+                    tools:text="00:00" />
 
-                    <android.support.v7.widget.AppCompatTextView
-                        android:id="@id/exo_position"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:textColor="@android:color/white"
-                        tools:text="00:00" />
+                <android.support.v7.widget.AppCompatTextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:text="/"
+                    android:textColor="@android:color/white" />
 
-                    <android.support.v7.widget.AppCompatTextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:text="/"
-                        android:textColor="@android:color/white" />
-
-                    <android.support.v7.widget.AppCompatTextView
-                        android:id="@id/exo_duration"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:textColor="@android:color/white"
-                        tools:text="00:00" />
-                </android.support.v7.widget.LinearLayoutCompat>
+                <android.support.v7.widget.AppCompatTextView
+                    android:id="@id/exo_duration"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:textColor="@android:color/white"
+                    tools:text="00:00" />
             </android.support.v7.widget.LinearLayoutCompat>
-
-            <ImageButton
-                android:id="@id/exo_next"
-                style="@style/ExoMediaButton.Next"
-                app:layout_constraintEnd_toEndOf="parent" />
         </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>

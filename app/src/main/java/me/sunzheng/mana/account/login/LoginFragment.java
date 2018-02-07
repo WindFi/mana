@@ -11,7 +11,9 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
@@ -35,6 +37,7 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
     private TextInputEditText loginUserNameEditText;
     private TextInputEditText loginPassWordEditText;
     private AppCompatCheckBox checkBox;
+
     public LoginFragment() {
         // Required empty public constructor
     }
@@ -58,15 +61,17 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
     }
 
     @Override
-    public android.view.View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                          Bundle savedInstanceState) {
-        android.view.View view = inflater.inflate(R.layout.fragment_login, container, false);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_login, container, false);
         loginUserNameEditText = (TextInputEditText) view.findViewById(R.id.login_username_textinputedittext);
         loginPassWordEditText = (TextInputEditText) view.findViewById(R.id.login_passowrd_textinputedittext);
         ((AppCompatButton) view.findViewById(android.R.id.button1)).setOnClickListener(new android.view.View.OnClickListener() {
             @Override
             public void onClick(android.view.View v) {
                 try {
+                    InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     mPresenter.login(loginUserNameEditText.getText().toString(), loginPassWordEditText.getText().toString(), checkBox.isChecked());
                 } catch (IllegalArgumentException e) {
                     showToast(e.getLocalizedMessage());

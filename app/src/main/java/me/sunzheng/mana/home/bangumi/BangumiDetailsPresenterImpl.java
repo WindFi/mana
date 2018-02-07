@@ -52,19 +52,12 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
         Disposable disposable = dataRespository.query()
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .doOnError(new Consumer<Throwable>() {
-                    @Override
-                    public void accept(Throwable throwable) throws Exception {
-                        mView.showProgressIntractor(false);
-                    }
-                })
                 .doOnComplete(new Action() {
                     @Override
                     public void run() throws Exception {
                         mView.showProgressIntractor(false);
                     }
-                })
-                .doOnNext(new Consumer<BangumiDetailWrapper>() {
+                }).subscribe(new Consumer<BangumiDetailWrapper>() {
                     @Override
                     public void accept(BangumiDetailWrapper bangumiDetailWrapper) throws Exception {
                         final BangumiDetails mBangumiDetails = bangumiDetailWrapper.getBangumiDetails();
@@ -103,7 +96,12 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                             }
                         });
                     }
-                }).subscribe();
+                }, new Consumer<Throwable>() {
+                    @Override
+                    public void accept(Throwable throwable) throws Exception {
+                        mView.showProgressIntractor(false);
+                    }
+                });
         mView.showProgressIntractor(true);
         completable.add(disposable);
     }

@@ -5,7 +5,7 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@android:color/white</item>
         <item name="autoCompleteTextViewStyle">@style/SuggestionAutoCompleteTextViewStyle</item>
         <item name="textAppearanceSearchResultTitle">@style/SuggestionTitleStyle</item>
         <item name="colorButtonNormal">@color/colorPrimary</item>
@@ -78,5 +78,39 @@
     <style name="TextAppearance.Image.Title" parent="TextAppearance.AppCompat">
         <item name="android:textColor">@android:color/white</item>
         <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="AppTheme.MainActivity" parent="AppTheme.NoActionBar" />
+
+    <style name="AppTheme.BangumiDetailsActivity" parent="AppTheme.NoActionBar.NoStatusBar">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+    <style name="AppTheme.SearchResultActivity" parent="AppTheme.NoActionBar" />
+
+    <style name="AppTheme.LoginActivity">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+    <style name="AppTheme.MyFavoritesActivity" parent="AppTheme.NoActionBar" />
+
+    <style name="AppTheme.LaunchActivity" />
+
+    <style name="AppTheme.VideoPlayActivity" parent="AppTheme.NoActionBar.FullScreen" />
+
+    <style name="AppTheme.SettingsActivity">
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+    <style name="Widget" />
+
+    <style name="Widget.AppTheme" />
+
+    <style name="Widget.AppTheme.TextView" />
+
+    <style name="Widget.AppTheme.TextView.VideoPlayHint" parent="Widget">
+        <item name="android:alpha">0.7</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:background">@android:color/black</item>
     </style>
 </resources>

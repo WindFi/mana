@@ -47,7 +47,7 @@ public class BangumiDetailsActivity extends AppCompatActivity {
             finish();
         fragment = BangumiDetailsFragment.newInstance(savedInstanceState);
         fragment.setPresenter(new BangumiDetailsPresenterImpl(fragment, new DataRespositoryImpl(this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Bangumi.class), savedInstanceState.getString(ARGS_ID_STR))));
-        getSupportFragmentManager().beginTransaction().replace(R.id.contentPanel, fragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.contentPanel, fragment).commit();
     }
 
     @Override
