@@ -45,9 +45,9 @@
 
         <android.support.v7.widget.AppCompatTextView
             android:id="@+id/videoplay_vol_textview"
+            style="@style/Widget.AppTheme.TextView.VideoPlayHint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/black"
             android:textColor="@android:color/white"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -58,9 +58,9 @@
 
         <android.support.v7.widget.LinearLayoutCompat
             android:id="@+id/progress_viewgroup"
+            style="@style/Widget.AppTheme.TextView.VideoPlayHint"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@android:color/black"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"

@@ -101,4 +101,16 @@
     <style name="AppTheme.SettingsActivity">
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
+
+    <style name="Widget" />
+
+    <style name="Widget.AppTheme" />
+
+    <style name="Widget.AppTheme.TextView" />
+
+    <style name="Widget.AppTheme.TextView.VideoPlayHint" parent="Widget">
+        <item name="android:alpha">0.7</item>
+        <item name="android:padding">8dp</item>
+        <item name="android:background">@android:color/black</item>
+    </style>
 </resources>
