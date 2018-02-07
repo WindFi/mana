@@ -87,7 +87,6 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
                 .subscribe(new Consumer<SearchResultWrapper>() {
                     @Override
                     public void accept(SearchResultWrapper searchResultWrapper) throws Exception {
-                        // TODO: 2017/7/24  loadmore
                         if (searchResultWrapper != null && searchResultWrapper.getTotal() > 0L) {
                             list.addAll(searchResultWrapper.getData());
                             mView.notifyDataSetChanged();
