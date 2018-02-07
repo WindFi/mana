@@ -35,7 +35,6 @@ public class OnAirFragment extends Fragment implements HomeContract.OnAir.View {
     public OnAirFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static OnAirFragment newInstance(int type) {
         OnAirFragment fragment = new OnAirFragment();
