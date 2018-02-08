@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <group android:checkableBehavior="single">
+    <group
+        android:id="@+id/nav_top"
+        android:checkableBehavior="single">
         <item
             android:id="@+id/nav_history"
             android:icon="@drawable/ic_menu_recent_history"
@@ -10,24 +11,21 @@
         <!--android:id="@+id/nav_bangumi"-->
         <!--android:icon="@drawable/ic_menu_bangumi"-->
         <!--android:title="@string/title_nav_bangumi" />-->
-
     </group>
-
-    <item android:title="Communicate">
-        <menu>
-            <item
-                android:id="@+id/nav_settings"
-                android:icon="@drawable/ic_menu_manage"
-                android:title="@string/title_nav_settings" />
-            <item
-                android:id="@+id/nav_feedback"
-                android:icon="@drawable/ic_menu_feedback_24px"
-                android:title="@string/title_feedback" />
-            <item
-                android:id="@+id/nav_exit"
-                android:icon="@drawable/ic_menu_exit_24dp"
-                android:title="@string/title_nav_logout" />
-        </menu>
-    </item>
-
+    <group
+        android:id="@+id/nav_bottom"
+        android:checkableBehavior="none">
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="@string/title_nav_settings" />
+        <item
+            android:id="@+id/nav_feedback"
+            android:icon="@drawable/ic_menu_feedback_24px"
+            android:title="@string/title_nav_feedback" />
+        <item
+            android:id="@+id/nav_exit"
+            android:icon="@drawable/ic_menu_exit_24dp"
+            android:title="@string/title_nav_logout" />
+    </group>
 </menu>
