@@ -7,6 +7,7 @@
     <string name="action_settings">Settings</string>
     <string name="title_activity_settings">@string/action_settings</string>
     <string name="title_activity_favorites">Favorites</string>
+    <string name="title_activity_feedback">Feedback</string>
     <string name="title_settings">@string/action_settings</string>
     <string name="title_action_video_list">Episodes</string>
     <string name="title_action_source">S</string>
@@ -91,6 +92,7 @@
     <string name="title_history">Favorites</string>
     <string name="title_logout">Sign Out</string>
     <string name="title_bangumi">Bangumi</string>
+    <string name="title_feedback">Send feedback</string>
     <!-- Strings related to login -->
     <string name="prompt_email" translatable="false">Email</string>
     <string name="prompt_password" translatable="false">Password (optional)</string>
