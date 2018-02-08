@@ -5,4 +5,5 @@
     <string name="title_nav_logout" translatable="false">@string/title_logout</string>
     <string name="title_nav_settings" translatable="false">@string/title_settings</string>
     <string name="title_nav_bangumi" translatable="false">@string/title_bangumi</string>
+    <string name="title_nav_feedback" translatable="false">@string/title_feedback</string>
 </resources>
