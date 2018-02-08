@@ -98,6 +98,8 @@
 
     <style name="AppTheme.VideoPlayActivity" parent="AppTheme.NoActionBar.FullScreen" />
 
+    <style name="AppTheme.FeedbackActivity" parent="AppTheme.NoActionBar" />
+
     <style name="AppTheme.SettingsActivity">
         <item name="colorAccent">@color/colorPrimary</item>
     </style>

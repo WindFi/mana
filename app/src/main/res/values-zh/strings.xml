@@ -39,5 +39,7 @@
     <string name="pref_description_auto_play">当前播放完成后自动播放下一集</string>
     <string name="vol">音量 : %1$s</string>
     <string name="brightness">亮度 : %1$s</string>
+    <string name="title_feedback">发送反馈</string>
+    <string name="title_activity_feedback">反馈</string>
     <string name="title_action_source">源</string>
 </resources>

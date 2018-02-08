@@ -217,6 +217,15 @@ public class MainActivity extends AppCompatActivity
                     finish();
                 }
             }, CLICK_DELAY_MILLIONSECONDS);
+        } else if (id == R.id.nav_feedback) {
+            intent.setComponent(new ComponentName(this, FeedbackActivity.class));
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (intent.getComponent() != null)
+                        startActivity(intent);
+                }
+            }, CLICK_DELAY_MILLIONSECONDS);
         }
         return false;
     }
