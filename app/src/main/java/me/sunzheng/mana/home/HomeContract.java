@@ -112,8 +112,6 @@ public interface HomeContract {
 
             void showBrightnessVal(int val);
 
-            void setSourceItemChecked(int position, boolean isChecked);
-
             void setSourceAdapter(BaseAdapter adapter);
 
         }
@@ -138,6 +136,8 @@ public interface HomeContract {
             void seekTo(float detaVal);
 
             void logWatchProgress();
+
+            void onSourceChoice(int position);
         }
     }
 }

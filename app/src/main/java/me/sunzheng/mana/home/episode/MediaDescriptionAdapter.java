@@ -31,7 +31,7 @@ public class MediaDescriptionAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return dataRepository.getCount();
+        return dataRepository.getEpisodeCount();
     }
 
     @Override

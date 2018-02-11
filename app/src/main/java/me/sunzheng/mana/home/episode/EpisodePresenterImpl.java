@@ -2,6 +2,8 @@ package me.sunzheng.mana.home.episode;
 
 import android.net.Uri;
 import android.util.Log;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
@@ -31,6 +33,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import me.sunzheng.mana.R;
 import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.core.VideoFile;
 import me.sunzheng.mana.home.HomeApiService;
@@ -104,17 +107,8 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
                 .subscribe(new Consumer<EpisodeWrapper>() {
                     @Override
                     public void accept(EpisodeWrapper episodeWrapper) throws Exception {
-                        if (watchProgressLoggerDelegator != null) {
-                            watchProgressLoggerDelegator.recycle();
-                        }
-                        compositeDisposable.clear();
-                        watchProgressLoggerDelegator = new WatchProgressLoggerDelegator(episodeWrapper.getBangumiId(), episodeWrapper.getId(), bApiService, player);
-                        compositeDisposable.add(watchProgressLoggerDelegator.logWatchProgressWithInternal(5000));
-                        VideoFile videoFile = episodeWrapper.getVideoFiles().get(0);
-
-                        MediaSource source = new ExtractorMediaSource(Uri.parse(videoFile.getUrl()), dataSourceFactory, extractorFactory, null, null);
-                        player.prepare(source);
-                        play();
+                        onPreparePlayItem(episodeWrapper);
+                        playItem();
                         mView.setMediaTitle(episodeWrapper.getEpisodeNo() + "");
                     }
                 }, new Consumer<Throwable>() {
@@ -124,6 +118,28 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
                     }
                 });
         compositeDisposable.add(disposable);
+    }
+
+    void onPreparePlayItem(EpisodeWrapper episodeWrapper) {
+        if (watchProgressLoggerDelegator != null) {
+            watchProgressLoggerDelegator.recycle();
+        }
+        compositeDisposable.clear();
+        watchProgressLoggerDelegator = new WatchProgressLoggerDelegator(episodeWrapper.getBangumiId(), episodeWrapper.getId(), bApiService, player);
+        compositeDisposable.add(watchProgressLoggerDelegator.logWatchProgressWithInternal(5000));
+        dataRepository.clearVideoFiles();
+        for (VideoFile item : episodeWrapper.getVideoFiles()) {
+            dataRepository.addVideoFile(item);
+        }
+        BaseAdapter adapter = new ArrayAdapter<String>(mView.getContext(), R.layout.item_source_listview, R.id.title, dataRepository.getSourceLabels());
+        mView.setSourceAdapter(adapter);
+    }
+
+    void playItem() {
+        VideoFile videoFile = dataRepository.getVideoFileItem(dataRepository.getCurrentSourcePosition());
+        MediaSource source = new ExtractorMediaSource(Uri.parse(videoFile.getUrl()), dataSourceFactory, extractorFactory, null, null);
+        player.prepare(source);
+        play();
     }
 
     @Override
@@ -141,6 +157,15 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
         if (watchProgressLoggerDelegator != null) {
             compositeDisposable.add(watchProgressLoggerDelegator.logWatchProgressNow());
         }
+    }
+
+    @Override
+    public void onSourceChoice(int position) {
+        if (dataRepository.getCurrentSourcePosition() == position || position > dataRepository.getVideoFilesCount() - 1)
+            return;
+        dataRepository.setCurrentPosition(position);
+        // TODO: 2018/2/11 wait....
+        playItem();
     }
 
     @Override
@@ -273,4 +298,5 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
             player = null;
         }
     }
+
 }
