@@ -73,7 +73,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     boolean isResume = false, isAudioFouced = false, isControlViewVisibile;
 
     ViewGroup progressViewGroup;
-    View mVolView, mBrightnessView;
+    View mVolView, mBrightnessView, mSourceRootView;
     AppCompatTextView textViewPosition, textViewDuration;
 
     StringBuilder formatBuilder = new StringBuilder();
@@ -215,7 +215,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     boolean listViewIsShowing() {
         // TODO: 2018/2/7 SourceListView
 //        return mEpisodeListView.getVisibility() == View.VISIBLE || mSourceListView.getVisibility() == View.VISIBLE;
-        return mEpisodeListView.getVisibility() == View.VISIBLE;
+        return mEpisodeListView.getVisibility() == View.VISIBLE || mSourceRootView.getVisibility() == View.VISIBLE;
     }
 
     @Override
@@ -233,8 +233,12 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         MediaDescriptionCompat[] items = convertFromParcelable(parcelableArray);
 
         playerView = (SimpleExoPlayerView) findViewById(R.id.player);
-        mEpisodeListView = (ListView) findViewById(R.id.list);
-
+        mVolView = findViewById(R.id.videoplay_vol_textview);
+        mEpisodeListView = (ListView) findViewById(R.id.video_episode_list);
+//      ----------------source list---------------------
+        mSourceRootView = findViewById(R.id.source_list_root);
+        mSourceListView = (ListView) findViewById(R.id.source_list);
+//      ----------------end-----------------------------
         progressViewGroup = (ViewGroup) findViewById(R.id.progress_viewgroup);
         textViewDuration = (AppCompatTextView) findViewById(R.id.exo_duration_textview);
         textViewPosition = (AppCompatTextView) findViewById(R.id.exo_position_textview);
@@ -263,12 +267,19 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         });
 
         mEpisodeListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 presenter.tryPlayItem(((ListView) parent).getCheckedItemPosition());
                 hideEpisodeListView();
             }
         });
-
+        mSourceListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                presenter.onSourceChoice(((ListView) parent).getCheckedItemPosition());
+                hideSourceListView();
+            }
+        });
         initAudioManager();
         presenter.getPlayer().addListener(new Player.DefaultEventListener() {
             @Override
@@ -279,7 +290,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                         presenter.logWatchProgress();
                         if (isAutoPlay() && !isListEnd()) {
                             int position = mEpisodeListView.getCheckedItemPosition() + 1;
-                            performItemClick(position);
+                            performEpisodeItemClick(position);
                         } else {
                             finish();
                         }
@@ -291,14 +302,18 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(broadcastReceiver, intentFilter);
-        performItemClick(current);
+        performEpisodeItemClick(current);
     }
 
-    void performItemClick(int position) {
+    void performEpisodeItemClick(int position) {
         if (mEpisodeListView == null || mEpisodeListView.getAdapter() == null) {
             return;
         }
         mEpisodeListView.performItemClick(mEpisodeListView.getAdapter().getView(position, null, null), position, mEpisodeListView.getAdapter().getItemId(position));
+    }
+
+    void performSourceItemClick(int position) {
+
     }
 
     @Override
@@ -331,13 +346,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     @Override
-    public void setSourceItemChecked(int position, boolean isChecked) {
-
-    }
-
-    @Override
     public void setSourceAdapter(BaseAdapter adapter) {
-
+        mSourceListView.setAdapter(adapter);
     }
 
     @Override
@@ -401,6 +411,9 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         if (mEpisodeListView.getVisibility() == View.VISIBLE) {
             hideEpisodeListView();
             return true;
+        } else if (mSourceRootView.getVisibility() == View.VISIBLE) {
+            hideSourceListView();
+            return true;
         }
         return false;
     }
@@ -411,6 +424,19 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     void hideEpisodeListView(long delayMillisecond) {
         mHnadler.postDelayed(hideListViewRunnable, delayMillisecond);
+    }
+
+    void showSourceListView() {
+        if (mSourceRootView == null || mSourceRootView.getVisibility() == View.VISIBLE)
+            return;
+        hideControlView();
+        showViewWithAnimation(mSourceRootView);
+    }
+
+    void hideSourceListView() {
+        if (mSourceRootView == null || mSourceRootView.getVisibility() != View.VISIBLE)
+            return;
+        hideViewWithAnimation(mSourceRootView);
     }
 
     @Override
@@ -427,6 +453,9 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             return true;
         } else if (itemId == android.R.id.home) {
             super.onBackPressed();
+            return true;
+        } else if (itemId == R.id.action_source) {
+            showSourceListView();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -623,4 +652,5 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             return flag;
         }
     }
+
 }
