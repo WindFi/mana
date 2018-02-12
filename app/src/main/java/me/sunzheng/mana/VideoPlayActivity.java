@@ -213,8 +213,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     boolean listViewIsShowing() {
-        // TODO: 2018/2/7 SourceListView
-//        return mEpisodeListView.getVisibility() == View.VISIBLE || mSourceListView.getVisibility() == View.VISIBLE;
         return mEpisodeListView.getVisibility() == View.VISIBLE || mSourceRootView.getVisibility() == View.VISIBLE;
     }
 
@@ -313,7 +311,10 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     void performSourceItemClick(int position) {
-
+        if (mSourceListView == null || mSourceListView.getAdapter() == null) {
+            return;
+        }
+        mSourceListView.performItemClick(mSourceListView.getAdapter().getView(position, null, null), position, mEpisodeListView.getAdapter().getItemId(position));
     }
 
     @Override

@@ -52,6 +52,7 @@ public class LocalDataRepository implements DataRepository {
     public void clearVideoFiles() {
         labelMaps.clear();
         videoFiles.clear();
+        currentSource = -1;
     }
 
     @Override

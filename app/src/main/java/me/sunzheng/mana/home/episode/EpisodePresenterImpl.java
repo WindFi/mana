@@ -3,7 +3,6 @@ package me.sunzheng.mana.home.episode;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.ArrayAdapter;
-import android.widget.BaseAdapter;
 
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
@@ -58,6 +57,7 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
     DataSource.Factory dataSourceFactory;
     ExtractorsFactory extractorFactory = new DefaultExtractorsFactory();
     WatchProgressLoggerDelegator watchProgressLoggerDelegator;
+    ArrayAdapter labelsAdapter;
 
     public EpisodePresenterImpl(HomeContract.VideoPlayer.View view, HomeApiService.Episode eApiService, HomeApiService.Bangumi bApiService, DataRepository dataRepository) {
         this.eApiService = eApiService;
@@ -85,7 +85,9 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         player = ExoPlayerFactory.newSimpleInstance(mView.getContext(), trackSelector);
         dataSourceFactory = new DefaultDataSourceFactory(mView.getContext(), Util.getUserAgent(mView.getContext(), mView.getContext().getPackageName()), mDefaultBandwidthMeter);
+        labelsAdapter = new ArrayAdapter<String>(mView.getContext(), R.layout.item_source_listview, R.id.title);
         mView.setEpisodeAdapter(new MediaDescriptionAdapter(mView.getContext(), dataRepository));
+        mView.setSourceAdapter(labelsAdapter);
     }
 
     @Override
@@ -131,8 +133,9 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
         for (VideoFile item : episodeWrapper.getVideoFiles()) {
             dataRepository.addVideoFile(item);
         }
-        BaseAdapter adapter = new ArrayAdapter<String>(mView.getContext(), R.layout.item_source_listview, R.id.title, dataRepository.getSourceLabels());
-        mView.setSourceAdapter(adapter);
+        labelsAdapter.clear();
+        labelsAdapter.addAll(dataRepository.getSourceLabels());
+        labelsAdapter.notifyDataSetChanged();
     }
 
     void playItem() {
@@ -157,15 +160,6 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
         if (watchProgressLoggerDelegator != null) {
             compositeDisposable.add(watchProgressLoggerDelegator.logWatchProgressNow());
         }
-    }
-
-    @Override
-    public void onSourceChoice(int position) {
-        if (dataRepository.getCurrentSourcePosition() == position || position > dataRepository.getVideoFilesCount() - 1)
-            return;
-        dataRepository.setCurrentPosition(position);
-        // TODO: 2018/2/11 wait....
-        playItem();
     }
 
     @Override
@@ -213,6 +207,15 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
         logWatchProgress();
         dataRepository.setCurrentPosition(position);
         playMediaFromEpisodeId(dataRepository.getItemByPosition(position).getMediaId());
+    }
+
+    @Override
+    public void onSourceChoice(int position) {
+        if (dataRepository.getCurrentSourcePosition() == position || position > dataRepository.getVideoFilesCount() - 1)
+            return;
+        dataRepository.setCurrentSourcePosition(position);
+        // TODO: 2018/2/11 wait....
+        playItem();
     }
 
     @Override
