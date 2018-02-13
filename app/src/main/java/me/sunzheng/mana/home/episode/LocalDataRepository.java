@@ -3,7 +3,7 @@ package me.sunzheng.mana.home.episode;
 import android.support.v4.media.MediaDescriptionCompat;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 import me.sunzheng.mana.core.VideoFile;
 
@@ -16,12 +16,12 @@ public class LocalDataRepository implements DataRepository {
     int currentMediaDescription = -1;
     int currentSource = -1;
     ArrayList<VideoFile> videoFiles;
-    HashMap<String, VideoFile> labelMaps;
+    LinkedHashMap<String, VideoFile> labelMaps;
 
     public LocalDataRepository(MediaDescriptionCompat[] items) {
         this.items = items;
         videoFiles = new ArrayList<>();
-        labelMaps = new HashMap<>();
+        labelMaps = new LinkedHashMap<>();
     }
 
     @Override
@@ -79,8 +79,8 @@ public class LocalDataRepository implements DataRepository {
 
     @Override
     public int getCurrentSourcePosition() {
-        if (!labelMaps.containsKey(currentSource))
-            currentSource = 0;
+//        if (!labelMaps.containsKey(currentSource))
+//            currentSource = 0;
         return currentSource;
     }
 

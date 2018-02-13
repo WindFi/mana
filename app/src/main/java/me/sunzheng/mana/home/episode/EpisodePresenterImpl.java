@@ -110,7 +110,7 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
                     @Override
                     public void accept(EpisodeWrapper episodeWrapper) throws Exception {
                         onPreparePlayItem(episodeWrapper);
-                        playItem();
+                        mView.performLabelClick(0);
                         mView.setMediaTitle(episodeWrapper.getEpisodeNo() + "");
                     }
                 }, new Consumer<Throwable>() {
