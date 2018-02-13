@@ -6,6 +6,7 @@ import android.widget.BaseAdapter;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 
 import me.sunzheng.mana.core.Episode;
+import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
 import me.sunzheng.mana.utils.IPresenter;
 import me.sunzheng.mana.utils.IView;
 
@@ -114,6 +115,7 @@ public interface HomeContract {
 
             void setSourceAdapter(BaseAdapter adapter);
 
+            void performLabelClick(int position);
         }
 
         interface Presenter extends IPresenter {
@@ -138,6 +140,12 @@ public interface HomeContract {
             void logWatchProgress();
 
             void onSourceChoice(int position);
+
+            interface Listener {
+                void onGetEpisode(EpisodeWrapper episodeWrapper);
+
+                void onGetLabelSource(String[] labels);
+            }
         }
     }
 }

@@ -310,6 +310,11 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         mEpisodeListView.performItemClick(mEpisodeListView.getAdapter().getView(position, null, null), position, mEpisodeListView.getAdapter().getItemId(position));
     }
 
+    @Override
+    public void performLabelClick(int position) {
+        performSourceItemClick(position);
+    }
+
     void performSourceItemClick(int position) {
         if (mSourceListView == null || mSourceListView.getAdapter() == null) {
             return;
