@@ -1,6 +1,7 @@
 package me.sunzheng.mana.home.episode;
 
 import android.support.v4.media.MediaDescriptionCompat;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -58,7 +59,7 @@ public class LocalDataRepository implements DataRepository {
     @Override
     public void addVideoFile(VideoFile file) {
         videoFiles.add(file);
-        labelMaps.put(file.getLabel(), file);
+        labelMaps.put(TextUtils.isEmpty(file.getLabel()) ? "" : file.getLabel(), file);
     }
 
     @Override
