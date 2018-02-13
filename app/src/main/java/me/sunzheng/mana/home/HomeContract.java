@@ -116,6 +116,8 @@ public interface HomeContract {
             void setSourceAdapter(BaseAdapter adapter);
 
             void performLabelClick(int position);
+
+            void setSourceMenuVisible(boolean visibile);
         }
 
         interface Presenter extends IPresenter {
