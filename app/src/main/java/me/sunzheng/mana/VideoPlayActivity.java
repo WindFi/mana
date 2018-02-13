@@ -71,11 +71,10 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     Toolbar toolbar;
     ListView mEpisodeListView, mSourceListView;
     boolean isResume = false, isAudioFouced = false, isControlViewVisibile;
-
     ViewGroup progressViewGroup;
     View mVolView, mBrightnessView, mSourceRootView;
     AppCompatTextView textViewPosition, textViewDuration;
-
+    MenuItem sourceMenu;
     StringBuilder formatBuilder = new StringBuilder();
     Formatter formatter = new Formatter(formatBuilder, Locale.getDefault());
     HomeContract.VideoPlayer.Presenter presenter;
@@ -132,6 +131,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             }
         }
     };
+    private boolean sourceMenuIsVisible;
 
     public static Intent newInstance(Context context, int position, List<Episode> items) {
         Intent intent = new Intent(context, VideoPlayActivity.class);
@@ -448,7 +448,16 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.video_menu, menu);
+        sourceMenu = menu.findItem(R.id.action_source);
+        sourceMenu.setVisible(sourceMenuIsVisible);
         return super.onCreateOptionsMenu(menu);
+
+    }
+
+    @Override
+    public void setSourceMenuVisible(boolean visibile) {
+        sourceMenuIsVisible = visibile;
+        invalidateOptionsMenu();
     }
 
     @Override

@@ -22,6 +22,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -104,6 +105,7 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
     }
 
     private void playMediaFromEpisodeId(final String episodeId) {
+        mView.setSourceMenuVisible(false);
         Disposable disposable = eApiService.getEpisode(episodeId)
                 .observeOn(AndroidSchedulers.mainThread()).subscribeOn(Schedulers.io())
                 .subscribe(new Consumer<EpisodeWrapper>() {
@@ -133,8 +135,9 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
         for (VideoFile item : episodeWrapper.getVideoFiles()) {
             dataRepository.addVideoFile(item);
         }
+        mView.setSourceMenuVisible(dataRepository.getSourceLabels().length > 1);
         labelsAdapter.clear();
-        labelsAdapter.addAll(dataRepository.getSourceLabels());
+        labelsAdapter.addAll(Arrays.asList(dataRepository.getSourceLabels()));
         labelsAdapter.notifyDataSetChanged();
     }
 
