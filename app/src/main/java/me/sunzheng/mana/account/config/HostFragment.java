@@ -71,7 +71,10 @@ public class HostFragment extends Fragment implements AccountContrant.Start.View
                 }
                 sharedPreferences.edit().putString(PreferenceManager.Global.STR_KEY_HOST, mTextInputEidtText.getText().toString()).commit();
                 InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+//                if back from next fragment and click button  will crash
+//                sovled seed https://stackoverflow.com/questions/19069448/null-pointer-error-with-hidesoftinputfromwindow
+//                inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                inputManager.hideSoftInputFromWindow(mButton.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                 mTextInputEidtText.clearFocus();
                 if (listener != null)
                     listener.onSave();
