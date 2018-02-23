@@ -20,10 +20,6 @@
             android:icon="@drawable/ic_menu_manage"
             android:title="@string/title_nav_settings" />
         <item
-            android:id="@+id/nav_feedback"
-            android:icon="@drawable/ic_menu_feedback_24px"
-            android:title="@string/title_nav_feedback" />
-        <item
             android:id="@+id/nav_exit"
             android:icon="@drawable/ic_menu_exit_24dp"
             android:title="@string/title_nav_logout" />

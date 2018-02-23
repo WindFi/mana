@@ -1,6 +1,7 @@
 package me.sunzheng.mana;
 
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -67,6 +68,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     public final static String STR_CURRINT_INT = "current";
     public final static String STR_ITEMS_PARCEL = "items";
     public final static long DEFAULT_HIDE_TIME = 500;
+    public final static long CLICK_DELAY_MILLIONSECONDS = 500;
     SimpleExoPlayerView playerView;
     Toolbar toolbar;
     ListView mEpisodeListView, mSourceListView;
@@ -472,6 +474,16 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         } else if (itemId == R.id.action_source) {
             showSourceListView();
             return true;
+        } else if (itemId == R.id.action_feedback) {
+            final Intent intent = new Intent();
+            intent.setComponent(new ComponentName(this, FeedbackActivity.class));
+            mHnadler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    if (intent.getComponent() != null)
+                        startActivity(intent);
+                }
+            }, CLICK_DELAY_MILLIONSECONDS);
         }
         return super.onOptionsItemSelected(item);
     }
