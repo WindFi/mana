@@ -6,6 +6,8 @@ import me.sunzheng.mana.home.bangumi.Response;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
 import me.sunzheng.mana.home.bangumi.wrapper.request.SynchronizeEpisodeHistoryWrapper;
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
+import me.sunzheng.mana.home.feedback.FeedbackRequestWrapper;
+import me.sunzheng.mana.home.feedback.FeedbackResponseWrapper;
 import me.sunzheng.mana.home.mybangumi.wrapper.FavoriteWrapper;
 import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
 import me.sunzheng.mana.home.search.SearchResultWrapper;
@@ -97,4 +99,15 @@ public interface HomeApiService {
         Observable<EpisodeWrapper> getEpisode(@Path("id") String id);
     }
 
+    interface FeedBack {
+        String PATH = HOME_PATH + "/feedback";
+
+        /**
+         * Send a feedback about current episode and video_file.
+         *
+         * @return
+         */
+        @POST(PATH)
+        Observable<FeedbackResponseWrapper> send(@Body FeedbackRequestWrapper request);
+    }
 }
