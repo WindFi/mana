@@ -148,4 +148,6 @@
 
     <string name="vol">Vol : %1$s</string>
     <string name="brightness">Brightness : %1$s</string>
+    <string name="hint_want_to_say_something_edittext">I want to say sometihng</string>
+    <string name="title_send_fab">Send</string>
 </resources>

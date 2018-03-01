@@ -42,4 +42,6 @@
     <string name="title_feedback">发送反馈</string>
     <string name="title_activity_feedback">反馈</string>
     <string name="title_action_source">源</string>
+    <string name="hint_want_to_say_something_edittext">还想说点啥....</string>
+    <string name="title_send_fab">发送</string>
 </resources>

@@ -59,6 +59,17 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
     ExtractorsFactory extractorFactory = new DefaultExtractorsFactory();
     WatchProgressLoggerDelegator watchProgressLoggerDelegator;
     ArrayAdapter labelsAdapter;
+    // TODO: 2018/2/27 remove them if unused
+//
+//    @Override
+//    public String getCurrnetEpisodeId() {
+//        return dataRepository.getItemByPosition(dataRepository.getCurrentPosition()).getMediaId();
+//    }
+//
+//    @Override
+//    public String getCurrentVideoVileId() {
+//        return dataRepository.getVideoFileItem(dataRepository.getCurrentSourcePosition()).getId();
+//    }
 
     public EpisodePresenterImpl(HomeContract.VideoPlayer.View view, HomeApiService.Episode eApiService, HomeApiService.Bangumi bApiService, DataRepository dataRepository) {
         this.eApiService = eApiService;
