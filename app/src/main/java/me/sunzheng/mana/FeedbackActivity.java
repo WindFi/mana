@@ -19,6 +19,8 @@ import java.util.HashMap;
 
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
+import me.sunzheng.mana.home.feedback.FeedbackPresenterImpl;
+import me.sunzheng.mana.utils.App;
 
 public class FeedbackActivity extends AppCompatActivity implements HomeContract.Feedback.View {
     private final static String ARGS_EPISODE_ID_STR = "episodeId";
@@ -26,7 +28,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
 
     HomeContract.Feedback.Presenter mPresenter;
     HomeApiService.Feedback apiService;
-
+    String episodeId, videoFileId;
     RadioGroup mRadioGroup;
     AppCompatRadioButton mRadioButton0, mRadioButton1, mRadioButton2, mEtcRadioButton;
     AppCompatEditText mEditText;
@@ -52,9 +54,9 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
         if (savedInstanceState == null)
             savedInstanceState = getIntent().getExtras();
 
-//        episodeId = savedInstanceState.getString(ARGS_EPISODE_ID_STR);
-//        videoFileId = savedInstanceState.getString(ARGS_EPISODE_ID_STR);
-//        setPresenter(new FeedbackPresenterImpl(episodeId, videoFileId, this, ((App) getApplication()).getRetrofit().create(HomeApiService.Feedback.class)));
+        episodeId = savedInstanceState.getString(ARGS_EPISODE_ID_STR);
+        videoFileId = savedInstanceState.getString(ARGS_EPISODE_ID_STR);
+        setPresenter(new FeedbackPresenterImpl(episodeId, videoFileId, this, ((App) getApplication()).getRetrofit().create(HomeApiService.Feedback.class)));
 
         mRadioGroup = (RadioGroup) findViewById(R.id.feedback_radiogroup);
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
