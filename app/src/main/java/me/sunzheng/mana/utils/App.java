@@ -8,12 +8,18 @@ import android.util.Log;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 
+import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 import java.util.concurrent.TimeUnit;
 
+import me.sunzheng.mana.BuildConfig;
+import okhttp3.Headers;
+import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -79,7 +85,34 @@ public class App extends MultiDexApplication {
     private OkHttpClient defaultOkHttpClient() {
         return new OkHttpClient.Builder()
                 .connectTimeout(10000, TimeUnit.MILLISECONDS)
+                .addNetworkInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request();
+                        Headers headers = request.headers();
+                        String s = headers.get("User-Agent");
+                        headers = headers.newBuilder().set("User-Agent", s + "; " + getUserAgent()).build();
+                        request = request.newBuilder().headers(headers).build();
+                        return chain.proceed(request);
+                    }
+                })
                 .cookieJar(new JavaNetCookieJar(new CookieManager(new PersistentHttpCookieStore(this), CookiePolicy.ACCEPT_ALL)))
                 .build();
+    }
+
+    String getUserAgent() {
+        return getApplicationLabel() + "/" + getVersionCode() + "\t" + getLanguage();
+    }
+
+    String getVersionCode() {
+        return BuildConfig.VERSION_CODE + "";
+    }
+
+    String getApplicationLabel() {
+        return getApplicationInfo().loadLabel(getPackageManager()).toString();
+    }
+
+    String getLanguage() {
+        return "";
     }
 }
