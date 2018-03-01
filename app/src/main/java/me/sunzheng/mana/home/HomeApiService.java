@@ -99,7 +99,7 @@ public interface HomeApiService {
         Observable<EpisodeWrapper> getEpisode(@Path("id") String id);
     }
 
-    interface FeedBack {
+    interface Feedback {
         String PATH = HOME_PATH + "/feedback";
 
         /**

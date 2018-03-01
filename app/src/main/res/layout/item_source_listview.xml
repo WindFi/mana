@@ -9,5 +9,5 @@
         android:layout_height="60dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:textColor="@color/text_selector" />
+        android:textColor="@color/listview_text_selector" />
 </FrameLayout>

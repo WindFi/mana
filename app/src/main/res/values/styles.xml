@@ -65,6 +65,10 @@
 
     <style name="TextAppearance" parent="TextAppearance.AppCompat" />
 
+    <style name="TextAppearance.RadioButton" parent="TextAppearance.AppCompat.Display1">
+        <item name="android:textColor">@color/radiobutton_text_selector</item>
+    </style>
+
     <style name="TextAppearance.Button" parent="TextAppearance.AppCompat.Button">
         <item name="android:textColor">@android:color/white</item>
     </style>
@@ -72,11 +76,11 @@
     <style name="TextAppearance.Image" parent="TextAppearance.AppCompat" />
 
     <style name="TextAppearance.Image.Subtitle" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/text_selector</item>
+        <item name="android:textColor">@color/listview_text_selector</item>
     </style>
 
     <style name="TextAppearance.Image.Title" parent="TextAppearance.AppCompat">
-        <item name="android:textColor">@color/text_selector</item>
+        <item name="android:textColor">@color/listview_text_selector</item>
         <item name="android:textSize">24sp</item>
     </style>
 
@@ -98,7 +102,10 @@
 
     <style name="AppTheme.VideoPlayActivity" parent="AppTheme.NoActionBar.FullScreen" />
 
-    <style name="AppTheme.FeedbackActivity" parent="AppTheme.NoActionBar" />
+    <style name="AppTheme.FeedbackActivity" parent="AppTheme">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="android:textAppearance">@style/TextAppearance.RadioButton</item>
+    </style>
 
     <style name="AppTheme.SettingsActivity">
         <item name="colorAccent">@color/colorPrimary</item>

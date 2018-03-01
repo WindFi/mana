@@ -1,7 +1,6 @@
 package me.sunzheng.mana;
 
 import android.content.BroadcastReceiver;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -51,6 +50,7 @@ import java.util.List;
 import java.util.Locale;
 
 import me.sunzheng.mana.core.Episode;
+import me.sunzheng.mana.core.VideoFile;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.episode.EpisodePresenterImpl;
@@ -76,7 +76,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     ViewGroup progressViewGroup;
     View mVolView, mBrightnessView, mSourceRootView;
     AppCompatTextView textViewPosition, textViewDuration;
-    MenuItem sourceMenu;
     StringBuilder formatBuilder = new StringBuilder();
     Formatter formatter = new Formatter(formatBuilder, Locale.getDefault());
     HomeContract.VideoPlayer.Presenter presenter;
@@ -450,6 +449,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.video_menu, menu);
+        MenuItem sourceMenu;
         sourceMenu = menu.findItem(R.id.action_source);
         sourceMenu.setVisible(sourceMenuIsVisible);
         return super.onCreateOptionsMenu(menu);
@@ -475,8 +475,15 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
             showSourceListView();
             return true;
         } else if (itemId == R.id.action_feedback) {
-            final Intent intent = new Intent();
-            intent.setComponent(new ComponentName(this, FeedbackActivity.class));
+            if (mSourceListView.getCheckedItemCount() < 1) {
+                // TODO: 2018/2/27 selected item before loading
+                return true;
+            }
+            MediaDescriptionCompat mediaDescriptionCompat = (MediaDescriptionCompat) mEpisodeListView.getItemAtPosition(mEpisodeListView.getCheckedItemPosition());
+            VideoFile videoFile = (VideoFile) mSourceListView.getItemAtPosition(mSourceListView.getCheckedItemPosition());
+            final Intent intent = FeedbackActivity.newInstance(this, mediaDescriptionCompat.getMediaId(), videoFile.getId());
+            //test
+//            final Intent intent = FeedbackActivity.newInstance(this, presenter.getCurrnetEpisodeId(), presenter.getCurrentVideoVileId());
             mHnadler.postDelayed(new Runnable() {
                 @Override
                 public void run() {

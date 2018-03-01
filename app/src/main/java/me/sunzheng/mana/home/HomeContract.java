@@ -6,7 +6,6 @@ import android.widget.BaseAdapter;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 
 import me.sunzheng.mana.core.Episode;
-import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
 import me.sunzheng.mana.utils.IPresenter;
 import me.sunzheng.mana.utils.IView;
 
@@ -143,11 +142,26 @@ public interface HomeContract {
 
             void onSourceChoice(int position);
 
-            interface Listener {
-                void onGetEpisode(EpisodeWrapper episodeWrapper);
+            // TODO: 2018/2/27 remove them if unused
+//            String getCurrnetEpisodeId();
+//
+//            String getCurrentVideoVileId();
+        }
+    }
 
-                void onGetLabelSource(String[] labels);
-            }
+    interface Feedback {
+        interface View extends IView<Presenter> {
+            void showToast(CharSequence message);
+
+            void showProgressIntractor(boolean active);
+
+            void finishSelf();
+        }
+
+        interface Presenter extends IPresenter {
+            void setMessage(String message);
+
+            void submit();
         }
     }
 }
