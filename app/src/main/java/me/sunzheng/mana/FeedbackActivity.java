@@ -27,7 +27,6 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
     private final static String ARGS_VIDEOFILE_ID_STR = "videoFileId";
 
     HomeContract.Feedback.Presenter mPresenter;
-    HomeApiService.Feedback apiService;
     String episodeId, videoFileId;
     RadioGroup mRadioGroup;
     AppCompatRadioButton mRadioButton0, mRadioButton1, mRadioButton2, mEtcRadioButton;
