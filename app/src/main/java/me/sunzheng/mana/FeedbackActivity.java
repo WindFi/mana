@@ -145,7 +145,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
     }
 
     void initViewState() {
-        mRadioGroup.check(mRadioButton0.getId());
+//        mRadioGroup.check(mRadioButton0.getId());
     }
 
     void initSelectString() {
