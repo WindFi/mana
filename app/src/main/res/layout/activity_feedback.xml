@@ -23,32 +23,35 @@
                 android:id="@+id/feedback_radiobutton_0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="有画面无声音" />
+                android:text="有画面无声音"
+                android:textColor="@color/radiobutton_text_selector" />
 
             <android.support.v7.widget.AppCompatRadioButton
                 android:id="@+id/feedback_radiobutton_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="有声音无画面" />
+                android:text="有声音无画面"
+                android:textColor="@color/radiobutton_text_selector" />
 
             <android.support.v7.widget.AppCompatRadioButton
                 android:id="@+id/feedback_radiobutton_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="无画面无声音" />
+                android:text="无画面无声音"
+                android:textColor="@color/radiobutton_text_selector" />
 
             <android.support.v7.widget.AppCompatRadioButton
                 android:id="@+id/feedback_etc_radiobutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="其他" />
+                android:text="其他"
+                android:textColor="@color/radiobutton_text_selector" />
         </RadioGroup>
 
         <android.support.v7.widget.AppCompatEditText
             android:id="@+id/feedback_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:enabled="false"
             android:focusable="false"
             android:hint="@string/hint_want_to_say_something_edittext"
             android:maxLength="70"
@@ -63,6 +66,6 @@
         app:elevation="4dp"
         app:layout_anchor="@+id/constraintLayout"
         app:layout_anchorGravity="bottom|right"
-        app:srcCompat="@android:drawable/ic_menu_send"
+        app:srcCompat="@drawable/ic_menu_send"
         app:useCompatPadding="true" />
 </android.support.design.widget.CoordinatorLayout>
