@@ -2,18 +2,26 @@ package me.sunzheng.mana.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.MemoryCategory;
 
+import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Headers;
+import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -79,7 +87,40 @@ public class App extends MultiDexApplication {
     private OkHttpClient defaultOkHttpClient() {
         return new OkHttpClient.Builder()
                 .connectTimeout(10000, TimeUnit.MILLISECONDS)
+                .addNetworkInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request();
+                        Headers headers = request.headers();
+                        String s = headers.get("User-Agent");
+                        headers = headers.newBuilder().set("User-Agent", s + "; " + getUserAgent()).build();
+                        request = request.newBuilder().headers(headers).build();
+                        return chain.proceed(request);
+                    }
+                })
                 .cookieJar(new JavaNetCookieJar(new CookieManager(new PersistentHttpCookieStore(this), CookiePolicy.ACCEPT_ALL)))
                 .build();
+    }
+
+    String getUserAgent() {
+        return getApplicationLabel() + "/" + getVersionCode();
+    }
+
+    String getVersionCode() {
+        try {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.COMPONENT_ENABLED_STATE_DEFAULT);
+            return String.valueOf(packageInfo.versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return "0";
+    }
+
+    String getApplicationLabel() {
+        return getApplicationInfo().loadLabel(getPackageManager()).toString();
+    }
+
+    String getLanguage() {
+        return Locale.getDefault().getDisplayLanguage();
     }
 }
