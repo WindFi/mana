@@ -2,6 +2,8 @@ package me.sunzheng.mana.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.multidex.MultiDexApplication;
 import android.util.Log;
 
@@ -11,9 +13,9 @@ import com.bumptech.glide.MemoryCategory;
 import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
-import me.sunzheng.mana.BuildConfig;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
@@ -101,11 +103,17 @@ public class App extends MultiDexApplication {
     }
 
     String getUserAgent() {
-        return getApplicationLabel() + "/" + getVersionCode() + "\t" + getLanguage();
+        return getApplicationLabel() + "/" + getVersionCode();
     }
 
     String getVersionCode() {
-        return BuildConfig.VERSION_CODE + "";
+        try {
+            PackageInfo packageInfo = getPackageManager().getPackageInfo(getPackageName(), PackageManager.COMPONENT_ENABLED_STATE_DEFAULT);
+            return String.valueOf(packageInfo.versionCode);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return "0";
     }
 
     String getApplicationLabel() {
@@ -113,6 +121,6 @@ public class App extends MultiDexApplication {
     }
 
     String getLanguage() {
-        return "";
+        return Locale.getDefault().getDisplayLanguage();
     }
 }
