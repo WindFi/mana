@@ -65,7 +65,7 @@
 
     <style name="TextAppearance" parent="TextAppearance.AppCompat" />
 
-    <style name="TextAppearance.RadioButton" parent="TextAppearance.AppCompat.Display1">
+    <style name="TextAppearance.RadioButton">
         <item name="android:textColor">@color/radiobutton_text_selector</item>
     </style>
 

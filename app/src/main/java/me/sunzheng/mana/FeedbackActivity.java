@@ -49,7 +49,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
-        getActionBar().setDisplayHomeAsUpEnabled(true);
+//        getActionBar().setDisplayHomeAsUpEnabled(true);
         if (savedInstanceState == null)
             savedInstanceState = getIntent().getExtras();
 
@@ -61,8 +61,10 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId != R.id.feedback_etc_radiobutton)
+                if (checkedId != R.id.feedback_etc_radiobutton) {
                     mEditText.setText("");
+                    return;
+                }
                 mEditText.setFocusable(checkedId == R.id.feedback_etc_radiobutton);
                 mEditText.setFocusableInTouchMode(checkedId == R.id.feedback_etc_radiobutton);
                 mEditText.requestFocus();

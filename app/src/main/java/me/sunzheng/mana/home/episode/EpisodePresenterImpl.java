@@ -22,7 +22,6 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -97,7 +96,7 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
         TrackSelector trackSelector = new DefaultTrackSelector(videoTrackSelectionFactory);
         player = ExoPlayerFactory.newSimpleInstance(mView.getContext(), trackSelector);
         dataSourceFactory = new DefaultDataSourceFactory(mView.getContext(), Util.getUserAgent(mView.getContext(), mView.getContext().getPackageName()), mDefaultBandwidthMeter);
-        labelsAdapter = new ArrayAdapter<String>(mView.getContext(), R.layout.item_source_listview, R.id.title);
+        labelsAdapter = new ArrayAdapter<VideoFile>(mView.getContext(), R.layout.item_source_listview, R.id.title);
         mView.setEpisodeAdapter(new MediaDescriptionAdapter(mView.getContext(), dataRepository));
         mView.setSourceAdapter(labelsAdapter);
     }
@@ -148,7 +147,7 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
         }
         mView.setSourceMenuVisible(dataRepository.getSourceLabels().length > 1);
         labelsAdapter.clear();
-        labelsAdapter.addAll(Arrays.asList(dataRepository.getSourceLabels()));
+        labelsAdapter.addAll(episodeWrapper.getVideoFiles());
         labelsAdapter.notifyDataSetChanged();
     }
 
