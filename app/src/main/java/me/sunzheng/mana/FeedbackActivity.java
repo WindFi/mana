@@ -153,6 +153,13 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
     }
 
     @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(ARGS_EPISODE_ID_STR, episodeId);
+        outState.putString(ARGS_EPISODE_ID_STR, videoFileId);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public Context getContext() {
         return this;
     }
