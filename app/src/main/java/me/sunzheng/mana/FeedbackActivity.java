@@ -5,14 +5,23 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.AppCompatRadioButton;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.HashMap;
@@ -49,10 +58,9 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_feedback);
-//        getActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         if (savedInstanceState == null)
             savedInstanceState = getIntent().getExtras();
-
         episodeId = savedInstanceState.getString(ARGS_EPISODE_ID_STR);
         videoFileId = savedInstanceState.getString(ARGS_EPISODE_ID_STR);
         setPresenter(new FeedbackPresenterImpl(episodeId, videoFileId, this, ((App) getApplication()).getRetrofit().create(HomeApiService.Feedback.class)));
@@ -61,13 +69,15 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId != R.id.feedback_etc_radiobutton) {
-                    mEditText.setText("");
-                    return;
-                }
                 mEditText.setFocusable(checkedId == R.id.feedback_etc_radiobutton);
                 mEditText.setFocusableInTouchMode(checkedId == R.id.feedback_etc_radiobutton);
-                mEditText.requestFocus();
+                if (checkedId != R.id.feedback_etc_radiobutton) {
+                    mEditText.setText("");
+                    fabShow();
+                } else {
+                    fabHide();
+                    mEditText.requestFocus();
+                }
             }
         });
         mRadioButton0 = (AppCompatRadioButton) findViewById(R.id.feedback_radiobutton_0);
@@ -90,6 +100,38 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
                 mEditText.setFocusable(true);
                 mEditText.setFocusableInTouchMode(true);
                 mEditText.requestFocus();
+            }
+        });
+        mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    fab.performClick();
+                    return true;
+                }
+                return false;
+            }
+        });
+        mEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (!mEditText.isFocusable())
+                    return;
+                if (s.length() < 1) {
+                    fabHide();
+                } else {
+                    fabShow();
+                }
             }
         });
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -147,7 +189,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
     }
 
     void initViewState() {
-//        mRadioGroup.check(mRadioButton0.getId());
+        fabHide();
     }
 
     void initSelectString() {
@@ -170,5 +212,53 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
         } else {
             return "";
         }
+    }
+
+    void fabShow() {
+        if (fab == null || fab.getVisibility() == View.VISIBLE)
+            return;
+        Animation anim = AnimationUtils.loadAnimation(fab.getContext(), R.anim.slide_in_up);
+        anim.setInterpolator(new LinearOutSlowInInterpolator());
+        anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                fab.setVisibility(View.VISIBLE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        fab.startAnimation(anim);
+    }
+
+    void fabHide() {
+        if (fab == null || fab.getVisibility() != View.VISIBLE)
+            return;
+        Animation anim = AnimationUtils.loadAnimation(fab.getContext(), R.anim.slide_out_down);
+        anim.setInterpolator(new FastOutSlowInInterpolator());
+        anim.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                fab.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        fab.startAnimation(anim);
     }
 }
