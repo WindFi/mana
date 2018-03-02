@@ -89,7 +89,8 @@
         <activity
             android:name=".FeedbackActivity"
             android:label="@string/title_activity_feedback"
-            android:theme="@style/AppTheme.FeedbackActivity" />
+            android:theme="@style/AppTheme.FeedbackActivity"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>
