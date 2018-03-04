@@ -72,7 +72,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     SimpleExoPlayerView playerView;
     Toolbar toolbar;
     ListView mEpisodeListView, mSourceListView;
-    boolean isResume = false, isAudioFouced = false, isControlViewVisibile;
+    boolean isResume = true, isAudioFouced = true, isControlViewVisibile;
     ViewGroup progressViewGroup;
     View mVolView, mBrightnessView, mSourceRootView;
     AppCompatTextView textViewPosition, textViewDuration;
@@ -360,35 +360,13 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     @Override
     protected void onStart() {
         super.onStart();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            return;
         isResume = true;
         playerPlay();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
-            return;
-        isResume = true;
-        playerPlay();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N)
-            return;
-        isResume = false;
-        playerPause();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N)
-            return;
         isResume = false;
         playerPause();
     }

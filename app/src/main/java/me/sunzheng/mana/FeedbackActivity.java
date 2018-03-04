@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -69,6 +70,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
+                mEditText.setEnabled(checkedId == R.id.feedback_etc_radiobutton);
                 mEditText.setFocusable(checkedId == R.id.feedback_etc_radiobutton);
                 mEditText.setFocusableInTouchMode(checkedId == R.id.feedback_etc_radiobutton);
                 if (checkedId != R.id.feedback_etc_radiobutton) {
@@ -76,8 +78,9 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
                     fabShow();
                 } else {
                     fabHide();
-                    mEditText.requestFocus();
+                    mEditText.performClick();
                 }
+                mEditText.setEnabled(true);
             }
         });
         mRadioButton0 = (AppCompatRadioButton) findViewById(R.id.feedback_radiobutton_0);
@@ -91,6 +94,9 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
                     mRadioGroup.check(mEtcRadioButton.getId());
+                    showSoftInputKeyboard();
+                } else {
+                    hideSoftInputKeyboard();
                 }
             }
         });
@@ -141,9 +147,10 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
                 String feedbackResult = handleString(mRadioGroup.getCheckedRadioButtonId());
                 if (TextUtils.isEmpty(feedbackResult)) {
                     // TODO: 2018/3/1 replace hard coding use resId
-                    Snackbar.make(v, "result must be not null", Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(v, feedbackResult, Snackbar.LENGTH_SHORT).show();
                     return;
                 }
+                hideSoftInputKeyboard();
                 mPresenter.setMessage(feedbackResult);
                 mPresenter.submit();
             }
@@ -267,5 +274,17 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
             }
         });
         fab.startAnimation(anim);
+    }
+
+    void showSoftInputKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(getCurrentFocus(), InputMethodManager.SHOW_IMPLICIT);
+    }
+
+    void hideSoftInputKeyboard() {
+        if (getCurrentFocus() != null) {
+            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+        }
     }
 }

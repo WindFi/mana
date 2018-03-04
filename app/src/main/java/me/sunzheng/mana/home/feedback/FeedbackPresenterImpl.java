@@ -55,7 +55,7 @@ public class FeedbackPresenterImpl implements HomeContract.Feedback.Presenter {
                     @Override
                     public void accept(FeedbackResponseWrapper feedbackResponseWrapper) throws Exception {
                         mView.showToast(feedbackResponseWrapper.getMessage());
-                        if (feedbackResponseWrapper.getStatus() == 1) {
+                        if (feedbackResponseWrapper.getStatus() == 0) {
                             mView.finishSelf();
                         }
                     }
