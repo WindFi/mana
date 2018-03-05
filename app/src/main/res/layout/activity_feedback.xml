@@ -57,6 +57,7 @@
             android:hint="@string/hint_want_to_say_something_edittext"
             android:imeOptions="actionSend"
             android:inputType="text"
+            android:maxEms="24"
             android:maxLength="70"
             app:layout_constraintStart_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/feedback_radiogroup" />
@@ -66,9 +67,9 @@
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
         app:elevation="4dp"
-        app:layout_anchor="@+id/constraintLayout"
-        app:layout_anchorGravity="bottom|right"
         app:srcCompat="@drawable/ic_menu_send"
         app:useCompatPadding="true" />
 </android.support.design.widget.CoordinatorLayout>
