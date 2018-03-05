@@ -70,7 +70,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                mEditText.setEnabled(checkedId == R.id.feedback_etc_radiobutton);
+//                mEditText.setEnabled(checkedId == R.id.feedback_etc_radiobutton);
                 mEditText.setFocusable(checkedId == R.id.feedback_etc_radiobutton);
                 mEditText.setFocusableInTouchMode(checkedId == R.id.feedback_etc_radiobutton);
                 if (checkedId != R.id.feedback_etc_radiobutton) {
@@ -80,7 +80,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
                     fabHide();
                     mEditText.performClick();
                 }
-                mEditText.setEnabled(true);
+//                mEditText.setEnabled(true);
             }
         });
         mRadioButton0 = (AppCompatRadioButton) findViewById(R.id.feedback_radiobutton_0);
@@ -284,7 +284,8 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
     void hideSoftInputKeyboard() {
         if (getCurrentFocus() != null) {
             InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+//            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
+            inputMethodManager.hideSoftInputFromInputMethod(mEditText.getWindowToken(), 0);
         }
     }
 }
