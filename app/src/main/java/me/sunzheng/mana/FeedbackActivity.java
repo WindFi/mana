@@ -278,7 +278,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
 
     void showSoftInputKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(getCurrentFocus(), InputMethodManager.SHOW_IMPLICIT);
+        imm.showSoftInput(getCurrentFocus(), InputMethodManager.SHOW_FORCED);
     }
 
     void hideSoftInputKeyboard() {
