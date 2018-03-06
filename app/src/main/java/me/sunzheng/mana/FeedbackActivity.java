@@ -2,6 +2,7 @@ package me.sunzheng.mana;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -70,7 +71,6 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
         mRadioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-//                mEditText.setEnabled(checkedId == R.id.feedback_etc_radiobutton);
                 mEditText.setFocusable(checkedId == R.id.feedback_etc_radiobutton);
                 mEditText.setFocusableInTouchMode(checkedId == R.id.feedback_etc_radiobutton);
                 if (checkedId != R.id.feedback_etc_radiobutton) {
@@ -78,9 +78,8 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
                     fabShow();
                 } else {
                     fabHide();
-                    mEditText.performClick();
+                    mEditText.requestFocus();
                 }
-//                mEditText.setEnabled(true);
             }
         });
         mRadioButton0 = (AppCompatRadioButton) findViewById(R.id.feedback_radiobutton_0);
@@ -93,7 +92,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (hasFocus) {
-                    mRadioGroup.check(mEtcRadioButton.getId());
+                    mRadioGroup.check(R.id.feedback_etc_radiobutton);
                     showSoftInputKeyboard();
                 } else {
                     hideSoftInputKeyboard();
@@ -103,9 +102,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
         mEditText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mEditText.setFocusable(true);
-                mEditText.setFocusableInTouchMode(true);
-                mEditText.requestFocus();
+                mRadioGroup.check(R.id.feedback_etc_radiobutton);
             }
         });
         mEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -183,6 +180,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
 
     @Override
     public void finishSelf() {
+        mEditText.setText("");
         finish();
     }
 
@@ -195,11 +193,17 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
+                hideSoftInputKeyboard();
                 onBackPressed();
                 return true;
             default:
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 
     void initViewState() {
@@ -276,16 +280,18 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
         fab.startAnimation(anim);
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+    }
+
     void showSoftInputKeyboard() {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-        imm.showSoftInput(getCurrentFocus(), InputMethodManager.SHOW_FORCED);
+        imm.showSoftInput(mEditText, InputMethodManager.SHOW_FORCED);
     }
 
     void hideSoftInputKeyboard() {
-        if (getCurrentFocus() != null) {
-            InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//            inputMethodManager.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_IMPLICIT_ONLY);
-            inputMethodManager.hideSoftInputFromInputMethod(mEditText.getWindowToken(), 0);
-        }
+        InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(mEditText.getWindowToken(), 0);
     }
 }
