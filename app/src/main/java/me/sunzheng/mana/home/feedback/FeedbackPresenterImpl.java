@@ -48,6 +48,7 @@ public class FeedbackPresenterImpl implements HomeContract.Feedback.Presenter {
     @Override
     public void submit() {
         mView.showProgressIntractor(true);
+        mView.showToast("Sending....");
         Disposable disposable = apiService.send(request)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -64,6 +65,7 @@ public class FeedbackPresenterImpl implements HomeContract.Feedback.Presenter {
                     public void accept(Throwable throwable) throws Exception {
                         mView.showProgressIntractor(false);
                         Log.i(TAG, throwable.getLocalizedMessage());
+                        mView.showToast(throwable.getLocalizedMessage());
                     }
                 }, new Action() {
                     @Override

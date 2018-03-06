@@ -57,8 +57,8 @@
             android:hint="@string/hint_want_to_say_something_edittext"
             android:imeOptions="actionSend"
             android:inputType="text"
-            android:maxEms="24"
-            android:maxLength="70"
+            android:maxLength="40"
+            android:maxLines="1"
             app:layout_constraintStart_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/feedback_radiogroup" />
     </android.support.constraint.ConstraintLayout>
