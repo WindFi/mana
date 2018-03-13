@@ -150,4 +150,8 @@
     <string name="brightness">Brightness : %1$s</string>
     <string name="hint_want_to_say_something_edittext">Say...</string>
     <string name="title_send_fab">Send</string>
+
+    <string name="linearlayoutmanager" translatable="false">android.support.v7.widget.LinearLayoutManager</string>
+    <string name="gridelayoutlayoutmanager" translatable="false">android.support.v7.widget.GridLayoutManager</string>
+    <string name="staggergridelayoutlayoutmanager" translatable="false">android.support.v7.widget.StaggeredGridLayoutManager</string>
 </resources>

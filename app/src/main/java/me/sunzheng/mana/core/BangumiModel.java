@@ -132,6 +132,10 @@ public class BangumiModel implements Parcelable {
     @Expose
     protected int unwatched_count;
 
+    @SerializedName("cover_image")
+    @Expose
+    protected CoverImage coverImage;
+
     public BangumiModel() {
     }
     public BangumiModel(Parcel in) {
@@ -156,6 +160,7 @@ public class BangumiModel implements Parcelable {
         rss = in.readString();
         epsRegex = in.readString();
         unwatched_count = in.readInt();
+        coverImage = in.readParcelable(ClassLoader.getSystemClassLoader());
     }
 
     @Override
@@ -181,6 +186,7 @@ public class BangumiModel implements Parcelable {
         dest.writeString(rss);
         dest.writeString(epsRegex);
         dest.writeInt(unwatched_count);
+        dest.writeParcelable(coverImage, 0);
     }
 
     @Override
@@ -400,6 +406,14 @@ public class BangumiModel implements Parcelable {
 
     public void set_id(long _id) {
         this._id = _id;
+    }
+
+    public CoverImage getCoverImage() {
+        return coverImage;
+    }
+
+    public void setCoverImage(CoverImage coverImage) {
+        this.coverImage = coverImage;
     }
 
     @Override
