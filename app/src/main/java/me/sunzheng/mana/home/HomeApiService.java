@@ -8,6 +8,7 @@ import me.sunzheng.mana.home.bangumi.wrapper.request.SynchronizeEpisodeHistoryWr
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
 import me.sunzheng.mana.home.feedback.FeedbackRequestWrapper;
 import me.sunzheng.mana.home.feedback.FeedbackResponseWrapper;
+import me.sunzheng.mana.home.main.ResponseWrapper;
 import me.sunzheng.mana.home.mybangumi.wrapper.FavoriteWrapper;
 import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
 import me.sunzheng.mana.home.search.SearchResultWrapper;
@@ -109,5 +110,15 @@ public interface HomeApiService {
          */
         @POST(PATH)
         Observable<FeedbackResponseWrapper> send(@Body FeedbackRequestWrapper request);
+    }
+
+    interface Announce {
+        String PATH = HOME_PATH + "/announce";
+
+        /**
+         * Will only get announcement which current time is between start_time and end_time
+         */
+        @GET(PATH)
+        Observable<ResponseWrapper> getAllAvailable();
     }
 }
