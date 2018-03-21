@@ -19,20 +19,40 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
-            app:layout_collapseMode="pin"
             app:layout_scrollFlags="scroll"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/main_announce_recyclerview"
+        <android.support.design.widget.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="gone"
-            app:layoutManager="@string/gridelayoutlayoutmanager"
-            app:layout_collapseMode="parallax"
             app:layout_scrollFlags="scroll"
-            app:scrimAnimationDuration="1000"
-            app:spanCount="3" />
+            app:titleEnabled="false">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="announce"
+                    android:textAllCaps="true"
+                    android:textColor="@android:color/white" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/main_announce_recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    app:layoutManager="@string/gridelayoutlayoutmanager"
+                    app:layout_collapseMode="parallax"
+                    app:scrimAnimationDuration="1000"
+                    app:spanCount="3" />
+            </LinearLayout>
+        </android.support.design.widget.CollapsingToolbarLayout>
+
         <android.support.design.widget.TabLayout
             android:id="@+id/main_tablayout"
             android:layout_width="match_parent"
