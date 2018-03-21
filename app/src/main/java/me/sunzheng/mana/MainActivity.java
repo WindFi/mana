@@ -6,8 +6,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -18,23 +21,39 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatTextView;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.bumptech.glide.DrawableTypeRequest;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestManager;
+
+import java.util.List;
+
+import me.sunzheng.mana.core.AnnounceModel;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
+import me.sunzheng.mana.home.main.AnnoucePresenterImpl;
 import me.sunzheng.mana.home.onair.OnAirFragment;
 import me.sunzheng.mana.home.onair.OnAirPresenterImpl;
 import me.sunzheng.mana.home.onair.respository.DataRepositoryImpl;
 import me.sunzheng.mana.utils.App;
 import me.sunzheng.mana.utils.PreferenceManager;
+import me.sunzheng.mana.utils.RegexUtils;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, HomeContract.Annouce.View {
     final static long CLICK_DELAY_MILLIONSECONDS = 500;
     TabLayout tabLayout;
     ViewPager mViewPager;
@@ -72,6 +91,51 @@ public class MainActivity extends AppCompatActivity
             return titles[position];
         }
     };
+    HomeContract.Annouce.Presenter mPresenter;
+    RecyclerView mRecyclerView;
+    AppBarLayout appBarLayout;
+
+    @Override
+    public Context getContext() {
+        return this;
+    }
+
+    @Override
+    public void setPresenter(HomeContract.Annouce.Presenter presenter) {
+        mPresenter = presenter;
+    }
+
+    @Override
+    public void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showProgressIntractor(boolean active) {
+
+    }
+
+    @Override
+    public void showContentView(boolean visible) {
+        showCollapsingToolbarLayout(visible);
+        if (visible) {
+            mRecyclerView.setVisibility(View.VISIBLE);
+        } else {
+            mRecyclerView.setVisibility(View.GONE);
+        }
+    }
+
+    void showCollapsingToolbarLayout(boolean active) {
+        if (appBarLayout == null)
+            return;
+        appBarLayout.setExpanded(active, true);
+    }
+
+    @Override
+    public void setData(List<AnnounceModel> datas) {
+        if (mRecyclerView != null)
+            mRecyclerView.setAdapter(new AnnouceAdapter(datas));
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +143,8 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+        getSupportActionBar().setTitle(R.string.app_name);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
@@ -103,6 +169,10 @@ public class MainActivity extends AppCompatActivity
         mViewPager.setAdapter(fragmentPagerAdapter);
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.setupWithViewPager(mViewPager, true);
+        mRecyclerView = (RecyclerView) findViewById(R.id.main_announce_recyclerview);
+        appBarLayout = (AppBarLayout) findViewById(R.id.main_appbarlayout);
+        setPresenter(new AnnoucePresenterImpl(this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Announce.class)));
+        mPresenter.load();
     }
 
     @Override
@@ -219,5 +289,72 @@ public class MainActivity extends AppCompatActivity
             }, CLICK_DELAY_MILLIONSECONDS);
         }
         return false;
+    }
+
+    /**
+     * Created by Sun on 2018/3/12.
+     */
+
+    public class AnnouceAdapter extends RecyclerView.Adapter<AnnouceAdapter.ViewHolder> {
+        List<AnnounceModel> values;
+
+        public AnnouceAdapter(List<AnnounceModel> values) {
+            this.values = values;
+        }
+
+        @Override
+        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_announce_recyclerview, parent, false);
+            return new ViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(final ViewHolder holder, int position) {
+            final AnnounceModel item = values.get(position);
+            RequestManager requestManager = Glide.with(holder.itemView.getContext());
+            DrawableTypeRequest request = null;
+            if (item.getPosition() == 1) {
+                holder.itemView.setOnClickListener(null);
+                if (!TextUtils.isEmpty(item.getImage_url())) {
+                    request = requestManager.load(item.getImage_url());
+                } else {
+                    Log.e("remote error", "id:item.getId()" + "\timage_url is null");
+                }
+            } else if (item.getPosition() == 2) {
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        BangumiDetailsActivity.newInstance(MainActivity.this, item.getBangumi().getId().toString(), item.getBangumi().getImage(), item.getBangumi().getNameCn(),
+                                holder.mImageView);
+                    }
+                });
+                if (item.getBangumi().getCoverImage() != null && !TextUtils.isEmpty(item.getBangumi().getCoverImage().dominantColor)
+                        && item.getBangumi().getCoverImage().dominantColor.matches(RegexUtils.ColorPattern)) {
+                    request = requestManager.load(item.getBangumi().getCoverImage().url);
+                    request.placeholder(new ColorDrawable(Color.parseColor(item.getBangumi().getCoverImage().dominantColor)));
+                } else {
+
+                }
+            }
+            if (request != null)
+                request.into(holder.mImageView);
+            holder.mTextView.setText(item.getBangumi().getNameCn());
+        }
+
+        @Override
+        public int getItemCount() {
+            return values == null ? 0 : values.size();
+        }
+
+        class ViewHolder extends RecyclerView.ViewHolder {
+            public ImageView mImageView;
+            public TextView mTextView;
+
+            public ViewHolder(View itemView) {
+                super(itemView);
+                mImageView = itemView.findViewById(R.id.item_album);
+                mTextView = itemView.findViewById(R.id.item_title_textview);
+            }
+        }
     }
 }
