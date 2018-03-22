@@ -26,19 +26,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_scrollFlags="scroll"
+            app:scrimAnimationDuration="5000"
             app:titleEnabled="false">
 
             <LinearLayout
-                android:id="@+id/h"
+                android:id="@+id/main_announce_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone">
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:text="announce"
+                    android:text="@string/title_announce"
                     android:textAllCaps="true"
                     android:textColor="@android:color/white" />
 

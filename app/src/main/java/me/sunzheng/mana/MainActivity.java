@@ -6,11 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
+import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -28,6 +31,7 @@ import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -59,6 +63,7 @@ public class MainActivity extends AppCompatActivity
     final static long CLICK_DELAY_MILLIONSECONDS = 500;
     TabLayout tabLayout;
     ViewPager mViewPager;
+    View mAnnounceView;
     HomeApiService.OnAir apiService;
     CharSequence[] titles;
     Handler handler = new Handler();
@@ -125,6 +130,7 @@ public class MainActivity extends AppCompatActivity
         } else {
             mRecyclerView.setVisibility(View.GONE);
         }
+        mAnnounceView.setVisibility(mRecyclerView.getVisibility());
     }
 
     void showCollapsingToolbarLayout(boolean active) {
@@ -173,6 +179,7 @@ public class MainActivity extends AppCompatActivity
         tabLayout.setupWithViewPager(mViewPager, true);
         mRecyclerView = (RecyclerView) findViewById(R.id.main_announce_recyclerview);
         appBarLayout = (AppBarLayout) findViewById(R.id.main_appbarlayout);
+        mAnnounceView = findViewById(R.id.main_announce_view);
         setPresenter(new AnnoucePresenterImpl(this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Announce.class)));
         mPresenter.load();
     }
@@ -328,7 +335,15 @@ public class MainActivity extends AppCompatActivity
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
+                        TypedValue typedValue = new TypedValue();
+                        TypedArray a = obtainStyledAttributes(typedValue.data, new int[]{R.attr.colorPrimary});
+                        int color = a.getColor(0, 0);
+                        a.recycle();
+//                        see: https://stackoverflow.com/questions/27611173/how-to-get-accent-color-programmatically/28777489?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
+                        CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
+                        builder.setToolbarColor(color);
+                        CustomTabsIntent intent = builder.build();
+                        intent.launchUrl(MainActivity.this, Uri.parse(item.getContent()));
                     }
                 });
                 if (!TextUtils.isEmpty(item.getImage_url())) {

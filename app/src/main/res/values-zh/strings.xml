@@ -44,4 +44,5 @@
     <string name="title_action_source">源</string>
     <string name="hint_want_to_say_something_edittext">还想说点啥....</string>
     <string name="title_send_fab">发送</string>
+    <string name="title_announce">推荐观看</string>
 </resources>
