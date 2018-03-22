@@ -156,4 +156,5 @@
     <string name="staggergridelayoutlayoutmanager" translatable="false">android.support.v7.widget.StaggeredGridLayoutManager</string>
     <string name="main_announce_span_count" translatable="false">3</string>
     <string name="main_air_span_count" translatable="false">1</string>
+    <string name="title_announce">announce</string>
 </resources>
