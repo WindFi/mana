@@ -2,21 +2,22 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
+    android:layout_width="96dp"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp">
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="@color/colorPrimaryDark">
 
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/item_album"
-            android:layout_width="96dp"
+            android:layout_width="match_parent"
             android:layout_height="128dp"
-            android:scaleType="centerCrop"
+            android:scaleType="matrix"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -24,17 +25,18 @@
 
         <TextView
             android:id="@+id/item_title_textview"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
+            android:ems="13"
+            android:gravity="center_horizontal"
             android:lines="2"
-            android:maxLength="7"
-            android:textColor="@android:color/black"
-            app:layout_constraintEnd_toEndOf="@id/item_album"
-            app:layout_constraintLeft_toLeftOf="@id/item_album"
-            app:layout_constraintRight_toRightOf="@id/item_album"
-            app:layout_constraintStart_toStartOf="@id/item_album"
+            android:textColor="@android:color/white"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/item_album"
-            tools:text="nihaoazheshiyigezifuchuanhuihenchanghenchang" />
+            tools:text="nihaoazheshiyigezifuchuanhuihenjld;jfdhihiuchanghenchang" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>
