@@ -342,6 +342,7 @@ public class MainActivity extends AppCompatActivity
 //                        see: https://stackoverflow.com/questions/27611173/how-to-get-accent-color-programmatically/28777489?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
                         CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
                         builder.setToolbarColor(color);
+                        builder.setShowTitle(true);
                         CustomTabsIntent intent = builder.build();
                         intent.launchUrl(MainActivity.this, Uri.parse(item.getContent()));
                     }
