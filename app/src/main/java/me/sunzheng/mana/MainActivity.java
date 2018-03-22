@@ -325,7 +325,12 @@ public class MainActivity extends AppCompatActivity
             RequestManager requestManager = Glide.with(holder.itemView.getContext());
             DrawableTypeRequest request = null;
             if (item.getPosition() == 1) {
-                holder.itemView.setOnClickListener(null);
+                holder.itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                    }
+                });
                 if (!TextUtils.isEmpty(item.getImage_url())) {
                     request = requestManager.load(item.getImage_url());
                 } else {
