@@ -62,5 +62,6 @@ dependencies {
     compile "com.google.android.exoplayer:exoplayer:$rootProject.exoplayerVersion"
     compile "com.j256.ormlite:ormlite-core:$rootProject.ormliteVersion"
     compile "com.j256.ormlite:ormlite-android:$rootProject.ormliteVersion"
+    compile "com.android.support:customtabs:$rootProject.supportLibraryVersion"
     testCompile 'junit:junit:4.12'
 }
