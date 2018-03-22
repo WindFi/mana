@@ -11,8 +11,7 @@
         android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        app:layoutManager="LinearLayoutManager"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layoutManager="@string/gridelayoutlayoutmanager"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:spanCount="1" />
 </android.support.v4.widget.SwipeRefreshLayout>
