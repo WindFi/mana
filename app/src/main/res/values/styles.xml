@@ -61,6 +61,7 @@
 
     <style name="SpinnerStyle" parent="Widget.AppCompat.Spinner">
         <item name="android:dropDownItemStyle">@style/DropDownListItemStyle</item>
+        <item name="android:spinnerItemStyle">@style/DropDownListItemStyle</item>
     </style>
 
     <style name="TextAppearance" parent="TextAppearance.AppCompat" />
@@ -96,7 +97,9 @@
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
 
-    <style name="AppTheme.MyFavoritesActivity" parent="AppTheme.NoActionBar" />
+    <style name="AppTheme.MyFavoritesActivity" parent="AppTheme.NoActionBar">
+        <item name="android:spinnerStyle">@style/SpinnerStyle</item>
+    </style>
 
     <style name="AppTheme.LaunchActivity" />
 
