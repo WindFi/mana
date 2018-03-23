@@ -15,7 +15,7 @@
             android:id="@+id/item_album"
             android:layout_width="96dp"
             android:layout_height="128dp"
-            android:scaleType="matrix"
+            android:scaleType="centerCrop"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
