@@ -8,6 +8,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import java.util.List;
 
 import me.sunzheng.mana.core.AnnounceModel;
+import me.sunzheng.mana.core.BangumiModel;
 import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.utils.IPresenter;
 import me.sunzheng.mana.utils.IView;
@@ -23,7 +24,7 @@ public interface HomeContract {
 
             void showProgressIntractor(boolean active);
 
-            void setAdapter(RecyclerView.Adapter adapter);
+            void setAirs(List<BangumiModel> bangumiModels);
         }
 
         interface Presenter extends IPresenter {
