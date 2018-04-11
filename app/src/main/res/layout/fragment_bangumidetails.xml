@@ -42,18 +42,18 @@
     <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/content_vertival_margin"
         android:fillViewport="true"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <RelativeLayout
             android:id="@+id/bangumidetails_header_constraint"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/content_vertival_margin">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/bangumidetails_ablum_imageview"
@@ -70,6 +70,7 @@
                 android:layout_toEndOf="@+id/bangumidetails_ablum_imageview"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                tools:layout_editor_absoluteX="48dp"
                 tools:text="name" />
 
             <android.support.v7.widget.AppCompatTextView
@@ -115,6 +116,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/bangumidetails_episode_label_textview" />
+
             <android.support.v4.widget.ContentLoadingProgressBar
                 android:id="@+id/bangumidetails_progreassbar"
                 style="?android:attr/progressBarStyleLarge"
