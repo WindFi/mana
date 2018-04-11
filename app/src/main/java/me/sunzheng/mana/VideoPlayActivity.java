@@ -620,12 +620,12 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                 sourceY = e1.getY();
                 Point p = new Point();
                 getWindowManager().getDefaultDisplay().getSize(p);
-                isValid = e1.getX() > 21 && e1.getX() < p.x - 21;
+                isValid = e1.getX() > 21 && e1.getX() < p.x - 21 && e1.getY() > 101;
                 isLeft = isVertical && e1.getX() < p.x / 2;
             } else {
+                if (!isValid)
+                    return true;
                 if (!isVertical) {
-                    if (!isValid)
-                        return true;
                     float unit = (int) ((e2.getX() - sourceX) / MEASURE_LENGTH);
                     if (Math.abs(unit) > 0) {
                         sourceX = e2.getX();
