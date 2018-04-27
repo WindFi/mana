@@ -9,11 +9,12 @@ android {
             storePassword String.valueOf(project.storePassword)
         }
     }
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdkVersion build_versions.compileSdkVersion
+    buildToolsVersion build_versions.build_tools
     defaultConfig {
         applicationId "me.sunzheng.mana"
-        minSdkVersion 17
-        targetSdkVersion 25
+        minSdkVersion build_versions.min_sdk
+        targetSdkVersion build_versions.target_sdk
         versionCode 22
         versionName "1.4.02"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -29,39 +30,40 @@ android {
     }
     productFlavors {
     }
-    buildToolsVersion '27.0.3'
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    androidTestImplementation ('com.android.support.test.espresso:espresso-core:2.2.2', {
+
+    androidTestImplementation(deps.espresso.core, {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation "io.reactivex.rxjava2:rxandroid:$rootProject.rxandroid2Version"
-    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofit2Version"
-    implementation "com.squareup.retrofit2:retrofit-converters:$rootProject.retrofit2Version"
-    implementation "com.squareup.retrofit2:retrofit-adapters:$rootProject.retrofit2Version"
-    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofit2Version"
-    implementation "com.github.bumptech.glide:glide:$rootProject.glideVersion"
-    implementation "org.apache.commons:commons-lang3:$rootProject.common3Version"
-    implementation "com.android.support:multidex:$rootProject.supportMultidexVersion"
-    implementation "com.squareup.retrofit2:retrofit-mock:$rootProject.retrofitMockVersion"
-    implementation "com.squareup.retrofit2:adapter-rxjava2:$rootProject.retrofitAdapterVersion"
-    implementation "com.android.support:gridlayout-v7:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:cardview-v7:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:appcompat-v7:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:support-v4:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:design:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:recyclerview-v7:$rootProject.supportLibraryVersion"
-    implementation "com.squareup.okhttp3:okhttp-urlconnection:$rootProject.okhttpUrlConnectionVersion"
-    implementation "com.android.support.constraint:constraint-layout:$rootProject.constraintlayoutVersion"
-    implementation "com.android.support:preference-v7:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:support-vector-drawable:$rootProject.supportLibraryVersion"
-    implementation "com.android.support:support-core-utils:$rootProject.supportLibraryVersion"
-    implementation "com.google.android.exoplayer:exoplayer:$rootProject.exoplayerVersion"
-    implementation "com.j256.ormlite:ormlite-core:$rootProject.ormliteVersion"
-    implementation "com.j256.ormlite:ormlite-android:$rootProject.ormliteVersion"
-    implementation "com.android.support:customtabs:$rootProject.supportLibraryVersion"
-    testImplementation 'junit:junit:4.12'
+    implementation deps.rxandroid
+    implementation deps.retrofit.runtime
+    implementation deps.retrofit.converters
+    implementation deps.retrofit.adapters
+    implementation deps.retrofit.gson
+    implementation deps.retrofit.mock
+    implementation deps.retrofit.rxjava
+    implementation deps.glide
+    implementation deps.common3
+    implementation deps.multidex
+
+    implementation deps.support.customtabs
+    implementation deps.support.gridlayout
+    implementation deps.support.cardview
+    implementation deps.support.app_compat
+    implementation deps.support.v4
+    implementation deps.support.design
+    implementation deps.support.recyclerview
+    implementation deps.okhttp_urlconnection
+    implementation deps.constraint_layout
+    implementation deps.support.preference
+    implementation deps.support.vector_drawable
+    implementation deps.support.core_utils
+    implementation deps.exoplayer
+    implementation deps.ormlite.core
+    implementation deps.ormlite.android
+
+    testImplementation deps.junit
 }
