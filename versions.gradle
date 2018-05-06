@@ -11,11 +11,11 @@ versions.glide = '3.7.0'
 versions.common3 = '3.5'
 versions.dagger = '2.10'
 versions.ormlite = '5.0'
-versions.supportMultidexVersion = '1.0.1'
+versions.supportMultidexVersion = '1.0.2'
 versions.junit = '4.12'
 versions.espresso = '2.2.2'
 versions.guava = '21.0'
-versions.exoplayer = '2.6.0'
+versions.exoplayer = '2.6.1'
 ext.versions = versions
 def deps = [:]
 
@@ -56,11 +56,9 @@ ormlite.android = "com.j256.ormlite:ormlite-android:$versions.ormlite"
 deps.ormlite = ormlite
 
 deps.rxandroid = "io.reactivex.rxjava2:rxandroid:$versions.rxandroid"
-
 deps.glide = "com.github.bumptech.glide:glide:$versions.glide"
 deps.common3 = "org.apache.commons:commons-lang3:$versions.common3"
 deps.multidex = "com.android.support:multidex:$versions.supportMultidexVersion"
-
 deps.okhttp_urlconnection = "com.squareup.okhttp3:okhttp-urlconnection:$versions.okhttpUrlConnection"
 deps.constraint_layout = "com.android.support.constraint:constraint-layout:$versions.constraintlayout"
 deps.exoplayer = "com.google.android.exoplayer:exoplayer:$versions.exoplayer"
@@ -74,13 +72,13 @@ build_versions.build_tools = "27.0.3"
 build_versions.compileSdkVersion = 27
 ext.build_versions = build_versions
 
-//def addRepos(RepositoryHandler handler) {
-//    handler.google()
-//    handler.jcenter()
-//    handler.maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-//}
-//
-//ext.addRepos = this.&addRepos
+def addRepos(RepositoryHandler handler) {
+    handler.google()
+    handler.jcenter()
+    handler.maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
+}
+
+ext.addRepos = this.&addRepos
 
 
 
