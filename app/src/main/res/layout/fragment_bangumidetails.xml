@@ -58,7 +58,7 @@
             <ImageView
                 android:id="@+id/bangumidetails_ablum_imageview"
                 android:layout_width="96dp"
-                android:layout_height="128dp"
+                android:layout_height="96dp"
                 android:src="@mipmap/ic_launcher" />
 
             <android.support.v7.widget.AppCompatTextView
@@ -66,10 +66,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/bangumidetails_ablum_imageview"
-                android:layout_marginStart="@dimen/content_horizontal_margin"
                 android:layout_toEndOf="@+id/bangumidetails_ablum_imageview"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
+                tools:layout_editor_absoluteX="48dp"
                 tools:text="name" />
 
             <android.support.v7.widget.AppCompatTextView
@@ -77,7 +77,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/bangumidetails_name_textview"
-                android:layout_marginStart="@dimen/content_horizontal_margin"
                 android:layout_toEndOf="@+id/bangumidetails_ablum_imageview"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Widget.TextView.SpinnerItem"

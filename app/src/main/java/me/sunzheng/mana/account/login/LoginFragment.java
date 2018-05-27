@@ -71,7 +71,7 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
             public void onClick(android.view.View v) {
                 try {
                     InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    inputManager.hideSoftInputFromWindow(loginPassWordEditText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     mPresenter.login(loginUserNameEditText.getText().toString(), loginPassWordEditText.getText().toString(), checkBox.isChecked());
                 } catch (IllegalArgumentException e) {
                     showToast(e.getLocalizedMessage());

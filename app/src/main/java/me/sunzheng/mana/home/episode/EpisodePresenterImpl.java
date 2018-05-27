@@ -234,6 +234,8 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
     @Override
     public void seekTo(float detaVal) {
         long position = player.getCurrentPosition() + (long) detaVal * 5000;
+        if (position < 0)
+            return;
         player.seekTo(position);
         mView.showProgressDetaVal(0);
     }
