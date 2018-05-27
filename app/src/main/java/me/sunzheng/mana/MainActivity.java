@@ -370,7 +370,10 @@ public class MainActivity extends AppCompatActivity
             }
             if (request != null)
                 request.into(holder.mImageView);
-            holder.mTextView.setText(item.getBangumi().getNameCn());
+            if (item.getBangumi() != null) {
+                holder.mTextView.setVisibility(View.GONE);
+                holder.mTextView.setText(item.getBangumi().getNameCn());
+            }
         }
 
         @Override
