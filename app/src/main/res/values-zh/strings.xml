@@ -43,6 +43,10 @@
     <string name="title_activity_feedback">反馈</string>
     <string name="title_action_source">源</string>
     <string name="hint_want_to_say_something_edittext">还想说点啥....</string>
-    <string name="title_send_fab">发送</string>
+    <string name="title_send_fabpref">发送</string>
     <string name="title_announce">推荐观看</string>
+    <string name="pref_header_language">语言</string>
+    <string name="pref_title_ja_first">优先显示日语</string>
+    <string name="pref_description_ja_first_display">在有日语内容的情况下,优先显示日语内容</string>
+    <string name="toast_preference_changed">重启后生效</string>
 </resources>

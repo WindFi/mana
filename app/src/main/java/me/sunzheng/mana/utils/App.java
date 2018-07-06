@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.multidex.MultiDexApplication;
+import android.support.v4.os.LocaleListCompat;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
@@ -50,6 +52,7 @@ public class App extends MultiDexApplication {
         Glide.get(this).setMemoryCategory(MemoryCategory.NORMAL);
         sharedPreferences = getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
         sharedPreferences.registerOnSharedPreferenceChangeListener(configListener);
+        initGlobalPreferences();
     }
 
     @Override
@@ -121,6 +124,19 @@ public class App extends MultiDexApplication {
     }
 
     String getLanguage() {
-        return Locale.getDefault().getDisplayLanguage();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return LocaleListCompat.getDefault().get(0).getLanguage();
+        }
+        return Locale.getDefault().getLanguage();
+    }
+
+    void initGlobalPreferences() {
+//        ja first
+        SharedPreferences __sharedPreferences = android.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        if (!__sharedPreferences.contains(getString(PreferenceManager.Global.RES_JA_FIRST_BOOL))) {
+            String displayLanguage = getLanguage();
+            boolean isJaLanguage = displayLanguage.toLowerCase().contains("ja");
+            __sharedPreferences.edit().putBoolean(getString(PreferenceManager.Global.RES_JA_FIRST_BOOL), isJaLanguage).commit();
+        }
     }
 }

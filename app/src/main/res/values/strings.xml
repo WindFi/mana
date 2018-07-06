@@ -83,11 +83,14 @@
 
     <!--Settings for playback-->
     <string name="pref_header_playback">Playback</string>
+    <string name="pref_header_language">Language</string>
+    <string name="pref_title_ja_first">Ja first display</string>
     <string name="pref_title_autoplay">Auto play</string>
     <string name="pref_description_auto_play">When autoplay is enabled,next video will be automatically played</string>
-
+    <string name="pref_description_ja_first_display">First display JA content</string>
     <string name="pref_title_vibrate" translatable="false">Vibrate</string>
     <string name="title_activity_login" translatable="false">Sign in</string>
+    <string name="pref_key_ja_first_bool" translatable="false">ja_first</string>
     <string name="title_account">Account</string>
     <string name="title_history">Favorites</string>
     <string name="title_logout">Sign Out</string>
@@ -149,7 +152,7 @@
     <string name="vol">Vol : %1$s</string>
     <string name="brightness">Brightness : %1$s</string>
     <string name="hint_want_to_say_something_edittext">Say...</string>
-    <string name="title_send_fab">Send</string>
+    <string name="title_send_fabpref">Send</string>
 
     <string name="linearlayoutmanager" translatable="false">android.support.v7.widget.LinearLayoutManager</string>
     <string name="gridelayoutlayoutmanager" translatable="false">android.support.v7.widget.GridLayoutManager</string>
@@ -157,4 +160,5 @@
     <string name="main_announce_span_count" translatable="false">3</string>
     <string name="main_air_span_count" translatable="false">1</string>
     <string name="title_announce">recommended</string>
+    <string name="toast_preference_changed">After the restart to take effect!</string>
 </resources>

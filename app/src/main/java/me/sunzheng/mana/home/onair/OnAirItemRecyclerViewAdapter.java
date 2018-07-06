@@ -20,6 +20,7 @@ import java.util.List;
 import me.sunzheng.mana.BangumiDetailsActivity;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.core.BangumiModel;
+import me.sunzheng.mana.utils.LanguageSwitchUtils;
 
 public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItemRecyclerViewAdapter.ViewHolder> {
 
@@ -57,7 +58,7 @@ public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItem
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BangumiDetailsActivity.newInstance((Activity) v.getContext(), mValues.get(position).getId().toString(), mValues.get(position).getImage(), mValues.get(position).getNameCn(),
+                BangumiDetailsActivity.newInstance((Activity) v.getContext(), mValues.get(position).getId().toString(), mValues.get(position).getImage(), LanguageSwitchUtils.switchLanguageToJa(holder.mView.getContext(), mValues.get(position).getName(), mValues.get(position).getNameCn()),
                         holder.mImageView);
             }
         });
@@ -65,7 +66,7 @@ public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItem
                 .load(mValues.get(position).getImage())
                 .placeholder(new ColorDrawable(Color.parseColor(mValues.get(position).getCover_color())))
                 .into(holder.mImageView);
-        holder.mTitleTextView.setText(mValues.get(position).getNameCn());
+        holder.mTitleTextView.setText(LanguageSwitchUtils.switchLanguageToJa(holder.mView.getContext(), mValues.get(position).getName(), mValues.get(position).getNameCn()));
         holder.mSummaryTextView.setText(mValues.get(position).getSummary());
         holder.mEtcTextView.setText(mValues.get(position).getAirDate());
     }
