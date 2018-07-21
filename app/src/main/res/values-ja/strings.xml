@@ -50,4 +50,11 @@
     <string name="pref_title_ja_first">日本語での優先表示</string>
     <string name="pref_description_ja_first_display">日本語のコンテンツがある場合、日本語で優先表示</string>
     <string name="toast_preference_changed">再起動の後に設定が適用される</string>
+    <string name="title_friday">金曜日</string>
+    <string name="title_monday">月曜日</string>
+    <string name="title_saturday">土曜日</string>
+    <string name="title_tuesday">火曜日</string>
+    <string name="title_wednesday">水曜日</string>
+    <string name="title_thursday">木曜日</string>
+    <string name="title_sunday">日曜日</string>
 </resources>

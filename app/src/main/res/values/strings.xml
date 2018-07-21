@@ -147,6 +147,23 @@
         <item>@string/title_pause_status</item>
         <item>@string/title_abanoned_status</item>
     </string-array>
+
+    <string name="title_monday">Monday</string>
+    <string name="title_tuesday">Tuesday</string>
+    <string name="title_wednesday">Wednesday</string>
+    <string name="title_thursday">Thursday</string>
+    <string name="title_friday">Friday</string>
+    <string name="title_saturday">Saturday</string>
+    <string name="title_sunday">Sunday</string>
+
+    <string-array name="weeks">
+        <item>@string/title_monday</item>
+        <item>@string/title_tuesday</item>
+        <item>@string/title_wednesday</item>
+        <item>@string/title_friday</item>
+        <item>@string/title_saturday</item>
+        <item>@string/title_sunday</item>
+    </string-array>
     <string name="title_start">getstart</string>
 
     <string name="vol">Vol : %1$s</string>

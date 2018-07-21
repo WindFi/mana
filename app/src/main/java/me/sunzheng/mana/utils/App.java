@@ -21,9 +21,11 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -90,7 +92,7 @@ public class App extends MultiDexApplication {
     private OkHttpClient defaultOkHttpClient() {
         return new OkHttpClient.Builder()
                 .connectTimeout(10000, TimeUnit.MILLISECONDS)
-                .addNetworkInterceptor(new Interceptor() {
+                .addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
                         Request request = chain.request();
@@ -98,7 +100,17 @@ public class App extends MultiDexApplication {
                         String s = headers.get("User-Agent");
                         headers = headers.newBuilder().set("User-Agent", s + "; " + getUserAgent()).build();
                         request = request.newBuilder().headers(headers).build();
-                        return chain.proceed(request);
+                        Response response = chain.proceed(request);
+                        ResponseBody body = response.body();
+                        MediaType mediaType = body.contentType();
+                        String content = body.string();
+                        Log.i(getHost(), request.url().host() + request.url().query());
+//                        Log.i(getHost(),"headers:"+content);
+//                        Log.i(getHost(),"request:"+content);
+                        logOver4kChars(getHost(), content);
+                        return response.newBuilder()
+                                .body(ResponseBody.create(body.contentType(), content))
+                                .build();
                     }
                 })
                 .cookieJar(new JavaNetCookieJar(new CookieManager(new PersistentHttpCookieStore(this), CookiePolicy.ACCEPT_ALL)))
@@ -137,6 +149,22 @@ public class App extends MultiDexApplication {
             String displayLanguage = getLanguage();
             boolean isJaLanguage = displayLanguage.toLowerCase().contains("ja");
             __sharedPreferences.edit().putBoolean(getString(PreferenceManager.Global.RES_JA_FIRST_BOOL), isJaLanguage).commit();
+        }
+    }
+
+    void logOver4kChars(String tag, String body) {
+        if (body.length() > 4000) {
+            int chunkCount = body.length() / 4000;
+            for (int i = 0; i < chunkCount; i++) {
+                int max = 4000 * (i + 1);
+                if (max > body.length()) {
+                    Log.i(tag, body.substring(4000 * i));
+                } else {
+                    Log.i(tag, body.substring(4000 * i, max));
+                }
+            }
+        } else {
+            Log.i(tag, body);
         }
     }
 }
