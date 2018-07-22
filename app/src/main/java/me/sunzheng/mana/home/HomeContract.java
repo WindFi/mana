@@ -43,7 +43,7 @@ public interface HomeContract {
 
             void setSummary(CharSequence descript);
 
-            void setOriginName(CharSequence originName);
+            void setOriginName(int dayInWeek, CharSequence airDate);
 
             void setAdapter(RecyclerView.Adapter adapter);
 

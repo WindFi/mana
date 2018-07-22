@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -31,6 +32,7 @@ import me.sunzheng.mana.BangumiDetailsActivity;
 import me.sunzheng.mana.FavoriteCompact;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.home.HomeContract;
+import me.sunzheng.mana.utils.ArrarysResourceUtils;
 import me.sunzheng.mana.utils.PreferenceManager;
 
 
@@ -209,10 +211,15 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     }
 
     @Override
-    public void setOriginName(CharSequence originName) {
+    public void setOriginName(int day, CharSequence etc) {
         if (mOriginTitleTextView == null)
             return;
-        mOriginTitleTextView.setText(originName);
+        String dayInWeek = ArrarysResourceUtils.dayInWeek(getActivity(), day);
+        int color = ContextCompat.getColor(getActivity(), R.color.colorPrimary);
+        String resultString = getActivity().getString(R.string.formatter_day_airdate, etc, dayInWeek);
+//        SpannableStringBuilder spannableStringBuilder=new SpannableStringBuilder(resultString);
+//        spannableStringBuilder.setSpan(new ForegroundColorSpan(color),resultString.indexOf(dayInWeek),resultString.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mOriginTitleTextView.setText(resultString);
     }
 
     @Override

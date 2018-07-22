@@ -157,12 +157,13 @@
     <string name="title_sunday">Sunday</string>
 
     <string-array name="weeks">
+        <item>@string/title_sunday</item>
         <item>@string/title_monday</item>
         <item>@string/title_tuesday</item>
         <item>@string/title_wednesday</item>
+        <item>@string/title_thursday</item>
         <item>@string/title_friday</item>
         <item>@string/title_saturday</item>
-        <item>@string/title_sunday</item>
     </string-array>
     <string name="title_start">getstart</string>
 
@@ -178,4 +179,5 @@
     <string name="main_air_span_count" translatable="false">1</string>
     <string name="title_announce">recommended</string>
     <string name="toast_preference_changed">After the restart to take effect!</string>
+    <string name="formatter_day_airdate" translatable="false">%1$s - %2$s</string>
 </resources>

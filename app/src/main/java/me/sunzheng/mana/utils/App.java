@@ -7,6 +7,7 @@ import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.multidex.MultiDexApplication;
 import android.support.v4.os.LocaleListCompat;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.bumptech.glide.Glide;
@@ -21,11 +22,10 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
+import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -75,7 +75,6 @@ public class App extends MultiDexApplication {
 
     private String getHost() {
         String host = sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "");
-        Log.i(TAG, host);
         return host;
     }
 
@@ -92,25 +91,21 @@ public class App extends MultiDexApplication {
     private OkHttpClient defaultOkHttpClient() {
         return new OkHttpClient.Builder()
                 .connectTimeout(10000, TimeUnit.MILLISECONDS)
+                .addNetworkInterceptor(new HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
                 .addInterceptor(new Interceptor() {
                     @Override
                     public Response intercept(Chain chain) throws IOException {
                         Request request = chain.request();
                         Headers headers = request.headers();
                         String s = headers.get("User-Agent");
-                        headers = headers.newBuilder().set("User-Agent", s + "; " + getUserAgent()).build();
+                        if (TextUtils.isEmpty(s)) {
+                            s = getUserAgent();
+                        } else {
+                            s += ";" + getUserAgent();
+                        }
+                        headers = headers.newBuilder().set("User-Agent", s).build();
                         request = request.newBuilder().headers(headers).build();
-                        Response response = chain.proceed(request);
-                        ResponseBody body = response.body();
-                        MediaType mediaType = body.contentType();
-                        String content = body.string();
-                        Log.i(getHost(), request.url().host() + request.url().query());
-//                        Log.i(getHost(),"headers:"+content);
-//                        Log.i(getHost(),"request:"+content);
-                        logOver4kChars(getHost(), content);
-                        return response.newBuilder()
-                                .body(ResponseBody.create(body.contentType(), content))
-                                .build();
+                        return chain.proceed(request);
                     }
                 })
                 .cookieJar(new JavaNetCookieJar(new CookieManager(new PersistentHttpCookieStore(this), CookiePolicy.ACCEPT_ALL)))
@@ -155,7 +150,7 @@ public class App extends MultiDexApplication {
     void logOver4kChars(String tag, String body) {
         if (body.length() > 4000) {
             int chunkCount = body.length() / 4000;
-            for (int i = 0; i < chunkCount; i++) {
+            for (int i = 0; i < chunkCount + 1; i++) {
                 int max = 4000 * (i + 1);
                 if (max > body.length()) {
                     Log.i(tag, body.substring(4000 * i));

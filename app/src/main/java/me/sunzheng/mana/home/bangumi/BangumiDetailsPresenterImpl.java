@@ -67,8 +67,9 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                         mView.setAirDate(mBangumiDetails.getAirDate());
                         mView.setSummary(mBangumiDetails.getSummary());
                         mView.setFavouriteStatus(mBangumiDetails.getFavoriteStatus());
-                        mView.setOriginName(LanguageSwitchUtils.switchLanguageToJa(mView.getContext(), mBangumiDetails.getNameCn(), mBangumiDetails.getName()));
-//                        mView.setOriginName(TextUtils.isEmpty(mBangumiDetails.getName()) ? mBangumiDetails.getNameCn() : mBangumiDetails.getName());
+                        mView.setName(LanguageSwitchUtils.switchLanguageToJa(mView.getContext(), mBangumiDetails.getNameCn(), mBangumiDetails.getName()));
+
+                        mView.setOriginName((int) mBangumiDetails.getAirWeekday(), mBangumiDetails.getAirDate());
                         Observable.fromIterable(mBangumiDetails.getEpisodes()).filter(new Predicate<Episode>() {
                             @Override
                             public boolean test(Episode episode) throws Exception {

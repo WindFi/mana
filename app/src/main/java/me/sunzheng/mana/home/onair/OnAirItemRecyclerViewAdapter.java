@@ -20,6 +20,7 @@ import java.util.List;
 import me.sunzheng.mana.BangumiDetailsActivity;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.core.BangumiModel;
+import me.sunzheng.mana.utils.ArrarysResourceUtils;
 import me.sunzheng.mana.utils.LanguageSwitchUtils;
 
 public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItemRecyclerViewAdapter.ViewHolder> {
@@ -68,7 +69,13 @@ public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItem
                 .into(holder.mImageView);
         holder.mTitleTextView.setText(LanguageSwitchUtils.switchLanguageToJa(holder.mView.getContext(), mValues.get(position).getName(), mValues.get(position).getNameCn()));
         holder.mSummaryTextView.setText(mValues.get(position).getSummary());
-        holder.mEtcTextView.setText(mValues.get(position).getAirDate());
+
+        String dayInWeek = ArrarysResourceUtils.dayInWeek(holder.itemView.getContext(), (int) mValues.get(position).getAirWeekday());
+        String resultString = holder.itemView.getContext().getString(R.string.formatter_day_airdate, mValues.get(position).getAirDate(), dayInWeek);
+//        int color= ContextCompat.getColor(holder.itemView.getContext(),R.color.colorPrimary);
+//        SpannableStringBuilder spannableStringBuilder=new SpannableStringBuilder(resultString);
+//        spannableStringBuilder.setSpan(new ForegroundColorSpan(color),resultString.indexOf(dayInWeek),resultString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        holder.mEtcTextView.setText(resultString);
     }
 
     @Override
