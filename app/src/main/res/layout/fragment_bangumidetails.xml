@@ -43,16 +43,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <RelativeLayout
             android:id="@+id/bangumidetails_header_constraint"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginEnd="@dimen/activity_horizontal_margin"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginStart="@dimen/activity_horizontal_margin"
             android:layout_marginTop="@dimen/content_vertival_margin">
 
             <ImageView
@@ -67,9 +67,9 @@
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/bangumidetails_ablum_imageview"
                 android:layout_toEndOf="@+id/bangumidetails_ablum_imageview"
+                android:layout_toRightOf="@+id/bangumidetails_ablum_imageview"
                 android:singleLine="true"
                 android:textAppearance="@style/TextAppearance.AppCompat.Title"
-                tools:layout_editor_absoluteX="48dp"
                 tools:text="name" />
 
             <android.support.v7.widget.AppCompatTextView
@@ -78,15 +78,17 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/bangumidetails_name_textview"
                 android:layout_toEndOf="@+id/bangumidetails_ablum_imageview"
+                android:layout_toRightOf="@+id/bangumidetails_ablum_imageview"
                 android:singleLine="true"
-                android:textAppearance="@style/TextAppearance.AppCompat.Widget.TextView.SpinnerItem"
-                tools:text="name" />
+                android:textColor="@color/grey"
+                tools:text="hello" />
 
             <android.support.v7.widget.AppCompatTextView
                 android:id="@+id/bangumidetails_summary_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
                 android:layout_below="@+id/bangumidetails_ablum_imageview"
                 tools:text="content" />
 
@@ -95,6 +97,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignStart="@+id/bangumidetails_originname_textview"
+                android:layout_alignLeft="@+id/bangumidetails_originname_textview"
                 android:layout_below="@+id/bangumidetails_originname_textview"
                 android:ems="10"
                 android:text="@string/title_uncollection_status" />
@@ -104,6 +107,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
                 android:layout_below="@+id/bangumidetails_summary_textview"
                 android:text="@string/title_episode_textview"
                 android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -113,13 +117,15 @@
                 android:id="@+id/recycler_view"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_below="@+id/bangumidetails_episode_label_textview" />
+                android:layout_below="@+id/bangumidetails_episode_label_textview"
+                tools:listitem="@layout/item_bangumidetails_fragment" />
             <android.support.v4.widget.ContentLoadingProgressBar
                 android:id="@+id/bangumidetails_progreassbar"
                 style="?android:attr/progressBarStyleLarge"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true" />
         </RelativeLayout>
     </android.support.v4.widget.NestedScrollView>

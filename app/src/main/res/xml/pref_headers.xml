@@ -19,4 +19,7 @@
     <header
         android:fragment="me.sunzheng.mana.SettingsActivity$PlaybackSettingsFragment"
         android:title="@string/pref_header_playback" />
+    <header
+        android:fragment="me.sunzheng.mana.SettingsActivity$LanguageSettingsFragment"
+        android:title="@string/pref_header_language" />
 </preference-headers>

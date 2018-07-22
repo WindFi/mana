@@ -46,7 +46,6 @@ public class AnnoucePresenterImpl implements HomeContract.Annouce.Presenter {
                             mView.showContentView(false);
                             return;
                         }
-                        // TODO: 2018/3/12 Adapter
                         mView.setData(responseWrapper.data);
                         mView.showContentView(true);
                     }

@@ -302,6 +302,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         intentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(broadcastReceiver, intentFilter);
         performEpisodeItemClick(current);
+        hideControlView();
     }
 
     void performEpisodeItemClick(int position) {
@@ -374,12 +375,17 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     void hideControlView() {
         getSupportActionBar().hide();
         playerView.hideController();
-        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        int flag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;// hide nav bar
+        if (Build.VERSION.SDK_INT > 15) {
+            flag |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;// hide status bar
+        }
+        if (Build.VERSION.SDK_INT > 18) {
+            flag |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        }
+        playerView.setSystemUiVisibility(flag);
     }
 
     void showControllView() {

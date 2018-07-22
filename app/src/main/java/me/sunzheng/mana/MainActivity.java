@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity
     HomeApiService.OnAir apiService;
     CharSequence[] titles;
     Handler handler = new Handler();
+    boolean isJaFirst = false;
     FragmentStatePagerAdapter fragmentPagerAdapter = new FragmentStatePagerAdapter(getSupportFragmentManager()) {
         @Override
         public void finishUpdate(ViewGroup container) {
@@ -170,6 +171,7 @@ public class MainActivity extends AppCompatActivity
 
         AppCompatTextView account = (AppCompatTextView) navigationView.getHeaderView(0).findViewById(R.id.nav_title);
         account.setText(getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE).getString(PreferenceManager.Global.STR_USERNAME, ""));
+        isJaFirst = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(PreferenceManager.Global.RES_JA_FIRST_BOOL), false);
         apiService = ((App) getApplicationContext()).getRetrofit().create(HomeApiService.OnAir.class);
         titles = new CharSequence[]{getText(R.string.title_anim_catalog_tablayout), getText(R.string.title_dram_catalog_tablayout)};
         tabLayout = (TabLayout) findViewById(R.id.main_tablayout);
@@ -356,7 +358,7 @@ public class MainActivity extends AppCompatActivity
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        BangumiDetailsActivity.newInstance(MainActivity.this, item.getBangumi().getId().toString(), item.getBangumi().getImage(), item.getBangumi().getNameCn(),
+                        BangumiDetailsActivity.newInstance(MainActivity.this, item.getBangumi().getId().toString(), item.getBangumi().getImage(), isJaFirst ? item.getBangumi().getName() : item.getBangumi().getNameCn(),
                                 holder.mImageView);
                     }
                 });
@@ -371,9 +373,9 @@ public class MainActivity extends AppCompatActivity
             if (request != null)
                 request.into(holder.mImageView);
             if (item.getBangumi() != null) {
-                holder.mTextView.setText(item.getBangumi().getNameCn());
+                holder.mTextView.setVisibility(View.GONE);
+                holder.mTextView.setText(isJaFirst ? item.getBangumi().getName() : item.getBangumi().getNameCn());
             }
-            holder.mTextView.setVisibility(item.getBangumi() == null ? View.INVISIBLE : View.VISIBLE);
         }
 
         @Override

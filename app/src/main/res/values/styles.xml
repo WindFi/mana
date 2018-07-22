@@ -85,10 +85,35 @@
         <item name="android:textSize">24sp</item>
     </style>
 
-    <style name="AppTheme.MainActivity" parent="AppTheme.NoActionBar" />
+    <style name="TextAppearance.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextAppearance.Subtitle" parent="TextAppearance.AppCompat.Title.Inverse">
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="TextAppearance.ListItem" />
+
+    <style name="TextAppearance.ListItem.Title" parent="TextAppearance.AppCompat.Title">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="TextAppearance.ListItem.SubTitle">
+        <item name="android:textAppearance">@style/TextAppearance.Subtitle</item>
+        <item name="android:textAppearanceListItemSmall"></item>
+    </style>
+
+    <style name="AppTheme.MainActivity" parent="AppTheme.NoActionBar">
+        <item name="android:textAppearanceListItem">@style/TextAppearance.ListItem.Title</item>
+    </style>
 
     <style name="AppTheme.BangumiDetailsActivity" parent="AppTheme.NoActionBar.NoStatusBar">
         <item name="colorAccent">@color/colorPrimary</item>
+        <item name="cardViewStyle">@style/CardView</item>
     </style>
 
     <style name="AppTheme.SearchResultActivity" parent="AppTheme.NoActionBar" />
