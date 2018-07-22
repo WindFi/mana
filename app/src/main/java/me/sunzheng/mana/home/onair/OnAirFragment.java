@@ -12,7 +12,10 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.List;
+
 import me.sunzheng.mana.R;
+import me.sunzheng.mana.core.BangumiModel;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.widget.EmptyAdapter;
 
@@ -106,11 +109,11 @@ public class OnAirFragment extends Fragment implements HomeContract.OnAir.View {
     }
 
     @Override
-    public void setAdapter(RecyclerView.Adapter adapter) {
+    public void setAirs(List<BangumiModel> bangumiModels) {
         if (recyclerView.getAdapter() == null || recyclerView.getAdapter() instanceof EmptyAdapter)
-            recyclerView.setAdapter(adapter);
+            recyclerView.setAdapter(new OnAirItemRecyclerViewAdapter(bangumiModels));
         else
-            recyclerView.swapAdapter(adapter, true);
+            recyclerView.swapAdapter(new OnAirItemRecyclerViewAdapter(bangumiModels), true);
         if (recyclerView.getLayoutManager() == null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             DividerItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);
