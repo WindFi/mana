@@ -83,11 +83,14 @@
 
     <!--Settings for playback-->
     <string name="pref_header_playback">Playback</string>
+    <string name="pref_header_language">Language</string>
+    <string name="pref_title_ja_first">Ja first display</string>
     <string name="pref_title_autoplay">Auto play</string>
     <string name="pref_description_auto_play">When autoplay is enabled,next video will be automatically played</string>
-
+    <string name="pref_description_ja_first_display">First display JA content</string>
     <string name="pref_title_vibrate" translatable="false">Vibrate</string>
     <string name="title_activity_login" translatable="false">Sign in</string>
+    <string name="pref_key_ja_first_bool" translatable="false">ja_first</string>
     <string name="title_account">Account</string>
     <string name="title_history">Favorites</string>
     <string name="title_logout">Sign Out</string>
@@ -115,8 +118,8 @@
     <string name="text_fragment_remember">Rememberd</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
-    <string name="title_anim_catalog_tablayout">Anim</string>
-    <string name="title_dram_catalog_tablayout">Daram</string>
+    <string name="title_anim_catalog_tablayout">Anime</string>
+    <string name="title_dram_catalog_tablayout">Drama</string>
     <string name="title_episode_textview">Episode( %1$s / %2$s )</string>
     <string name="episode_template">Episode: %1$s</string>
     <string name="hint_search">Name</string>
@@ -144,12 +147,30 @@
         <item>@string/title_pause_status</item>
         <item>@string/title_abanoned_status</item>
     </string-array>
+
+    <string name="title_monday">Monday</string>
+    <string name="title_tuesday">Tuesday</string>
+    <string name="title_wednesday">Wednesday</string>
+    <string name="title_thursday">Thursday</string>
+    <string name="title_friday">Friday</string>
+    <string name="title_saturday">Saturday</string>
+    <string name="title_sunday">Sunday</string>
+
+    <string-array name="weeks">
+        <item>@string/title_sunday</item>
+        <item>@string/title_monday</item>
+        <item>@string/title_tuesday</item>
+        <item>@string/title_wednesday</item>
+        <item>@string/title_thursday</item>
+        <item>@string/title_friday</item>
+        <item>@string/title_saturday</item>
+    </string-array>
     <string name="title_start">getstart</string>
 
     <string name="vol">Vol : %1$s</string>
     <string name="brightness">Brightness : %1$s</string>
     <string name="hint_want_to_say_something_edittext">Say...</string>
-    <string name="title_send_fab">Send</string>
+    <string name="title_send_fabpref">Send</string>
 
     <string name="linearlayoutmanager" translatable="false">android.support.v7.widget.LinearLayoutManager</string>
     <string name="gridelayoutlayoutmanager" translatable="false">android.support.v7.widget.GridLayoutManager</string>
@@ -157,4 +178,6 @@
     <string name="main_announce_span_count" translatable="false">3</string>
     <string name="main_air_span_count" translatable="false">1</string>
     <string name="title_announce">recommended</string>
+    <string name="toast_preference_changed">After the restart to take effect!</string>
+    <string name="formatter_day_airdate" translatable="false">%1$s - %2$s</string>
 </resources>

@@ -23,6 +23,7 @@ import me.sunzheng.mana.R;
 import me.sunzheng.mana.VideoPlayActivity;
 import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.core.WatchProgress;
+import me.sunzheng.mana.utils.LanguageSwitchUtils;
 import me.sunzheng.mana.utils.RegexUtils;
 
 /**
@@ -75,7 +76,8 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
         }
         request.into(holder.mImageView);
         holder.mEpisodeNoTextView.setText(holder.itemView.getContext().getString(R.string.episode_template, item.getEpisodeNo() + ""));
-        holder.mTitleTextView.setText(TextUtils.isEmpty(item.getNameCn()) ? item.getName() : item.getNameCn());
+        holder.mTitleTextView.setText(LanguageSwitchUtils.switchLanguageToJa(holder.itemView.getContext(), item.getName(), item.getNameCn()));
+//        holder.mTitleTextView.setText(TextUtils.isEmpty(item.getNameCn()) ? item.getName() : item.getNameCn());
         holder.mUpdateDateTextView.setText(item.getAirdate());
         WatchProgress watchProgress = item.getWatchProgress();
         if (watchProgress == null) {

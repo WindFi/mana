@@ -234,6 +234,8 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
     @Override
     public void seekTo(float detaVal) {
         long position = player.getCurrentPosition() + (long) detaVal * 5000;
+        if (position < 0)
+            return;
         player.seekTo(position);
         mView.showProgressDetaVal(0);
     }
@@ -297,7 +299,7 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
             item.setLastWatchPosition(player.getCurrentPosition());
             item.setLastWatchTime(System.currentTimeMillis());
             item.setPercentage((float) player.getCurrentPosition() / (float) player.getDuration());
-            item.setIsFinished(player.getCurrentPosition() >= player.getDuration());
+            item.setIsFinished(player.getCurrentPosition() >= (player.getDuration() * 0.95));
             List<Record> list = new ArrayList<>();
             list.add(item);
             request.setItem(list);

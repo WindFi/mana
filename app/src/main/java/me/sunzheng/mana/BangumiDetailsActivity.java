@@ -3,6 +3,7 @@ package me.sunzheng.mana;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.support.v7.app.AppCompatActivity;
@@ -34,7 +35,7 @@ public class BangumiDetailsActivity extends AppCompatActivity {
         intent.putExtras(extras);
         Pair<View, String> pair0 = Pair.create((View) imageView[0], BangumiDetailsActivity.PAIR_IMAGE_STR);
         ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pair0);
-        activity.startActivity(intent, optionsCompat.toBundle());
+        ActivityCompat.startActivity(activity, intent, optionsCompat.toBundle());
     }
 
     @Override

@@ -43,6 +43,17 @@
     <string name="title_activity_feedback">反馈</string>
     <string name="title_action_source">源</string>
     <string name="hint_want_to_say_something_edittext">还想说点啥....</string>
-    <string name="title_send_fab">发送</string>
+    <string name="title_send_fabpref">发送</string>
     <string name="title_announce">推荐观看</string>
+    <string name="pref_header_language">语言</string>
+    <string name="pref_title_ja_first">优先显示日语</string>
+    <string name="pref_description_ja_first_display">在有日语内容的情况下,优先显示日语内容</string>
+    <string name="toast_preference_changed">重启后生效</string>
+    <string name="title_friday">星期五</string>
+    <string name="title_monday">星期一</string>
+    <string name="title_saturday">星期六</string>
+    <string name="title_sunday">星期日</string>
+    <string name="title_thursday">星期四</string>
+    <string name="title_tuesday">星期二</string>
+    <string name="title_wednesday">星期三</string>
 </resources>

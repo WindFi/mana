@@ -48,7 +48,6 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
      *
      * @return A new instance of fragment LoginFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static LoginFragment newInstance() {
         LoginFragment fragment = new LoginFragment();
         return fragment;
@@ -71,7 +70,7 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
             public void onClick(android.view.View v) {
                 try {
                     InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    inputManager.hideSoftInputFromWindow(loginPassWordEditText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     mPresenter.login(loginUserNameEditText.getText().toString(), loginPassWordEditText.getText().toString(), checkBox.isChecked());
                 } catch (IllegalArgumentException e) {
                     showToast(e.getLocalizedMessage());
@@ -91,7 +90,6 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
             onLoginSuccess();
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -153,7 +151,6 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }
