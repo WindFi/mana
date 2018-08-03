@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:alpha="0.9">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom">
@@ -69,5 +69,5 @@
             </android.support.v7.widget.LinearLayoutCompat>
         </android.support.constraint.ConstraintLayout>
 
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.ConstraintLayout>
 </FrameLayout>

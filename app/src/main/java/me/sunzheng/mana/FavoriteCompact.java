@@ -7,8 +7,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.RippleDrawable;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 /**
  * Created by Sun on 2017/7/6.

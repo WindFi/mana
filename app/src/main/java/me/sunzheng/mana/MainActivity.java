@@ -13,22 +13,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.customtabs.CustomTabsIntent;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.TypedValue;
@@ -41,12 +25,30 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.DrawableTypeRequest;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.RequestManager;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.tabs.TabLayout;
 
 import java.util.List;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.SearchView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.browser.customtabs.CustomTabsIntent;
+import androidx.core.view.GravityCompat;
+import androidx.core.view.MenuItemCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager.widget.ViewPager;
 import me.sunzheng.mana.core.AnnounceModel;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
@@ -57,6 +59,8 @@ import me.sunzheng.mana.home.onair.respository.DataRepositoryImpl;
 import me.sunzheng.mana.utils.App;
 import me.sunzheng.mana.utils.PreferenceManager;
 import me.sunzheng.mana.utils.RegexUtils;
+
+//import com.bumptech.glide.DrawableTypeRequest;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, HomeContract.Annouce.View {
@@ -84,7 +88,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         @Override
-        public android.support.v4.app.Fragment getItem(int position) {
+        public Fragment getItem(int position) {
             OnAirFragment fragment = OnAirFragment.newInstance(position % 2 == 0 ? OnAirFragment.INT_TYPE_ANIMATION : OnAirFragment.INT_TYPE_DRAMA);
             return fragment;
         }
@@ -171,8 +175,9 @@ public class MainActivity extends AppCompatActivity
 
         AppCompatTextView account = (AppCompatTextView) navigationView.getHeaderView(0).findViewById(R.id.nav_title);
         account.setText(getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE).getString(PreferenceManager.Global.STR_USERNAME, ""));
-        isJaFirst = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(PreferenceManager.Global.RES_JA_FIRST_BOOL), false);
-        apiService = ((App) getApplicationContext()).getRetrofit().create(HomeApiService.OnAir.class);
+        isJaFirst = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this).getBoolean(getString(PreferenceManager.Global.RES_JA_FIRST_BOOL), false);
+
+        apiService = ((App) getApplication()).getRetrofit().create(HomeApiService.OnAir.class);
         titles = new CharSequence[]{getText(R.string.title_anim_catalog_tablayout), getText(R.string.title_dram_catalog_tablayout)};
         tabLayout = (TabLayout) findViewById(R.id.main_tablayout);
         mViewPager = (ViewPager) findViewById(R.id.main_viewpager);
@@ -332,7 +337,7 @@ public class MainActivity extends AppCompatActivity
         public void onBindViewHolder(final ViewHolder holder, int position) {
             final AnnounceModel item = values.get(position);
             RequestManager requestManager = Glide.with(holder.itemView.getContext());
-            DrawableTypeRequest request = null;
+            RequestBuilder request = null;
             if (item.getPosition() == 1) {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -365,7 +370,8 @@ public class MainActivity extends AppCompatActivity
                 if (item.getBangumi().getCoverImage() != null && !TextUtils.isEmpty(item.getBangumi().getCoverImage().dominantColor)
                         && item.getBangumi().getCoverImage().dominantColor.matches(RegexUtils.ColorPattern)) {
                     request = requestManager.load(item.getBangumi().getCoverImage().url);
-                    request.placeholder(new ColorDrawable(Color.parseColor(item.getBangumi().getCoverImage().dominantColor)));
+                    RequestOptions options = new RequestOptions().placeholder(new ColorDrawable(Color.parseColor(item.getBangumi().getCoverImage().dominantColor)));
+                    request.apply(options);
                 } else {
 
                 }

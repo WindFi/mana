@@ -1,12 +1,12 @@
 package me.sunzheng.mana.home;
 
-import android.support.v7.widget.RecyclerView;
 import android.widget.BaseAdapter;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
 
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
 import me.sunzheng.mana.core.AnnounceModel;
 import me.sunzheng.mana.core.BangumiModel;
 import me.sunzheng.mana.core.Episode;

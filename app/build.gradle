@@ -17,7 +17,7 @@ android {
         targetSdkVersion build_versions.target_sdk
         versionCode 26
         versionName "1.4.06"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.release
         setProperty("archivesBaseName", "Mana-" + "$versionName")
@@ -38,9 +38,7 @@ android {
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
 
-    androidTestImplementation(deps.espresso.core, {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
+    androidTestImplementation'androidx.test.espresso:espresso-core:3.1.0-alpha3'
     implementation deps.rxandroid
     implementation deps.retrofit.runtime
     implementation deps.retrofit.converters
@@ -51,23 +49,26 @@ dependencies {
     implementation deps.okhttp_logging_interceptor
     implementation deps.glide
     implementation deps.common3
-    implementation deps.multidex
-
-    implementation deps.support.customtabs
-    implementation deps.support.gridlayout
-    implementation deps.support.cardview
-    implementation deps.support.app_compat
-    implementation deps.support.v4
-    implementation deps.support.design
-    implementation deps.support.recyclerview
     implementation deps.okhttp_urlconnection
-    implementation deps.constraint_layout
-    implementation deps.support.preference
-    implementation deps.support.vector_drawable
-    implementation deps.support.core_utils
     implementation deps.exoplayer
     implementation deps.ormlite.core
     implementation deps.ormlite.android
+    
+    implementation 'androidx.multidex:multidex:2.0.0'
+
+    implementation 'androidx.browser:browser:1.0.0-alpha1'
+    implementation 'androidx.gridlayout:gridlayout:1.0.0-alpha1'
+    implementation 'androidx.cardview:cardview:1.0.0-alpha1'
+    implementation 'androidx.appcompat:appcompat:1.0.0-alpha1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
+    implementation 'com.google.android.material:material:1.0.0-alpha1'
+    implementation 'androidx.recyclerview:recyclerview:1.0.0-alpha1'
+
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
+    implementation 'androidx.preference:preference:1.0.0-alpha1'
+    implementation 'androidx.vectordrawable:vectordrawable:1.0.0-alpha1'
+    implementation 'androidx.legacy:legacy-support-core-utils:1.0.0-alpha1'
+
 
     testImplementation deps.junit
 }

@@ -39,7 +39,7 @@
         </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true"
@@ -119,7 +119,8 @@
                 android:layout_height="match_parent"
                 android:layout_below="@+id/bangumidetails_episode_label_textview"
                 tools:listitem="@layout/item_bangumidetails_fragment" />
-            <android.support.v4.widget.ContentLoadingProgressBar
+
+            <androidx.core.widget.ContentLoadingProgressBar
                 android:id="@+id/bangumidetails_progreassbar"
                 style="?android:attr/progressBarStyleLarge"
                 android:layout_width="match_parent"
@@ -128,5 +129,5 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true" />
         </RelativeLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
 </android.support.design.widget.CoordinatorLayout>

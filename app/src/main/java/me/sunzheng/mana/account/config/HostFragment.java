@@ -3,11 +3,6 @@ package me.sunzheng.mana.account.config;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.v4.app.Fragment;
-import android.support.v4.util.PatternsCompat;
-import android.support.v7.widget.AppCompatButton;
 import android.text.TextUtils;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -18,6 +13,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.core.util.PatternsCompat;
+import androidx.fragment.app.Fragment;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.account.AccountContrant;
 import me.sunzheng.mana.utils.PreferenceManager;

@@ -8,7 +8,7 @@
     android:foreground="?attr/selectableItemBackground"
     app:contentPadding="@dimen/activity_horizontal_margin">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipChildren="true">
@@ -64,5 +64,5 @@
                 app:layout_constraintStart_toEndOf="@+id/item_album"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:text="subtitle" />
-    </android.support.constraint.ConstraintLayout>
+    </androidx.constraintlayout.ConstraintLayout>
 </android.support.v7.widget.CardView>

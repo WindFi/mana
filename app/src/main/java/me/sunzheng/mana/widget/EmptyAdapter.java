@@ -1,7 +1,8 @@
 package me.sunzheng.mana.widget;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
+
+import androidx.recyclerview.widget.RecyclerView;
 
 /**
  * see https://stackoverflow.com/questions/37462766/swiperefreshlayout-doesnt-refresh-on-swipe-when-list-size-is-zero

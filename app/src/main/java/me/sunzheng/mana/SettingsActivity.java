@@ -16,12 +16,13 @@ import android.preference.PreferenceActivity;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
-import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import java.util.List;
+
+import androidx.appcompat.app.ActionBar;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -309,7 +310,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             super.onCreate(savedInstanceState);
             addPreferencesFromResource(R.xml.pref_language);
             setHasOptionsMenu(true);
-            android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(listener);
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(getActivity()).registerOnSharedPreferenceChangeListener(listener);
             // Bind the summaries of EditText/List/Dialog/Ringtone preferences
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
@@ -330,7 +331,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         @Override
         public void onDestroy() {
             super.onDestroy();
-            android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(listener);
+            androidx.preference.PreferenceManager.getDefaultSharedPreferences(getActivity()).unregisterOnSharedPreferenceChangeListener(listener);
         }
     }
 }

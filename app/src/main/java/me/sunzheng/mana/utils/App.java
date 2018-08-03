@@ -5,8 +5,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.support.multidex.MultiDexApplication;
-import android.support.v4.os.LocaleListCompat;
 import android.text.TextUtils;
 import android.util.Log;
 
@@ -19,6 +17,8 @@ import java.net.CookiePolicy;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import androidx.core.os.LocaleListCompat;
+import androidx.multidex.MultiDexApplication;
 import okhttp3.Headers;
 import okhttp3.Interceptor;
 import okhttp3.JavaNetCookieJar;

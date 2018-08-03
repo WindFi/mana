@@ -1,7 +1,6 @@
 package me.sunzheng.mana.account;
 
-import android.support.v4.app.FragmentManager;
-
+import androidx.fragment.app.FragmentManager;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.account.config.HostFragment;
 import me.sunzheng.mana.account.config.StartPresenterImpl;

@@ -3,8 +3,6 @@ package me.sunzheng.mana.home.search;
 import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.support.v7.widget.CardView;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +10,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
 import me.sunzheng.mana.BangumiDetailsActivity;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.core.BangumiModel;
@@ -56,7 +57,8 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         });
         Glide.with(holder.itemView.getContext())
                 .load(mValues.get(position).getImage())
-                .placeholder(new ColorDrawable(Color.parseColor(mValues.get(position).getCover_color())))
+                .apply(new RequestOptions()
+                        .placeholder(new ColorDrawable(Color.parseColor(mValues.get(position).getCover_color()))))
                 .into(holder.mImageView);
         holder.mTitleTextView.setText(LanguageSwitchUtils.switchLanguageToJa(holder.itemView.getContext(), mValues.get(position).getName(), mValues.get(position).getNameCn()));
         holder.mSummaryTextView.setText(mValues.get(position).getSummary());

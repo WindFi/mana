@@ -16,13 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
 import android.support.v4.media.MediaDescriptionCompat;
-import android.support.v4.view.GestureDetectorCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -40,7 +34,7 @@ import android.widget.TextView;
 
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.Collections;
@@ -49,6 +43,12 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.preference.PreferenceManager;
 import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.core.VideoFile;
 import me.sunzheng.mana.home.HomeApiService;
@@ -69,7 +69,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     public final static String STR_ITEMS_PARCEL = "items";
     public final static long DEFAULT_HIDE_TIME = 500;
     public final static long CLICK_DELAY_MILLIONSECONDS = 500;
-    SimpleExoPlayerView playerView;
+    PlayerView playerView;
     Toolbar toolbar;
     ListView mEpisodeListView, mSourceListView;
     boolean isResume = true, isAudioFouced = true, isControlViewVisibile;
@@ -231,7 +231,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         final Parcelable[] parcelableArray = savedInstanceState.getParcelableArray(STR_ITEMS_PARCEL);
         MediaDescriptionCompat[] items = convertFromParcelable(parcelableArray);
 
-        playerView = (SimpleExoPlayerView) findViewById(R.id.player);
+        playerView = (PlayerView) findViewById(R.id.player);
         mVolView = findViewById(R.id.videoplay_vol_textview);
         mEpisodeListView = (ListView) findViewById(R.id.video_episode_list);
 //      ----------------source list---------------------
