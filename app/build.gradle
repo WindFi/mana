@@ -9,8 +9,8 @@ android {
             storePassword String.valueOf(project.storePassword)
         }
     }
-    compileSdkVersion build_versions.compileSdkVersion
-    buildToolsVersion build_versions.build_tools
+    compileSdkVersion 28
+    buildToolsVersion '28.0.1'
     defaultConfig {
         applicationId "me.sunzheng.mana"
         minSdkVersion build_versions.min_sdk
@@ -37,8 +37,7 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-
-    androidTestImplementation'androidx.test.espresso:espresso-core:3.1.0-alpha3'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha3'
     implementation deps.rxandroid
     implementation deps.retrofit.runtime
     implementation deps.retrofit.converters
@@ -53,9 +52,7 @@ dependencies {
     implementation deps.exoplayer
     implementation deps.ormlite.core
     implementation deps.ormlite.android
-    
     implementation 'androidx.multidex:multidex:2.0.0'
-
     implementation 'androidx.browser:browser:1.0.0-alpha1'
     implementation 'androidx.gridlayout:gridlayout:1.0.0-alpha1'
     implementation 'androidx.cardview:cardview:1.0.0-alpha1'
@@ -63,12 +60,9 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
     implementation 'com.google.android.material:material:1.0.0-alpha1'
     implementation 'androidx.recyclerview:recyclerview:1.0.0-alpha1'
-
     implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
     implementation 'androidx.preference:preference:1.0.0-alpha1'
     implementation 'androidx.vectordrawable:vectordrawable:1.0.0-alpha1'
     implementation 'androidx.legacy:legacy-support-core-utils:1.0.0-alpha1'
-
-
     testImplementation deps.junit
 }

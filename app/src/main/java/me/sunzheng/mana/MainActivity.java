@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity
         if (appBarLayout == null)
             return;
         appBarLayout.setExpanded(active, true);
+
     }
 
     @Override
@@ -226,7 +227,6 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public boolean onQueryTextSubmit(String query) {
                         MenuItemCompat.collapseActionView(searchItem);
-
                         return false;
                     }
 

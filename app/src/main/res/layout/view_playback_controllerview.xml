@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:alpha="0.9">
 
-    <androidx.constraintlayout.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom">
@@ -44,7 +44,7 @@
                 android:paddingEnd="8dp"
                 app:layout_constraintEnd_toEndOf="parent">
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@id/exo_position"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -52,14 +52,14 @@
                     android:textColor="@android:color/white"
                     tools:text="00:00" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:text="/"
                     android:textColor="@android:color/white" />
 
-                <android.support.v7.widget.AppCompatTextView
+                <androidx.appcompat.widget.AppCompatTextView
                     android:id="@id/exo_duration"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
@@ -69,5 +69,5 @@
             </android.support.v7.widget.LinearLayoutCompat>
         </android.support.constraint.ConstraintLayout>
 
-    </androidx.constraintlayout.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
