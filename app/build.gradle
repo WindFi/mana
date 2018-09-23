@@ -52,17 +52,17 @@ dependencies {
     implementation deps.exoplayer
     implementation deps.ormlite.core
     implementation deps.ormlite.android
-    implementation 'androidx.multidex:multidex:2.0.0'
-    implementation 'androidx.browser:browser:1.0.0-alpha1'
-    implementation 'androidx.gridlayout:gridlayout:1.0.0-alpha1'
-    implementation 'androidx.cardview:cardview:1.0.0-alpha1'
-    implementation 'androidx.appcompat:appcompat:1.0.0-alpha1'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0-alpha1'
-    implementation 'com.google.android.material:material:1.0.0-alpha1'
-    implementation 'androidx.recyclerview:recyclerview:1.0.0-alpha1'
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.2'
-    implementation 'androidx.preference:preference:1.0.0-alpha1'
-    implementation 'androidx.vectordrawable:vectordrawable:1.0.0-alpha1'
-    implementation 'androidx.legacy:legacy-support-core-utils:1.0.0-alpha1'
+    implementation deps.multidex
+    implementation deps.androidx.browser
+    implementation deps.androidx.gridlayout
+    implementation deps.androidx.cardview
+    implementation deps.androidx.appcompat
+    implementation deps.legacy.v4
+    implementation deps.material
+    implementation deps.androidx.recyclerview
+    implementation deps.androidx.constraintlayout
+    implementation deps.androidx.preference
+    implementation deps.androidx.vectordrawable
+    implementation deps.legacy.utils
     testImplementation deps.junit
 }
