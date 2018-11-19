@@ -326,6 +326,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(STR_CURRINT_INT, getIntent().getExtras().getInt(STR_CURRINT_INT));
+        outState.putParcelableArray(STR_ITEMS_PARCEL, getIntent().getExtras().getParcelableArray(STR_ITEMS_PARCEL));
         super.onSaveInstanceState(outState);
     }
 

@@ -42,13 +42,28 @@ public class BangumiDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bangumi_details);
-        if (savedInstanceState == null)
+        if (savedInstanceState == null) {
             savedInstanceState = getIntent().getExtras();
+        }
         if (savedInstanceState == null)
             finish();
         fragment = BangumiDetailsFragment.newInstance(savedInstanceState);
         fragment.setPresenter(new BangumiDetailsPresenterImpl(fragment, new DataRespositoryImpl(this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Bangumi.class), savedInstanceState.getString(ARGS_ID_STR))));
-        getSupportFragmentManager().beginTransaction().add(R.id.contentPanel, fragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.contentPanel, fragment, "fragment").commitAllowingStateLoss();
+    }
+
+    @Override
+    protected void onDestroy() {
+        getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(ARGS_ID_STR, getIntent().getExtras().getString(ARGS_ID_STR));
+        outState.putString(ARGS_ABLUM_URL_STR, getIntent().getExtras().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR));
+        outState.putString(ARGS_TITLE_STR, getIntent().getExtras().getString(BangumiDetailsActivity.ARGS_TITLE_STR));
+        super.onSaveInstanceState(outState);
     }
 
     @Override
