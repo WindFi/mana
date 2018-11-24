@@ -20,7 +20,7 @@
             app:scrubber_color="@color/colorPrimaryDark"
             app:unplayed_color="@android:color/darker_gray" />
 
-        <android.support.constraint.ConstraintLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@android:color/black"
@@ -38,10 +38,11 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <android.support.v7.widget.LinearLayoutCompat
+            <androidx.appcompat.widget.LinearLayoutCompat
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:paddingEnd="8dp"
+                android:paddingRight="8dp"
                 app:layout_constraintEnd_toEndOf="parent">
 
                 <androidx.appcompat.widget.AppCompatTextView
@@ -66,8 +67,8 @@
                     android:gravity="center_vertical"
                     android:textColor="@android:color/white"
                     tools:text="00:00" />
-            </android.support.v7.widget.LinearLayoutCompat>
-        </android.support.constraint.ConstraintLayout>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
