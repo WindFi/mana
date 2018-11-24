@@ -9,15 +9,15 @@ android {
             storePassword String.valueOf(project.storePassword)
         }
     }
-    compileSdkVersion 28
-    buildToolsVersion '28.0.1'
+    compileSdkVersion build_versions.compileSdkVersion
+    buildToolsVersion build_versions.build_tools
     defaultConfig {
         applicationId "me.sunzheng.mana"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
-        versionCode 26
-        versionName "1.4.06"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        versionCode 27
+        versionName "1.4.10"
+        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.release
         setProperty("archivesBaseName", "Mana-" + "$versionName")

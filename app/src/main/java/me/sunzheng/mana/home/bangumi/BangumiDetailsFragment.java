@@ -83,7 +83,11 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         super.onViewCreated(view, savedInstanceState);
         initToolbar(view);
         initContent(view);
-        mPresenter.load();
+        if (mPresenter == null) {
+            getFragmentManager().beginTransaction().remove(this).commit();
+        } else {
+            mPresenter.load();
+        }
     }
 
     private ActionBar getSupportActionBar() {
