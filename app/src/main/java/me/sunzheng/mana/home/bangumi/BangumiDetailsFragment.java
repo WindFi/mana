@@ -109,7 +109,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         mToolbar = view.findViewById(R.id.toolbar);
         mBannerImageView = view.findViewById(R.id.banner_imageview);
         mHeaderCollapsingToolbarLayout = view.findViewById(R.id.header_collaspingtoolbarlayout);
-        Glide.with(this).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mBannerImageView);
+        Glide.with(getActivity()).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mBannerImageView);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getArguments().getString(BangumiDetailsActivity.ARGS_TITLE_STR));
@@ -127,7 +127,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
-        Glide.with(this).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mImageView);
+        Glide.with(getActivity()).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mImageView);
         setName(getArguments().getString(BangumiDetailsActivity.ARGS_TITLE_STR));
 
         mFavoriteStatusButton.setOnClickListener(new View.OnClickListener() {
