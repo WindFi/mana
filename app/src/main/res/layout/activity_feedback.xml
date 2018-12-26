@@ -20,28 +20,28 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <android.support.v7.widget.AppCompatRadioButton
+            <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/feedback_radiobutton_0"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="有画面无声音"
                 android:textColor="@color/radiobutton_text_selector" />
 
-            <android.support.v7.widget.AppCompatRadioButton
+            <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/feedback_radiobutton_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="有声音无画面"
                 android:textColor="@color/radiobutton_text_selector" />
 
-            <android.support.v7.widget.AppCompatRadioButton
+            <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/feedback_radiobutton_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="无画面无声音"
                 android:textColor="@color/radiobutton_text_selector" />
 
-            <android.support.v7.widget.AppCompatRadioButton
+            <androidx.appcompat.widget.AppCompatRadioButton
                 android:id="@+id/feedback_etc_radiobutton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
                 android:textColor="@color/radiobutton_text_selector" />
         </RadioGroup>
 
-        <android.support.v7.widget.AppCompatEditText
+        <androidx.appcompat.widget.AppCompatEditText
             android:id="@+id/feedback_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
             app:layout_constraintTop_toBottomOf="@id/feedback_radiogroup" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <android.support.design.widget.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
