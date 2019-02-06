@@ -27,6 +27,7 @@
             android:inputType="textWebEditText"
             android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/dialog_host_button"
         android:layout_width="wrap_content"
