@@ -38,6 +38,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
     Handler mHandler = new Handler();
     List<Episode> values;
     String host;
+
     public EpisodeAdapter(List<Episode> values) {
         this.values = values;
     }
@@ -76,7 +77,11 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
             holder.itemView.setClickable(false);
         }
         CoverImage coverImage = item.getThumbnailImage();
-        RequestBuilder request = Glide.with(holder.itemView.getContext()).load(HostUtil.makeUp(host, coverImage == null ? item.getThumbnail() : coverImage.url));
+        if (coverImage != null) {
+            coverImage.url = HostUtil.makeUp(host, coverImage.url);
+        }
+        item.setThumbnail(HostUtil.makeUp(host, item.getThumbnail()));
+        RequestBuilder request = Glide.with(holder.itemView.getContext()).load(coverImage == null ? item.getThumbnail() : coverImage.url);
         RequestOptions options = null;
         if (item.getThumbnailImage() != null && !TextUtils.isEmpty(item.getThumbnailImage().dominantColor)
                 && item.getThumbnailImage().dominantColor.matches(RegexUtils.ColorPattern)) {
