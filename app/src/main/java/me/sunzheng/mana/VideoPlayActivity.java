@@ -227,7 +227,6 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         savedInstanceState = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
         int current = savedInstanceState.getInt(STR_CURRINT_INT, 0);
-
         final Parcelable[] parcelableArray = savedInstanceState.getParcelableArray(STR_ITEMS_PARCEL);
         MediaDescriptionCompat[] items = convertFromParcelable(parcelableArray);
 
