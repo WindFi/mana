@@ -22,9 +22,12 @@ import java.util.List;
 import androidx.recyclerview.widget.RecyclerView;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.VideoPlayActivity;
+import me.sunzheng.mana.core.CoverImage;
 import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.core.WatchProgress;
+import me.sunzheng.mana.utils.HostUtil;
 import me.sunzheng.mana.utils.LanguageSwitchUtils;
+import me.sunzheng.mana.utils.PreferenceManager;
 import me.sunzheng.mana.utils.RegexUtils;
 
 /**
@@ -34,7 +37,7 @@ import me.sunzheng.mana.utils.RegexUtils;
 public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHolder> {
     Handler mHandler = new Handler();
     List<Episode> values;
-
+    String host;
     public EpisodeAdapter(List<Episode> values) {
         this.values = values;
     }
@@ -48,6 +51,10 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         final Episode item = values.get(position);
+        if (TextUtils.isEmpty(host)) {
+            host = holder.itemView.getContext().getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE)
+                    .getString(PreferenceManager.Global.STR_KEY_HOST, "");
+        }
         holder.mTitleTextView.setText(item.getNameCn());
         if (item.getStatus() == 2L) {
             holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -68,7 +75,8 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
         } else {
             holder.itemView.setClickable(false);
         }
-        RequestBuilder request = Glide.with(holder.itemView.getContext()).load(item.getThumbnail());
+        CoverImage coverImage = item.getThumbnailImage();
+        RequestBuilder request = Glide.with(holder.itemView.getContext()).load(HostUtil.makeUp(host, coverImage == null ? item.getThumbnail() : coverImage.url));
         RequestOptions options = null;
         if (item.getThumbnailImage() != null && !TextUtils.isEmpty(item.getThumbnailImage().dominantColor)
                 && item.getThumbnailImage().dominantColor.matches(RegexUtils.ColorPattern)) {
