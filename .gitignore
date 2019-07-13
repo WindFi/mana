@@ -1,0 +1,7 @@
+*.iml
+*.apk
+build/
+*.properties
+gradlew
+gradlew.bat
+*.jks
