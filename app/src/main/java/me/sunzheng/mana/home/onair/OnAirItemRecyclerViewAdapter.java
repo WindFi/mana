@@ -1,6 +1,7 @@
 package me.sunzheng.mana.home.onair;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
@@ -10,7 +11,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.TransformationUtils;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.util.pool.GlideTrace;
 
 import java.util.List;
 
@@ -18,11 +21,15 @@ import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.SortedList;
 import androidx.recyclerview.widget.SortedListAdapterCallback;
+
 import me.sunzheng.mana.BangumiDetailsActivity;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.core.BangumiModel;
+import me.sunzheng.mana.core.CoverImage;
 import me.sunzheng.mana.utils.ArrarysResourceUtils;
+import me.sunzheng.mana.utils.HostUtil;
 import me.sunzheng.mana.utils.LanguageSwitchUtils;
+import me.sunzheng.mana.utils.PreferenceManager;
 
 public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItemRecyclerViewAdapter.ViewHolder> {
 
@@ -64,9 +71,16 @@ public class OnAirItemRecyclerViewAdapter extends RecyclerView.Adapter<OnAirItem
                         holder.mImageView);
             }
         });
+        String host = holder.itemView.getContext().getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE)
+                .getString(me.sunzheng.mana.utils.PreferenceManager.Global.STR_KEY_HOST, "");
+        CoverImage coverImage = mValues.get(position).getCoverImage();
+        String domainColor = coverImage == null ? mValues.get(position).getCover_color() : coverImage.dominantColor;
+        String coverImageUrl = coverImage == null ? mValues.get(position).getImage() : coverImage.url;
+        coverImageUrl = HostUtil.makeUp(host, coverImageUrl);
+
         Glide.with(holder.itemView.getContext())
-                .load(mValues.get(position).getImage())
-                .apply(new RequestOptions().placeholder(new ColorDrawable(Color.parseColor(mValues.get(position).getCover_color()))))
+                .load(coverImageUrl)
+                .apply(new RequestOptions().placeholder(new ColorDrawable(Color.parseColor(domainColor))))
                 .into(holder.mImageView);
         holder.mTitleTextView.setText(LanguageSwitchUtils.switchLanguageToJa(holder.mView.getContext(), mValues.get(position).getName(), mValues.get(position).getNameCn()));
         holder.mSummaryTextView.setText(mValues.get(position).getSummary());

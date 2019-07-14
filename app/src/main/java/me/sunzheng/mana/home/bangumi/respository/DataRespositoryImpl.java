@@ -25,19 +25,6 @@ public class DataRespositoryImpl implements DataRespository {
 
     @Override
     public Observable<BangumiDetailWrapper> query() {
-//        return Observable.zip(local.query().materialize(), remote.query().materialize(), new BiFunction<Notification<BangumiDetailWrapper>, Notification<BangumiDetailWrapper>, BangumiDetailWrapper>() {
-//            @Override
-//            public BangumiDetailWrapper apply(Notification<BangumiDetailWrapper> bangumiDetailWrapperNotification, Notification<BangumiDetailWrapper> bangumiDetailWrapperNotification2) throws Exception {
-//                if (bangumiDetailWrapperNotification2.getValue() != null) {
-//                    insert(bangumiDetailWrapperNotification2.getValue()).subscribe();
-//                    if (bangumiDetailWrapperNotification.getValue() != null)
-//                        return bangumiDetailWrapperNotification.getValue();
-//                    else
-//                        return bangumiDetailWrapperNotification2.getValue();
-//                }
-//                return new BangumiDetailWrapper();
-//            }
-//        });
         return queryRemoteAndCache().firstOrError().toObservable().onErrorResumeNext(queryFromLocal());
     }
 
