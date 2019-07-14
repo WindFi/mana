@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -145,7 +146,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
                 String feedbackResult = handleString(mRadioGroup.getCheckedRadioButtonId());
                 if (TextUtils.isEmpty(feedbackResult)) {
                     // TODO: 2018/3/1 replace hard coding use resId
-                    Snackbar.make(v, feedbackResult, Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(v, feedbackResult+sendFromString(), Snackbar.LENGTH_SHORT).show();
                     return;
                 }
                 hideSoftInputKeyboard();
@@ -232,7 +233,9 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
             return "";
         }
     }
-
+    String sendFromString(){
+        return "\r\n ----send from "+getString(getApplicationInfo().labelRes);
+    }
     void fabShow() {
         if (fab == null || fab.getVisibility() == View.VISIBLE)
             return;
