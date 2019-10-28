@@ -1,18 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:foreground="?attr/selectableItemBackground"
+    app:cardCornerRadius="2dp"
+    app:cardElevation="0dp"
     app:contentPaddingBottom="8dp"
     app:contentPaddingLeft="4dp"
     app:contentPaddingRight="4dp"
     app:contentPaddingTop="8dp">
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/item_album"
@@ -23,7 +25,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@mipmap/ic_launcher" />
-
         <ProgressBar
             android:id="@+id/item_progressbar"
             style="@style/Widget.AppCompat.ProgressBar.Horizontal"
@@ -38,6 +39,7 @@
             android:id="@+id/item_title_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
             android:layout_marginStart="4dp"
             android:maxLength="40"
             android:maxLines="2"
@@ -49,7 +51,7 @@
 
         <TextView
             android:id="@+id/item_subtitle_textview"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxEms="20"
@@ -58,6 +60,7 @@
             android:textAppearance="@style/TextAppearance.AppCompat.Small"
             app:layout_constraintStart_toStartOf="@+id/item_title_textview"
             app:layout_constraintTop_toBottomOf="@+id/item_title_textview"
+            app:layout_constraintEnd_toEndOf="parent"
             tools:text="title" />
 
         <TextView
@@ -68,5 +71,5 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/item_title_textview"
             tools:text="subtitle" />
-    </android.support.constraint.ConstraintLayout>
-</android.support.v7.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

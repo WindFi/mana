@@ -5,11 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputEditText;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatCheckBox;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +12,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
+import com.google.android.material.textfield.TextInputEditText;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatCheckBox;
+import androidx.fragment.app.Fragment;
 import me.sunzheng.mana.MainActivity;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.account.AccountContrant;
@@ -48,7 +49,6 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
      *
      * @return A new instance of fragment LoginFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static LoginFragment newInstance() {
         LoginFragment fragment = new LoginFragment();
         return fragment;
@@ -71,7 +71,7 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
             public void onClick(android.view.View v) {
                 try {
                     InputMethodManager inputManager = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                    inputManager.hideSoftInputFromWindow(loginPassWordEditText.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
                     mPresenter.login(loginUserNameEditText.getText().toString(), loginPassWordEditText.getText().toString(), checkBox.isChecked());
                 } catch (IllegalArgumentException e) {
                     showToast(e.getLocalizedMessage());
@@ -91,7 +91,6 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
             onLoginSuccess();
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {
             mListener.onFragmentInteraction(uri);
@@ -153,7 +152,6 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
 }

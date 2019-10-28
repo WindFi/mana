@@ -2,8 +2,8 @@ package me.sunzheng.mana;
 
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 
+import androidx.appcompat.app.AppCompatActivity;
 import me.sunzheng.mana.account.AccountApiService;
 import me.sunzheng.mana.account.AccountTableController;
 import me.sunzheng.mana.account.config.HostFragment;

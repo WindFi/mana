@@ -3,12 +3,13 @@ package me.sunzheng.mana;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.util.Pair;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.bangumi.BangumiDetailsFragment;
 import me.sunzheng.mana.home.bangumi.BangumiDetailsPresenterImpl;
@@ -34,20 +35,35 @@ public class BangumiDetailsActivity extends AppCompatActivity {
         intent.putExtras(extras);
         Pair<View, String> pair0 = Pair.create((View) imageView[0], BangumiDetailsActivity.PAIR_IMAGE_STR);
         ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(activity, pair0);
-        activity.startActivity(intent, optionsCompat.toBundle());
+        ActivityCompat.startActivity(activity, intent, optionsCompat.toBundle());
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bangumi_details);
-        if (savedInstanceState == null)
+        if (savedInstanceState == null) {
             savedInstanceState = getIntent().getExtras();
+        }
         if (savedInstanceState == null)
             finish();
         fragment = BangumiDetailsFragment.newInstance(savedInstanceState);
         fragment.setPresenter(new BangumiDetailsPresenterImpl(fragment, new DataRespositoryImpl(this, ((App) getApplicationContext()).getRetrofit().create(HomeApiService.Bangumi.class), savedInstanceState.getString(ARGS_ID_STR))));
-        getSupportFragmentManager().beginTransaction().add(R.id.contentPanel, fragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.contentPanel, fragment, "fragment").commitAllowingStateLoss();
+    }
+
+    @Override
+    protected void onDestroy() {
+        getSupportFragmentManager().beginTransaction().remove(fragment).commitAllowingStateLoss();
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(ARGS_ID_STR, getIntent().getExtras().getString(ARGS_ID_STR));
+        outState.putString(ARGS_ABLUM_URL_STR, getIntent().getExtras().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR));
+        outState.putString(ARGS_TITLE_STR, getIntent().getExtras().getString(BangumiDetailsActivity.ARGS_TITLE_STR));
+        super.onSaveInstanceState(outState);
     }
 
     @Override

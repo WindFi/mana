@@ -5,8 +5,7 @@
     android:orientation="vertical"
     tools:context="me.sunzheng.mana.settings.SettingsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <android.support.v7.widget.AppCompatTextView
+    <androidx.appcompat.widget.AppCompatTextView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:text="@string/hello_blank_fragment" />

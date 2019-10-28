@@ -16,13 +16,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.Settings;
-import android.support.annotation.Nullable;
 import android.support.v4.media.MediaDescriptionCompat;
-import android.support.v4.view.GestureDetectorCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.PreferenceManager;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Menu;
@@ -40,7 +34,7 @@ import android.widget.TextView;
 
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.Collections;
@@ -49,6 +43,12 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.preference.PreferenceManager;
 import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.core.VideoFile;
 import me.sunzheng.mana.home.HomeApiService;
@@ -69,7 +69,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     public final static String STR_ITEMS_PARCEL = "items";
     public final static long DEFAULT_HIDE_TIME = 500;
     public final static long CLICK_DELAY_MILLIONSECONDS = 500;
-    SimpleExoPlayerView playerView;
+    PlayerView playerView;
     Toolbar toolbar;
     ListView mEpisodeListView, mSourceListView;
     boolean isResume = true, isAudioFouced = true, isControlViewVisibile;
@@ -227,11 +227,10 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         getSupportActionBar().setDisplayShowTitleEnabled(true);
         savedInstanceState = savedInstanceState == null ? getIntent().getExtras() : savedInstanceState;
         int current = savedInstanceState.getInt(STR_CURRINT_INT, 0);
-
         final Parcelable[] parcelableArray = savedInstanceState.getParcelableArray(STR_ITEMS_PARCEL);
         MediaDescriptionCompat[] items = convertFromParcelable(parcelableArray);
 
-        playerView = (SimpleExoPlayerView) findViewById(R.id.player);
+        playerView = (PlayerView) findViewById(R.id.player);
         mVolView = findViewById(R.id.videoplay_vol_textview);
         mEpisodeListView = (ListView) findViewById(R.id.video_episode_list);
 //      ----------------source list---------------------
@@ -302,6 +301,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         intentFilter.addAction(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
         registerReceiver(broadcastReceiver, intentFilter);
         performEpisodeItemClick(current);
+        hideControlView();
     }
 
     void performEpisodeItemClick(int position) {
@@ -325,6 +325,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+        outState.putInt(STR_CURRINT_INT, getIntent().getExtras().getInt(STR_CURRINT_INT));
+        outState.putParcelableArray(STR_ITEMS_PARCEL, getIntent().getExtras().getParcelableArray(STR_ITEMS_PARCEL));
         super.onSaveInstanceState(outState);
     }
 
@@ -374,12 +376,17 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     void hideControlView() {
         getSupportActionBar().hide();
         playerView.hideController();
-        playerView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
-                | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        int flag = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION;// hide nav bar
+        if (Build.VERSION.SDK_INT > 15) {
+            flag |= View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN;// hide status bar
+        }
+        if (Build.VERSION.SDK_INT > 18) {
+            flag |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+        }
+        playerView.setSystemUiVisibility(flag);
     }
 
     void showControllView() {
@@ -620,12 +627,12 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
                 sourceY = e1.getY();
                 Point p = new Point();
                 getWindowManager().getDefaultDisplay().getSize(p);
-                isValid = e1.getX() > 21 && e1.getX() < p.x - 21;
+                isValid = e1.getX() > 21 && e1.getX() < p.x - 21 && e1.getY() > 101;
                 isLeft = isVertical && e1.getX() < p.x / 2;
             } else {
+                if (!isValid)
+                    return true;
                 if (!isVertical) {
-                    if (!isValid)
-                        return true;
                     float unit = (int) ((e2.getX() - sourceX) / MEASURE_LENGTH);
                     if (Math.abs(unit) > 0) {
                         sourceX = e2.getX();

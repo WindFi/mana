@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/black">
 
-    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+    <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:resize_mode="fill"
         app:controller_layout_id="@layout/view_playback_controllerview" />
 
-    <android.support.design.widget.AppBarLayout
+    <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:alpha="0.9"
@@ -22,13 +23,13 @@
         android:theme="@style/AppTheme.AppBarOverlay"
         app:elevation="0dp">
 
-        <android.support.v7.widget.Toolbar
+        <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay" />
-    </android.support.design.widget.AppBarLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ListView
         android:id="@+id/video_episode_list"
@@ -41,11 +42,11 @@
 
     <include layout="@layout/view_video_source" />
 
-    <android.support.constraint.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.v7.widget.AppCompatTextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/videoplay_vol_textview"
             style="@style/Widget.AppTheme.TextView.VideoPlayHint"
             android:layout_width="wrap_content"
@@ -58,7 +59,7 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:text="@string/vol" />
 
-        <android.support.v7.widget.LinearLayoutCompat
+        <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/progress_viewgroup"
             style="@style/Widget.AppTheme.TextView.VideoPlayHint"
             android:layout_width="wrap_content"
@@ -69,7 +70,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/exo_position_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
@@ -77,20 +78,20 @@
                 android:textColor="@android:color/white"
                 tools:text="00:00" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:text="/"
                 android:textColor="@android:color/white" />
 
-            <android.support.v7.widget.AppCompatTextView
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/exo_duration_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:textColor="@android:color/white"
                 tools:text="00:00" />
-        </android.support.v7.widget.LinearLayoutCompat>
-    </android.support.constraint.ConstraintLayout>
-</android.support.design.widget.CoordinatorLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

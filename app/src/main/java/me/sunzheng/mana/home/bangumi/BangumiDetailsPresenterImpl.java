@@ -1,6 +1,5 @@
 package me.sunzheng.mana.home.bangumi;
 
-import android.text.TextUtils;
 import android.util.Log;
 
 import java.util.Comparator;
@@ -20,6 +19,7 @@ import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.bangumi.respository.DataRespository;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetails;
+import me.sunzheng.mana.utils.LanguageSwitchUtils;
 
 /**
  * Created by Sun on 2017/5/27.
@@ -67,7 +67,9 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                         mView.setAirDate(mBangumiDetails.getAirDate());
                         mView.setSummary(mBangumiDetails.getSummary());
                         mView.setFavouriteStatus(mBangumiDetails.getFavoriteStatus());
-                        mView.setOriginName(TextUtils.isEmpty(mBangumiDetails.getName()) ? mBangumiDetails.getNameCn() : mBangumiDetails.getName());
+                        mView.setName(LanguageSwitchUtils.switchLanguageToJa(mView.getContext(), mBangumiDetails.getNameCn(), mBangumiDetails.getName()));
+
+                        mView.setOriginName((int) mBangumiDetails.getAirWeekday(), mBangumiDetails.getAirDate());
                         Observable.fromIterable(mBangumiDetails.getEpisodes()).filter(new Predicate<Episode>() {
                             @Override
                             public boolean test(Episode episode) throws Exception {

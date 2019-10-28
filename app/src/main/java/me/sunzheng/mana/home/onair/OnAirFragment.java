@@ -2,17 +2,20 @@ package me.sunzheng.mana.home.onair;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import java.util.List;
+
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import me.sunzheng.mana.R;
+import me.sunzheng.mana.core.BangumiModel;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.widget.EmptyAdapter;
 
@@ -106,11 +109,11 @@ public class OnAirFragment extends Fragment implements HomeContract.OnAir.View {
     }
 
     @Override
-    public void setAdapter(RecyclerView.Adapter adapter) {
+    public void setAirs(List<BangumiModel> bangumiModels) {
         if (recyclerView.getAdapter() == null || recyclerView.getAdapter() instanceof EmptyAdapter)
-            recyclerView.setAdapter(adapter);
+            recyclerView.setAdapter(new OnAirItemRecyclerViewAdapter(bangumiModels));
         else
-            recyclerView.swapAdapter(adapter, true);
+            recyclerView.swapAdapter(new OnAirItemRecyclerViewAdapter(bangumiModels), true);
         if (recyclerView.getLayoutManager() == null) {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             DividerItemDecoration itemDecoration = new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL);

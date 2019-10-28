@@ -1,5 +1,6 @@
 package me.sunzheng.mana.home.episode;
 
+import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 import android.widget.ArrayAdapter;
@@ -40,6 +41,8 @@ import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.bangumi.Response;
 import me.sunzheng.mana.home.bangumi.wrapper.request.SynchronizeEpisodeHistoryWrapper;
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
+import me.sunzheng.mana.utils.HostUtil;
+import me.sunzheng.mana.utils.PreferenceManager;
 
 /**
  * Created by Sun on 2018/1/2.
@@ -147,6 +150,15 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
         }
         mView.setSourceMenuVisible(dataRepository.getSourceLabels().length > 1);
         labelsAdapter.clear();
+        if (mView instanceof Context) {
+            String host = "";
+            Context context = (Context) mView;
+            host = context.getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE)
+                    .getString(me.sunzheng.mana.utils.PreferenceManager.Global.STR_KEY_HOST, "");
+            for (VideoFile item : episodeWrapper.getVideoFiles()) {
+                item.setUrl(HostUtil.makeUp(host, item.getUrl()));
+            }
+        }
         labelsAdapter.addAll(episodeWrapper.getVideoFiles());
         labelsAdapter.notifyDataSetChanged();
     }
@@ -234,6 +246,8 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
     @Override
     public void seekTo(float detaVal) {
         long position = player.getCurrentPosition() + (long) detaVal * 5000;
+        if (position < 0)
+            return;
         player.seekTo(position);
         mView.showProgressDetaVal(0);
     }
@@ -297,7 +311,7 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
             item.setLastWatchPosition(player.getCurrentPosition());
             item.setLastWatchTime(System.currentTimeMillis());
             item.setPercentage((float) player.getCurrentPosition() / (float) player.getDuration());
-            item.setIsFinished(player.getCurrentPosition() >= player.getDuration());
+            item.setIsFinished(player.getCurrentPosition() >= (player.getDuration() * 0.95));
             List<Record> list = new ArrayList<>();
             list.add(item);
             request.setItem(list);

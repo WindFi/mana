@@ -6,18 +6,6 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.widget.ContentLoadingProgressBar;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
-import android.support.v7.widget.AppCompatTextView;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.PopupMenu;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,11 +14,25 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.bumptech.glide.Glide;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatButton;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.ContentLoadingProgressBar;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import me.sunzheng.mana.BangumiDetailsActivity;
 import me.sunzheng.mana.FavoriteCompact;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.home.HomeContract;
+import me.sunzheng.mana.utils.ArrarysResourceUtils;
 import me.sunzheng.mana.utils.PreferenceManager;
 
 
@@ -81,7 +83,11 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         super.onViewCreated(view, savedInstanceState);
         initToolbar(view);
         initContent(view);
-        mPresenter.load();
+        if (mPresenter == null) {
+            getFragmentManager().beginTransaction().remove(this).commit();
+        } else {
+            mPresenter.load();
+        }
     }
 
     private ActionBar getSupportActionBar() {
@@ -103,7 +109,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         mToolbar = view.findViewById(R.id.toolbar);
         mBannerImageView = view.findViewById(R.id.banner_imageview);
         mHeaderCollapsingToolbarLayout = view.findViewById(R.id.header_collaspingtoolbarlayout);
-        Glide.with(this).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mBannerImageView);
+        Glide.with(getActivity()).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mBannerImageView);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getArguments().getString(BangumiDetailsActivity.ARGS_TITLE_STR));
@@ -121,7 +127,7 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mImageView.setTransitionName(BangumiDetailsActivity.PAIR_IMAGE_STR);
         }
-        Glide.with(this).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mImageView);
+        Glide.with(getActivity()).load(getArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR)).into(mImageView);
         setName(getArguments().getString(BangumiDetailsActivity.ARGS_TITLE_STR));
 
         mFavoriteStatusButton.setOnClickListener(new View.OnClickListener() {
@@ -209,10 +215,15 @@ public class BangumiDetailsFragment extends Fragment implements HomeContract.Ban
     }
 
     @Override
-    public void setOriginName(CharSequence originName) {
+    public void setOriginName(int day, CharSequence etc) {
         if (mOriginTitleTextView == null)
             return;
-        mOriginTitleTextView.setText(originName);
+        String dayInWeek = ArrarysResourceUtils.dayInWeek(getActivity(), day);
+        int color = ContextCompat.getColor(getActivity(), R.color.colorPrimary);
+        String resultString = getActivity().getString(R.string.formatter_day_airdate, etc, dayInWeek);
+//        SpannableStringBuilder spannableStringBuilder=new SpannableStringBuilder(resultString);
+//        spannableStringBuilder.setSpan(new ForegroundColorSpan(color),resultString.indexOf(dayInWeek),resultString.length(),Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        mOriginTitleTextView.setText(resultString);
     }
 
     @Override

@@ -2,16 +2,17 @@
 
 
     <style name="AppTheme.NoActionBar.FullScreen" parent="AppTheme.NoActionBar">
-        <item name="android:statusBarColor">@android:color/transparent</item>
+        <!--<item name="android:statusBarColor">@android:color/transparent</item>-->
+        <item name="android:statusBarColor">#44000000</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
-        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">false</item>
+        <item name="android:navigationBarColor">#44000000</item>
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
+    <!--<style name="AppTheme.NoActionBar">-->
+    <!--<item name="windowActionBar">false</item>-->
+    <!--<item name="windowNoTitle">true</item>-->
+    <!--</style>-->
 
     <style name="AppTheme.NoActionBar.NoStatusBar">
         <item name="android:statusBarColor">@android:color/transparent</item>

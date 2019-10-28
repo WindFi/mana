@@ -1,8 +1,9 @@
 package me.sunzheng.mana.settings;
 
 import android.content.Context;
-import android.support.v7.preference.Preference;
 import android.util.AttributeSet;
+
+import androidx.preference.Preference;
 
 /**
  * Created by Sun on 2018/1/18.

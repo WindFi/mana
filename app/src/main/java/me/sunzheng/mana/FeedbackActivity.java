@@ -4,16 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v4.view.animation.FastOutSlowInInterpolator;
-import android.support.v4.view.animation.LinearOutSlowInInterpolator;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatEditText;
-import android.support.v7.widget.AppCompatRadioButton;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,8 +20,16 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.snackbar.Snackbar;
+
 import java.util.HashMap;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatEditText;
+import androidx.appcompat.widget.AppCompatRadioButton;
+import androidx.interpolator.view.animation.FastOutSlowInInterpolator;
+import androidx.interpolator.view.animation.LinearOutSlowInInterpolator;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.feedback.FeedbackPresenterImpl;
@@ -144,7 +146,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
                 String feedbackResult = handleString(mRadioGroup.getCheckedRadioButtonId());
                 if (TextUtils.isEmpty(feedbackResult)) {
                     // TODO: 2018/3/1 replace hard coding use resId
-                    Snackbar.make(v, feedbackResult, Snackbar.LENGTH_SHORT).show();
+                    Snackbar.make(v, feedbackResult+sendFromString(), Snackbar.LENGTH_SHORT).show();
                     return;
                 }
                 hideSoftInputKeyboard();
@@ -231,7 +233,9 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
             return "";
         }
     }
-
+    String sendFromString(){
+        return "\r\n ----send from "+getString(getApplicationInfo().labelRes);
+    }
     void fabShow() {
         if (fab == null || fab.getVisibility() == View.VISIBLE)
             return;
@@ -240,7 +244,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
         anim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                fab.setVisibility(View.VISIBLE);
+                fab.show();
             }
 
             @Override
@@ -264,7 +268,7 @@ public class FeedbackActivity extends AppCompatActivity implements HomeContract.
         anim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-                fab.setVisibility(View.GONE);
+                fab.hide();
             }
 
             @Override

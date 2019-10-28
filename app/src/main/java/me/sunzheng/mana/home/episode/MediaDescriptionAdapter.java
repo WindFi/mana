@@ -1,7 +1,7 @@
 package me.sunzheng.mana.home.episode;
 
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.load.DataSource;
+import com.bumptech.glide.load.engine.GlideException;
 import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.target.Target;
 
@@ -55,14 +56,14 @@ public class MediaDescriptionAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         viewHolder.imageView.setAlpha(0.3f);
-        Glide.with(mContext).load(dataRepository.getItemByPosition(position).getIconUri()).listener(new RequestListener<Uri, GlideDrawable>() {
+        Glide.with(mContext).load(dataRepository.getItemByPosition(position).getIconUri()).listener(new RequestListener<Drawable>() {
             @Override
-            public boolean onException(Exception e, Uri model, Target<GlideDrawable> target, boolean isFirstResource) {
+            public boolean onLoadFailed(GlideException e, Object model, Target<Drawable> target, boolean isFirstResource) {
                 return false;
             }
 
             @Override
-            public boolean onResourceReady(GlideDrawable resource, Uri model, Target<GlideDrawable> target, boolean isFromMemoryCache, boolean isFirstResource) {
+            public boolean onResourceReady(Drawable resource, Object model, Target<Drawable> target, DataSource dataSource, boolean isFirstResource) {
                 viewHolder.imageView.setAlpha(1.0f);
                 return false;
             }

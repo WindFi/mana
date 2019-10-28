@@ -2,11 +2,11 @@ package me.sunzheng.mana.account;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
 import me.sunzheng.mana.R;
 
 /**
@@ -27,7 +27,6 @@ public class RegisterFragment extends Fragment {
      * @param param2 Parameter 2.
      * @return A new instance of fragment RegisterFragment.
      */
-    // TODO: Rename and change types and number of parameters
     public static RegisterFragment newInstance(String param1, String param2) {
         RegisterFragment fragment = new RegisterFragment();
         return fragment;

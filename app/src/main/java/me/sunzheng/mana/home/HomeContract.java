@@ -1,13 +1,14 @@
 package me.sunzheng.mana.home;
 
-import android.support.v7.widget.RecyclerView;
 import android.widget.BaseAdapter;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
 
 import java.util.List;
 
+import androidx.recyclerview.widget.RecyclerView;
 import me.sunzheng.mana.core.AnnounceModel;
+import me.sunzheng.mana.core.BangumiModel;
 import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.utils.IPresenter;
 import me.sunzheng.mana.utils.IView;
@@ -23,7 +24,7 @@ public interface HomeContract {
 
             void showProgressIntractor(boolean active);
 
-            void setAdapter(RecyclerView.Adapter adapter);
+            void setAirs(List<BangumiModel> bangumiModels);
         }
 
         interface Presenter extends IPresenter {
@@ -42,7 +43,7 @@ public interface HomeContract {
 
             void setSummary(CharSequence descript);
 
-            void setOriginName(CharSequence originName);
+            void setOriginName(int dayInWeek, CharSequence airDate);
 
             void setAdapter(RecyclerView.Adapter adapter);
 

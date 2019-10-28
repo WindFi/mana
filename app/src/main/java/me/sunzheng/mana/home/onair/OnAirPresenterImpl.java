@@ -12,7 +12,6 @@ import io.reactivex.schedulers.Schedulers;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.onair.respository.DataRepository;
 import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
-import me.sunzheng.mana.widget.EmptyAdapter;
 
 /**
  * Created by Sun on 2017/5/24.
@@ -49,7 +48,7 @@ public class OnAirPresenterImpl implements HomeContract.OnAir.Presenter {
                     @Override
                     public void accept(AirWrapper air) throws Exception {
                         if (air != null && air.getData() != null && air.getData().size() > 0)
-                            view.setAdapter(new OnAirItemRecyclerViewAdapter(air.getData()));
+                            view.setAirs(air.getData());
                     }
                 }, new Consumer<Throwable>() {
                     @Override
@@ -59,7 +58,7 @@ public class OnAirPresenterImpl implements HomeContract.OnAir.Presenter {
                         Log.i("e:", throwable.getLocalizedMessage());
                         view.showToast(throwable.getLocalizedMessage());
                         view.showProgressIntractor(false);
-                        view.setAdapter(new EmptyAdapter());
+                        view.setAirs(null);
                     }
                 }, new Action() {
                     @Override
