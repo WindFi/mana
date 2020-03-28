@@ -57,6 +57,7 @@ import me.sunzheng.mana.home.onair.OnAirFragment;
 import me.sunzheng.mana.home.onair.OnAirPresenterImpl;
 import me.sunzheng.mana.home.onair.respository.DataRepositoryImpl;
 import me.sunzheng.mana.utils.App;
+import me.sunzheng.mana.utils.HostUtil;
 import me.sunzheng.mana.utils.PreferenceManager;
 import me.sunzheng.mana.utils.RegexUtils;
 
@@ -338,6 +339,8 @@ public class MainActivity extends AppCompatActivity
             final AnnounceModel item = values.get(position);
             RequestManager requestManager = Glide.with(holder.itemView.getContext());
             RequestBuilder request = null;
+            String host = holder.itemView.getContext().getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE)
+                    .getString(PreferenceManager.Global.STR_KEY_HOST, "");
             if (item.getPosition() == 1) {
                 holder.itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -354,7 +357,8 @@ public class MainActivity extends AppCompatActivity
                         intent.launchUrl(MainActivity.this, Uri.parse(item.getContent()));
                     }
                 });
-                if (!TextUtils.isEmpty(item.getImage_url())) {
+
+                if (!TextUtils.isEmpty(HostUtil.makeUp(host,item.getImage_url()))) {
                     request = requestManager.load(item.getImage_url());
                 } else {
                     Log.e("remote error", "id:item.getId()" + "\timage_url is null");
@@ -369,7 +373,7 @@ public class MainActivity extends AppCompatActivity
                 });
                 if (item.getBangumi().getCoverImage() != null && !TextUtils.isEmpty(item.getBangumi().getCoverImage().dominantColor)
                         && item.getBangumi().getCoverImage().dominantColor.matches(RegexUtils.ColorPattern)) {
-                    request = requestManager.load(item.getBangumi().getCoverImage().url);
+                    request = requestManager.load(HostUtil.makeUp(host,item.getBangumi().getCoverImage().url));
                     RequestOptions options = new RequestOptions().placeholder(new ColorDrawable(Color.parseColor(item.getBangumi().getCoverImage().dominantColor)));
                     request.apply(options);
                 } else {
