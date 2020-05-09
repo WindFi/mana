@@ -10,7 +10,8 @@
         android:id="@+id/player"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:resize_mode="fill"
+        android:layout_gravity="center"
+        app:resize_mode="fixed_width"
         app:controller_layout_id="@layout/view_playback_controllerview" />
 
     <com.google.android.material.appbar.AppBarLayout
@@ -94,4 +95,9 @@
                 tools:text="00:00" />
         </androidx.appcompat.widget.LinearLayoutCompat>
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <ProgressBar
+        android:id="@+id/progressbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

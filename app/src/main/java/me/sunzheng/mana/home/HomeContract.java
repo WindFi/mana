@@ -121,6 +121,8 @@ public interface HomeContract {
             void performLabelClick(int position);
 
             void setSourceMenuVisible(boolean visibile);
+
+            void showLoading(boolean isLoading);
         }
 
         interface Presenter extends IPresenter {

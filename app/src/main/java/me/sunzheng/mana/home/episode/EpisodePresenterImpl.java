@@ -102,6 +102,17 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
         labelsAdapter = new ArrayAdapter<VideoFile>(mView.getContext(), R.layout.item_source_listview, R.id.title);
         mView.setEpisodeAdapter(new MediaDescriptionAdapter(mView.getContext(), dataRepository));
         mView.setSourceAdapter(labelsAdapter);
+
+        player.addListener(new Player.EventListener() {
+            @Override
+            public void onLoadingChanged(boolean isLoading) {
+//                mView.showLoading(isLoading);
+                if (player.getCurrentPosition() == player.getBufferedPosition())
+                    mView.showLoading(isLoading);
+                else
+                    mView.showLoading(false);
+            }
+        });
     }
 
     @Override

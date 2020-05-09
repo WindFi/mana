@@ -5,3 +5,6 @@ build/
 gradlew
 gradlew.bat
 *.jks
+gradle/*
+.gradle/
+.idea/

@@ -30,6 +30,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.Player;
@@ -371,6 +372,12 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         super.onStop();
         isResume = false;
         playerPause();
+    }
+
+    @Override
+    public void showLoading(boolean isLoading) {
+        ProgressBar pr=findViewById(R.id.progressbar);
+        pr.setVisibility(isLoading?View.VISIBLE : View.GONE);
     }
 
     void hideControlView() {

@@ -84,7 +84,7 @@
 
         <provider
             android:name=".home.search.HistorySuggestionProvider"
-            android:authorities="me.sunzheng.mana.historysugestionprovider" />
+            android:authorities="${applicationId}.historysugestionprovider" />
 
         <activity
             android:name=".FeedbackActivity"
