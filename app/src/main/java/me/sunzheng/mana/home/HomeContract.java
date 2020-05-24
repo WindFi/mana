@@ -123,6 +123,8 @@ public interface HomeContract {
             void setSourceMenuVisible(boolean visibile);
 
             void showLoading(boolean isLoading);
+
+            void onVideoResize(int vWidth,int vHeight);
         }
 
         interface Presenter extends IPresenter {

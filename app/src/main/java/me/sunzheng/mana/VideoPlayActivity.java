@@ -34,6 +34,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.util.Util;
@@ -50,6 +51,7 @@ import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GestureDetectorCompat;
 import androidx.preference.PreferenceManager;
+
 import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.core.VideoFile;
 import me.sunzheng.mana.home.HomeApiService;
@@ -203,6 +205,16 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         view.setVisibility(View.VISIBLE);
         Animation animation = AnimationUtils.loadAnimation(this, R.anim.slide_in_right);
         view.setAnimation(animation);
+        if(view instanceof ListView){
+            ListView listView=(ListView)view;
+            listView.post(new Runnable() {
+                @Override
+                public void run() {
+                listView.smoothScrollToPosition(listView.getCheckedItemPosition());
+                }
+            });
+        }
+
     }
 
     void hideViewWithAnimation(View view) {
@@ -313,6 +325,17 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     }
 
     @Override
+    public void onVideoResize(int vWidth, int vHeight) {
+        Point size = new Point();
+        getWindowManager().getDefaultDisplay().getSize(size);
+        float scaleX=(float)size.x/vWidth;
+        float scaleY=(float)size.y/vHeight;
+        float scaleRate=scaleX/scaleY;
+        int mode = scaleRate<1? AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH : AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT;
+        playerView.setResizeMode(mode);
+    }
+
+    @Override
     public void performLabelClick(int position) {
         performSourceItemClick(position);
     }
@@ -376,8 +399,8 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
 
     @Override
     public void showLoading(boolean isLoading) {
-        ProgressBar pr=findViewById(R.id.progressbar);
-        pr.setVisibility(isLoading?View.VISIBLE : View.GONE);
+        ProgressBar pr = findViewById(R.id.progressbar);
+        pr.setVisibility(isLoading ? View.VISIBLE : View.GONE);
     }
 
     void hideControlView() {

@@ -21,6 +21,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
+import com.google.android.exoplayer2.video.VideoListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +103,22 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
         labelsAdapter = new ArrayAdapter<VideoFile>(mView.getContext(), R.layout.item_source_listview, R.id.title);
         mView.setEpisodeAdapter(new MediaDescriptionAdapter(mView.getContext(), dataRepository));
         mView.setSourceAdapter(labelsAdapter);
+        player.addVideoListener(new VideoListener() {
+            @Override
+            public void onVideoSizeChanged(int width, int height, int unappliedRotationDegrees, float pixelWidthHeightRatio) {
+                mView.onVideoResize(width,height);
+            }
 
+            @Override
+            public void onSurfaceSizeChanged(int width, int height) {
+
+            }
+
+            @Override
+            public void onRenderedFirstFrame() {
+
+            }
+        });
         player.addListener(new Player.EventListener() {
             @Override
             public void onLoadingChanged(boolean isLoading) {
