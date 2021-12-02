@@ -13,7 +13,6 @@ import io.reactivex.schedulers.Schedulers;
 import me.sunzheng.mana.core.BangumiModel;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.mybangumi.respository.DataRespository;
-import me.sunzheng.mana.home.onair.OnAirItemRecyclerViewAdapter;
 
 /**
  * Created by Sun on 2017/7/17.
@@ -58,7 +57,7 @@ public class MyFavoritesPresenter implements HomeContract.MyBangumi.Presenter {
                         if (bangumiModels == null || bangumiModels.isEmpty())
                             mView.showEmpty();
                         else {
-                            mView.setAdapter(new OnAirItemRecyclerViewAdapter(bangumiModels));
+//                            mView.setAdapter(new OnAirItemRecyclerViewAdapter(bangumiModels));
                         }
                     }
                 }, new Consumer<Throwable>() {

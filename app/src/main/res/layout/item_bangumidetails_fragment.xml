@@ -35,7 +35,7 @@
             app:layout_constraintEnd_toEndOf="@+id/item_album"
             app:layout_constraintLeft_toLeftOf="@+id/item_album" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/item_title_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,7 +49,7 @@
             app:layout_constraintTop_toTopOf="@+id/item_album"
             tools:text="title" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/item_subtitle_textview"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -63,7 +63,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             tools:text="title" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/item_etc_textview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

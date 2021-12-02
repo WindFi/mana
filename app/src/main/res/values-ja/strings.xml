@@ -57,4 +57,5 @@
     <string name="title_wednesday">水曜日</string>
     <string name="title_thursday">木曜日</string>
     <string name="title_sunday">日曜日</string>
+    <string name="title_empty_data">空</string>
 </resources>

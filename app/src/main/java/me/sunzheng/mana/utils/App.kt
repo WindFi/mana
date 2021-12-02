@@ -1,26 +1,22 @@
 package me.sunzheng.mana.utils
 
-import androidx.multidex.MultiDexApplication
-import retrofit2.Retrofit
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
-import com.bumptech.glide.Glide
-import com.bumptech.glide.MemoryCategory
-import kotlin.Throws
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import okhttp3.Interceptor
-import android.text.TextUtils
-import okhttp3.JavaNetCookieJar
-import me.sunzheng.mana.utils.PersistentHttpCookieStore
-import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
+import android.text.TextUtils
 import android.util.Log
 import androidx.core.os.LocaleListCompat
-import java.lang.IllegalArgumentException
+import androidx.multidex.MultiDexApplication
+import com.bumptech.glide.Glide
+import com.bumptech.glide.MemoryCategory
+import dagger.hilt.android.HiltAndroidApp
+import okhttp3.JavaNetCookieJar
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import retrofit2.converter.gson.GsonConverterFactory
 import java.net.CookieManager
 import java.net.CookiePolicy
 import java.util.*
@@ -29,6 +25,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Created by Sun on 2017/5/21.
  */
+@HiltAndroidApp
 class App : MultiDexApplication() {
     var mRetrofit: Retrofit? = null
     var TAG = javaClass.simpleName
@@ -50,10 +47,6 @@ class App : MultiDexApplication() {
         initGlobalPreferences()
     }
 
-    override fun onTrimMemory(level: Int) {
-        super.onTrimMemory(level)
-    }
-
     val retrofit: Retrofit
         get() {
             if (mRetrofit == null || isConfigChanged) try {
@@ -64,7 +57,7 @@ class App : MultiDexApplication() {
             return mRetrofit!!
         }
     private val host: String?
-        private get() = sharedPreferences!!.getString(PreferenceManager.Global.STR_KEY_HOST, "")
+        private get() = sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "")
 
     @Throws(IllegalArgumentException::class)
     private fun defaultRetrofit(): Retrofit {
@@ -128,7 +121,7 @@ class App : MultiDexApplication() {
             android.preference.PreferenceManager.getDefaultSharedPreferences(this)
         if (!__sharedPreferences.contains(getString(PreferenceManager.Global.RES_JA_FIRST_BOOL))) {
             val displayLanguage = language
-            val isJaLanguage = displayLanguage.toLowerCase().contains("ja")
+            val isJaLanguage = displayLanguage.lowercase(Locale.getDefault()).contains("ja")
             __sharedPreferences.edit()
                 .putBoolean(getString(PreferenceManager.Global.RES_JA_FIRST_BOOL), isJaLanguage)
                 .commit()

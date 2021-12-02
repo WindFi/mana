@@ -45,6 +45,7 @@
             android:name=".SearchResultActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:launchMode="singleTask"
+            android:exported="true"
             android:theme="@style/AppTheme.SearchResultActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -64,6 +65,7 @@
             android:theme="@style/AppTheme.MyFavoritesActivity" />
         <activity
             android:name=".LaunchActivity"
+            android:exported="true"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:theme="@style/AppTheme.LaunchActivity">
             <intent-filter>

@@ -1,6 +1,9 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'kotlin-parcelize'
+    id("dagger.hilt.android.plugin")
 }
 android {
     signingConfigs {
@@ -37,6 +40,9 @@ android {
     dataBinding {
         enabled = true
     }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
     productFlavors {
     }
     compileOptions {
@@ -47,12 +53,15 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.3.0-beta01'
-//    implementation 'com.google.android.material:material:1.0.0-alpha1'
-    implementation 'androidx.lifecycle:lifecycle-extensions:2.3.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.3.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.0-alpha3'
+    implementation 'androidx.core:core-ktx:1.6.0'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation("androidx.fragment:fragment-ktx:1.3.1")
+    implementation 'com.google.android.material:material:1.3.0'
+//    implementation 'androidx.lifecycle:lifecycle-extensions:2.3.1'
+//    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
+//    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
+//    implementation "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin_version"
+
     implementation deps.rxandroid
     implementation deps.retrofit.runtime
 //    implementation deps.retrofit.converters
@@ -63,7 +72,7 @@ dependencies {
     implementation deps.rxjava2
     implementation deps.okhttp_logging_interceptor
     implementation deps.glide
-    annotationProcessor deps.glide_processor
+    kapt deps.glide_processor
     implementation deps.common3
     implementation deps.okhttp_urlconnection
     implementation deps.exoplayer
@@ -71,16 +80,60 @@ dependencies {
     implementation deps.ormlite.android
     implementation deps.multidex
     implementation deps.legacy.v4
-    implementation deps.material
     implementation deps.androidx.browser
-    implementation deps.androidx.gridlayout
-    implementation deps.androidx.cardview
-    implementation deps.androidx.appcompat
-    implementation deps.androidx.recyclerview
-    implementation deps.androidx.constraintlayout
     implementation deps.androidx.preference
-    implementation deps.androidx.vectordrawable
+//    implementation deps.androidx.gridlayout
+//    implementation deps.androidx.cardview
+//    implementation deps.androidx.appcompat
+//    implementation deps.androidx.recyclerview
+//    implementation deps.androidx.constraintlayout
+
+//    implementation deps.androidx.vectordrawable
     implementation deps.legacy.utils
+//    implementation "com.google.android.exoplayer:exoplayer:2.13.0"
+//    implementation 'com.google.android.exoplayer:exoplayer:2.16.0'
+//    implementation 'com.google.android.exoplayer:exoplayer-core:2.16.0'
+//    implementation 'com.google.android.exoplayer:exoplayer-dash:2.16.0'
+//    implementation 'com.google.android.exoplayer:exoplayer-ui:2.16.0'
 
     testImplementation deps.junit
+
+
+    implementation deps.room.runtime
+    kapt deps.room.compiler
+    implementation deps.room.ktx
+//    implementation deps.room.testing
+    androidTestImplementation deps.room.testing
+    androidTestImplementation "androidx.arch.core:core-testing:2.1.0"
+    androidTestImplementation "androidx.test.ext:junit:1.1.2"
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0-alpha03'
+    androidTestImplementation 'androidx.test:runner:1.4.1-alpha03'
+    androidTestImplementation 'androidx.test:rules:1.4.1-alpha03'
+
+    implementation "com.google.dagger:hilt-android:2.38.1"
+    kapt "com.google.dagger:hilt-android-compiler:2.38.1"
+//    annotationProcessor("androidx.room:room-compiler:$roomVersion")
+//
+//    // To use Kotlin annotation processing tool (kapt)
+//    kapt("androidx.room:room-compiler:$roomVersion")
+//    // To use Kotlin Symbolic Processing (KSP)
+//    ksp("androidx.room:room-compiler:$roomVersion")
+//
+//    // optional - Kotlin Extensions and Coroutines support for Room
+//    implementation("androidx.room:room-ktx:$roomVersion")
+//
+//    // optional - RxJava2 support for Room
+//    implementation("androidx.room:room-rxjava2:$roomVersion")
+//
+//    // optional - RxJava3 support for Room
+//    implementation("androidx.room:room-rxjava3:$roomVersion")
+//
+//    // optional - Guava support for Room, including Optional and ListenableFuture
+//    implementation("androidx.room:room-guava:$roomVersion")
+//
+//    // optional - Test helpers
+//    testImplementation("androidx.room:room-testing:$roomVersion")
+//
+//    // optional - Paging 3 Integration
+//    implementation("androidx.room:room-paging:2.4.0-beta01")
 }

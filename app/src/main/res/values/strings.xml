@@ -181,4 +181,5 @@
     <string name="toast_preference_changed">After the restart to take effect!</string>
     <string name="formatter_day_airdate" translatable="false">%1$s - %2$s</string>
     <string name="title_activity_bangumi_detail_mvvm" translatable="false">BangumiDetailMvvm</string>
+    <string name="title_empty_data">No data</string>
 </resources>

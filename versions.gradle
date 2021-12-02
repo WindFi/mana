@@ -17,12 +17,14 @@ versions.supportMultidexVersion = '2.0.1'
 versions.junit = '4.12'
 versions.espresso = '2.2.2'
 versions.guava = '21.0'
-versions.exoplayer = '2.9.1'
+versions.exoplayer = '2.9.0'
 versions.androidx='1.0.0-alpha1'
 versions.material='1.3.0'
-versions.kotlin_version='1.4.30'
+versions.kotlin_version='1.5.31'
 versions.kotlin_corotinues='1.4.30'
 versions.lifecycle_version='2.3.1'
+versions.room_version='2.4.0-beta01'
+
 ext.versions = versions
 def deps = [:]
 
@@ -37,7 +39,7 @@ support.core_utils = "com.android.support:support-core-utils:$versions.support"
 support.gridlayout = "com.android.support:gridlayout-v7:$versions.support"
 support.preference = "com.android.support:preference-v7:$versions.support"
 support.vector_drawable = "com.android.support:support-vector-drawable:$versions.support"
-support.customtabs = "com.android.support:customtabs:$versions.support"
+support.customtabs = "androidx.browser:browser:1.4.0"
 deps.support = support
 
 def retrofit = [:]
@@ -73,6 +75,14 @@ androidx.preference="androidx.preference:preference:$versions.androidx"
 androidx.vectordrawable="androidx.vectordrawable:vectordrawable:$versions.androidx"
 deps.androidx = androidx
 
+def room = [:]
+room.runtime="androidx.room:room-runtime:$versions.room_version"
+room.compiler="androidx.room:room-compiler:$versions.room_version"
+room.ktx="androidx.room:room-ktx:$versions.room_version"
+room.testing="androidx.room:room-testing:$versions.room_version"
+room.paging="androidx.room:room-pagin:2.4.0-beta01"
+deps.room = room
+
 def legacy = [:]
 legacy.v4="androidx.legacy:legacy-support-v4:$versions.androidx"
 legacy.utils="androidx.legacy:legacy-support-core-utils:$versions.androidx"
@@ -89,20 +99,15 @@ deps.constraint_layout = "com.android.support.constraint:constraint-layout:$vers
 deps.exoplayer = "com.google.android.exoplayer:exoplayer:$versions.exoplayer"
 deps.material="com.google.android.material:material:$versions.material"
 deps.junit = "junit:junit:$versions.junit"
+
 ext.deps = deps
 
 def build_versions = [:]
-build_versions.min_sdk = 15
-build_versions.target_sdk = 30
-build_versions.build_tools = "30.0.1"
-build_versions.compileSdkVersion = 30
+build_versions.min_sdk = 16
+build_versions.target_sdk = 31
+build_versions.build_tools = "31.0.0"
+build_versions.compileSdkVersion = 31
 ext.build_versions = build_versions
-
-def addRepos(RepositoryHandler handler) {
-    handler.google()
-    handler.jcenter()
-    handler.maven { url 'https://oss.sonatype.org/content/repositories/snapshots' }
-}
 
 ext.addRepos = this.&addRepos
 
