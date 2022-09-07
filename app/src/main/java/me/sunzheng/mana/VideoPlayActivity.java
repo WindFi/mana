@@ -33,6 +33,13 @@ import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.AppCompatTextView;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GestureDetectorCompat;
+import androidx.preference.PreferenceManager;
+
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
@@ -45,15 +52,8 @@ import java.util.Formatter;
 import java.util.List;
 import java.util.Locale;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.AppCompatTextView;
-import androidx.appcompat.widget.Toolbar;
-import androidx.core.view.GestureDetectorCompat;
-import androidx.preference.PreferenceManager;
-
-import me.sunzheng.mana.core.Episode;
 import me.sunzheng.mana.core.VideoFile;
+import me.sunzheng.mana.core.net.v2.database.EpisodeEntity;
 import me.sunzheng.mana.home.HomeApiService;
 import me.sunzheng.mana.home.HomeContract;
 import me.sunzheng.mana.home.episode.EpisodePresenterImpl;
@@ -137,7 +137,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     };
     private boolean sourceMenuIsVisible;
 
-    public static Intent newInstance(Context context, int position, List<Episode> items) {
+    public static Intent newInstance(Context context, int position, List<EpisodeEntity> items) {
         Intent intent = new Intent(context, VideoPlayActivity.class);
         Bundle extras = new Bundle();
         extras.putInt(STR_CURRINT_INT, position);
@@ -146,19 +146,20 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         return intent;
     }
 
-    private static MediaDescriptionCompat parseMediaDescriptionFromEpisode(Episode episode) {
+    private static MediaDescriptionCompat parseMediaDescriptionFromEpisode(EpisodeEntity episode) {
 //        holder.itemView.getContext().getString(R.string.episode_template, item.getEpisodeNo() + "")
         return new MediaDescriptionCompat.Builder().setTitle(episode.getEpisodeNo() + "")
                 .setDescription(episode.getNameCn())
                 .setIconUri(Uri.parse(episode.getThumbnailImage() == null ? episode.getThumbnail() : episode.getThumbnailImage().url))
-                .setMediaId(episode.getId()).build();
+                .setMediaId(episode.getId().toString()).build();
+
     }
 
-    private static MediaDescriptionCompat[] parseMediaDescriptionFromEpisode(List<Episode> episodes) {
+    private static MediaDescriptionCompat[] parseMediaDescriptionFromEpisode(List<EpisodeEntity> episodes) {
         MediaDescriptionCompat[] arrs = new MediaDescriptionCompat[episodes.size()];
-        Collections.sort(episodes, new Comparator<Episode>() {
+        Collections.sort(episodes, new Comparator<EpisodeEntity>() {
             @Override
-            public int compare(Episode o1, Episode o2) {
+            public int compare(EpisodeEntity o1, EpisodeEntity o2) {
                 return o1.getEpisodeNo() - o2.getEpisodeNo();
             }
         });
@@ -234,7 +235,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_play);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowTitleEnabled(true);
@@ -243,16 +244,16 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         final Parcelable[] parcelableArray = savedInstanceState.getParcelableArray(STR_ITEMS_PARCEL);
         MediaDescriptionCompat[] items = convertFromParcelable(parcelableArray);
 
-        playerView = (PlayerView) findViewById(R.id.player);
+        playerView = findViewById(R.id.player);
         mVolView = findViewById(R.id.videoplay_vol_textview);
-        mEpisodeListView = (ListView) findViewById(R.id.video_episode_list);
+        mEpisodeListView = findViewById(R.id.video_episode_list);
 //      ----------------source list---------------------
         mSourceRootView = findViewById(R.id.source_list_root);
-        mSourceListView = (ListView) findViewById(R.id.source_list);
+        mSourceListView = findViewById(R.id.source_list);
 //      ----------------end-----------------------------
-        progressViewGroup = (ViewGroup) findViewById(R.id.progress_viewgroup);
-        textViewDuration = (AppCompatTextView) findViewById(R.id.exo_duration_textview);
-        textViewPosition = (AppCompatTextView) findViewById(R.id.exo_position_textview);
+        progressViewGroup = findViewById(R.id.progress_viewgroup);
+        textViewDuration = findViewById(R.id.exo_duration_textview);
+        textViewPosition = findViewById(R.id.exo_position_textview);
 
         final GestureDetectorCompat gestureDetectorCompat = new GestureDetectorCompat(this, new PresenterGestureDetector());
 
@@ -567,7 +568,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         if (mVolView.getVisibility() != View.VISIBLE)
             mVolView.setVisibility(View.VISIBLE);
         if (mVolView instanceof TextView) {
-            ((TextView) mVolView).setText(String.format(getString(R.string.vol), String.valueOf(val)));
+            ((TextView) mVolView).setText(String.format(getString(R.string.vol), val));
         }
         mHnadler.postDelayed(hideHintRunnable, DEFAULT_HIDE_TIME);
     }
@@ -590,7 +591,7 @@ public class VideoPlayActivity extends AppCompatActivity implements HomeContract
         if (mVolView.getVisibility() != View.VISIBLE)
             mVolView.setVisibility(View.VISIBLE);
         if (mVolView instanceof TextView) {
-            ((TextView) mVolView).setText(String.format(getString(R.string.brightness), String.valueOf((int) ((val / 255.0f) * 100))));
+            ((TextView) mVolView).setText(String.format(getString(R.string.brightness), (int) ((val / 255.0f) * 100)));
         }
         mHnadler.postDelayed(hideHintRunnable, DEFAULT_HIDE_TIME);
     }

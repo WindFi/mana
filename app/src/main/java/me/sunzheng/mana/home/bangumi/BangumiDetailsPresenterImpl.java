@@ -89,7 +89,7 @@ public class BangumiDetailsPresenterImpl implements HomeContract.Bangumi.Present
                             @Override
                             public void onSuccess(List<Episode> value) {
                                 mView.setEpisode(value.size(), mBangumiDetails.getEps());
-                                mView.setAdapter(new EpisodeAdapter(value));
+//                                mView.setAdapter(new EpisodeAdapter(value));
                             }
 
                             @Override

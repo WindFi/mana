@@ -18,7 +18,6 @@ import me.sunzheng.mana.core.net.v2.database.BangumiEntity
 import me.sunzheng.mana.core.net.v2.showToast
 import me.sunzheng.mana.databinding.FragmentItemListBinding
 import me.sunzheng.mana.home.main.MainViewModel
-import me.sunzheng.mana.utils.LanguageSwitchUtils
 
 /**
  * A fragment representing a list of Items.
@@ -90,13 +89,7 @@ class OnAirFragment : Fragment() {
                                     is BangumiEntity -> {
                                         BangumiDetailsActivity.newInstance(
                                             requireActivity(),
-                                            m.id.toString(),
-                                            m.coverImage?.url ?: "",
-                                            LanguageSwitchUtils.switchLanguageToJa(
-                                                requireContext(),
-                                                m.name,
-                                                m.nameCn
-                                            ),
+                                            m,
                                             v.findViewById(R.id.item_album)
                                         )
                                     }
@@ -127,13 +120,7 @@ class OnAirFragment : Fragment() {
                                 is BangumiEntity -> {
                                     BangumiDetailsActivity.newInstance(
                                         requireActivity(),
-                                        m.id.toString(),
-                                        m.image,
-                                        LanguageSwitchUtils.switchLanguageToJa(
-                                            requireContext(),
-                                            m.name,
-                                            m.nameCn
-                                        ),
+                                        m,
                                         v.findViewById(R.id.item_album)
                                     )
                                 }

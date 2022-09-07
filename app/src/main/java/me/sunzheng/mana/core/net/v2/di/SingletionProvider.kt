@@ -7,6 +7,7 @@ import android.os.Build
 import android.text.TextUtils
 import androidx.multidex.MultiDexApplication
 import androidx.room.Room
+import androidx.room.migration.Migration
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,6 +18,7 @@ import me.sunzheng.mana.core.net.LiveDataCallAdapterFactory
 import me.sunzheng.mana.core.net.v2.ApiService
 import me.sunzheng.mana.core.net.v2.database.AppDatabase
 import me.sunzheng.mana.core.net.v2.database.BangumiDao
+import me.sunzheng.mana.core.net.v2.database.EpisodeDao
 import me.sunzheng.mana.core.net.v2.database.FavirouteDao
 import me.sunzheng.mana.utils.PersistentHttpCookieStore
 import me.sunzheng.mana.utils.PreferenceManager
@@ -37,6 +39,11 @@ object ViewModelModule {
     @Provides
     fun providerBanugmiModelDao(database: AppDatabase): BangumiDao {
         return database.bangumiDao()
+    }
+
+    @Provides
+    fun providerEpisodeDao(database: AppDatabase): EpisodeDao {
+        return database.episodeDao()
     }
 
     @Provides
@@ -66,7 +73,11 @@ object SingletionProvider {
     @Singleton
     @Provides
     fun providerDataBase(@ApplicationContext context: Context): AppDatabase {
-        return Room.databaseBuilder(context, AppDatabase::class.java, "data-base").build()
+        return Room.databaseBuilder(context, AppDatabase::class.java, "data-base")
+            .addMigrations(Migration(1, 2) {
+
+            })
+            .build()
     }
 
     @Singleton

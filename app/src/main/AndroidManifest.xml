@@ -94,7 +94,6 @@
             android:label="@string/title_activity_feedback"
             android:theme="@style/AppTheme.FeedbackActivity"
             android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".home.bangumi.BangumiDetailsMvvmActivity"></activity>
     </application>
 
 </manifest>

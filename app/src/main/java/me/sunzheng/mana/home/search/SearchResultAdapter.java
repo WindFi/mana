@@ -1,6 +1,5 @@
 package me.sunzheng.mana.home.search;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.view.LayoutInflater;
@@ -9,14 +8,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 
 import java.util.List;
 
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
-import me.sunzheng.mana.BangumiDetailsActivity;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.core.BangumiModel;
 import me.sunzheng.mana.utils.ArrarysResourceUtils;
@@ -51,8 +50,8 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BangumiDetailsActivity.newInstance((Activity) v.getContext(), mValues.get(position).getId().toString(), mValues.get(position).getImage(), LanguageSwitchUtils.switchLanguageToJa(holder.itemView.getContext(), mValues.get(position).getName(), mValues.get(position).getNameCn()),
-                        holder.mImageView);
+                // TODO: 2021/12/7 implement it
+//                BangumiDetailsActivity.newInstance((Activity) v.getContext(), mValues.get(position), holder.mImageView);
             }
         });
         Glide.with(holder.itemView.getContext())
@@ -79,10 +78,10 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         public ViewHolder(View view) {
             super(view);
             mView = (CardView) view;
-            mTitleTextView = (TextView) view.findViewById(R.id.item_title_textview);
-            mImageView = (ImageView) view.findViewById(R.id.item_album);
-            mSummaryTextView = (TextView) view.findViewById(R.id.item_subtitle_textview);
-            mEtcTextView = (TextView) view.findViewById(R.id.item_etc_textview);
+            mTitleTextView = view.findViewById(R.id.item_title_textview);
+            mImageView = view.findViewById(R.id.item_album);
+            mSummaryTextView = view.findViewById(R.id.item_subtitle_textview);
+            mEtcTextView = view.findViewById(R.id.item_etc_textview);
         }
     }
 }

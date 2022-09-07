@@ -10,13 +10,14 @@ import java.util.*
 
 @Database(
     entities = [BangumiEntity::class, FavriouteEntity::class, WatchProgressEntity::class, EpisodeEntity::class, VideoFileEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 @TypeConverters(UUIDTypeConvert::class, CovertImageConvert::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun bangumiDao(): BangumiDao
     abstract fun favriouteDao(): FavirouteDao
+    abstract fun episodeDao(): EpisodeDao
 }
 
 

@@ -262,14 +262,15 @@ class MainActivity @Inject constructor() : AppCompatActivity(),
                     Log.e("remote error", "id:item.getId()" + "\timage_url is null")
                 }
             } else if (item.position == 2) {
+                holder.mTextView
                 holder.itemView.setOnClickListener {
-                    BangumiDetailsActivity.newInstance(
-                        this@MainActivity,
-                        item.bangumi.id.toString(),
-                        item.bangumi.image,
-                        if (isJaFirst) item.bangumi.name else item.bangumi.nameCn,
-                        holder.mImageView
-                    )
+//                    BangumiDetailsActivity.newInstance(
+//                        this@MainActivity,
+//                        item.bangumi.id.toString(),
+//                        item.bangumi.image,
+//                        if (isJaFirst) item.bangumi.name else item.bangumi.nameCn,
+//                        holder.mImageView
+//                    )
                 }
                 if (item.bangumi.coverImage != null && !TextUtils.isEmpty(item.bangumi.coverImage.dominantColor)
                     && item.bangumi.coverImage.dominantColor.matches(RegexUtils.ColorPattern.toRegex())

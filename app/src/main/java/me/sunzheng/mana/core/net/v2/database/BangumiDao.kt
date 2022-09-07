@@ -9,7 +9,7 @@ interface BangumiDao {
     @Query("SELECT * FROM bangumi WHERE type = :type AND status = :status")
     fun queryList(type: Int = 2, status: Int = 1): LiveData<List<BangumiEntity>>
 
-    @Query("SELECT * FROM bangumi WHERE id=:id")
+    @Query("SELECT * FROM bangumi WHERE id = :id")
     fun queryById(id: UUID): LiveData<BangumiEntity>
 
     @Update
@@ -46,10 +46,10 @@ interface FavirouteDao {
 
 @Dao
 interface EpisodeDao {
-    @Query("SELECT * FROM episode WHERE bangumiId=:bangumiId")
-    fun queryListByBangumiId(bangumiId: UUID): LiveData<List<EpisodeEntity>?>
+    @Query("SELECT * FROM episode WHERE bangumiId = :bangumiId AND status = :status ORDER BY updateTime DESC")
+    fun queryListByBangumiId(bangumiId: UUID, status: Int): LiveData<List<EpisodeEntity>>
 
-    @Query("SELECT * FROM episode WHERE id=:id")
+    @Query("SELECT * FROM episode WHERE id = :id")
     fun queryById(id: UUID): LiveData<EpisodeEntity?>
 
     @Update
@@ -64,13 +64,13 @@ interface EpisodeDao {
 
 @Dao
 interface VideoFileDao {
-    @Query("SELECT * FROM videofile WHERE id=:id ")
+    @Query("SELECT * FROM videofile WHERE id = :id ")
     fun queryById(id: UUID): LiveData<VideoFileEntity?>
 
-    @Query("SELECT * FROM videofile WHERE bangumiId=:bangumiId")
+    @Query("SELECT * FROM videofile WHERE bangumiId = :bangumiId")
     fun queryListByBangumiId(bangumiId: UUID): LiveData<List<VideoFileEntity>?>
 
-    @Query("SELECT * FROM videofile WHERE episodeId=:episodeId ")
+    @Query("SELECT * FROM videofile WHERE episodeId = :episodeId ")
     fun queryByEpisodeId(episodeId: UUID): LiveData<VideoFileEntity?>
 
     @Update
@@ -85,13 +85,13 @@ interface VideoFileDao {
 
 @Dao
 interface WatchProgressDao {
-    @Query("SELECT * FROM watchprogress WHERE id=:id ")
+    @Query("SELECT * FROM watchprogress WHERE id = :id ")
     fun queryById(id: UUID): LiveData<WatchProgressEntity?>
 
-    @Query("SELECT * FROM watchprogress WHERE bangumiId=:bangumiId")
+    @Query("SELECT * FROM watchprogress WHERE bangumiId = :bangumiId")
     fun queryListByBangumiId(bangumiId: UUID): LiveData<List<WatchProgressEntity>?>
 
-    @Query("SELECT * FROM watchprogress WHERE episodeId=:episodeId ")
+    @Query("SELECT * FROM watchprogress WHERE episodeId = :episodeId ")
     fun queryByEpisodeId(episodeId: UUID): LiveData<WatchProgressEntity?>
 
     @Update

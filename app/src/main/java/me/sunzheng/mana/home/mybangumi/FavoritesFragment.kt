@@ -24,11 +24,9 @@ import me.sunzheng.mana.core.net.v2.database.FavriouteEntity
 import me.sunzheng.mana.databinding.FragmentMyfavoritesBinding
 import me.sunzheng.mana.home.mybangumi.wrapper.FavoriteWrapper
 import me.sunzheng.mana.home.onair.OnAirItemRecyclerViewAdapter
-import me.sunzheng.mana.utils.LanguageSwitchUtils
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
-import kotlin.collections.ArrayList
 
 /**
  * Created by Sun on 2017/6/22.
@@ -70,13 +68,7 @@ class FavoritesFragment @Inject constructor() : Fragment() {
                 if (m is BangumiEntity)
                     BangumiDetailsActivity.newInstance(
                         requireActivity(),
-                        m.id.toString(),
-                        m.coverImage?.url ?: "",
-                        LanguageSwitchUtils.switchLanguageToJa(
-                            requireContext(),
-                            m.name,
-                            m.nameCn
-                        ),
+                        m,
                         v.findViewById(R.id.item_album)
                     )
             }

@@ -151,45 +151,55 @@ data class FavriouteEntity(
     var id: Long = 0
 }
 
-@Entity(tableName = "episode")
+@Entity(
+    tableName = "episode",
+    foreignKeys = [ForeignKey(
+        entity = BangumiEntity::class,
+        parentColumns = ["id"],
+        childColumns = ["bangumiId"]
+    )],
+    indices = [Index("bangumiId")]
+)
 data class EpisodeEntity(
     @PrimaryKey
     val id: UUID,
+    @ColumnInfo
     @SerializedName("status")
     @Expose
     var status: Long = 0,
+    @ColumnInfo
     @SerializedName("episode_no")
     @Expose
     val episodeNo: Int = 0,
-
+    @ColumnInfo
     @SerializedName("update_time")
     @Expose
     val updateTime: Long = 0,
-
+    @ColumnInfo
     @SerializedName("name")
     @Expose
     val name: String? = null,
-
+    @ColumnInfo
     @SerializedName("bgm_eps_id")
     @Expose
     val bgmEpsId: Long = 0,
-
+    @ColumnInfo
     @SerializedName("bangumi_id")
     @Expose
     val bangumiId: UUID? = null,
-
+    @ColumnInfo
     @SerializedName("airdate")
     @Expose
     val airdate: String? = null,
-
+    @ColumnInfo
     @SerializedName("name_cn")
     @Expose
     val nameCn: String? = null,
-
+    @ColumnInfo
     @SerializedName("thumbnail")
     @Expose
     val thumbnail: String? = null,
-
+    @ColumnInfo
     @SerializedName("thumbnail_color")
     @Expose
     val thumbnailColor: String? = null,
@@ -197,15 +207,15 @@ data class EpisodeEntity(
 //    @SerializedName("delete_mark")
 //    @Expose
 //    val deleteMark: Any? = null,
-
+    @ColumnInfo
     @SerializedName("create_time")
     @Expose
     val createTime: Long = 0,
-
+    @ColumnInfo
     @SerializedName("duration")
     @Expose
     val duration: String? = null,
-
+    @ColumnInfo
     @SerializedName("thumbnail_image")
     @Expose
     val thumbnailImage: CoverImage? = null

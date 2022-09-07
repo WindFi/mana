@@ -8,8 +8,8 @@
     app:cardCornerRadius="2dp"
     app:cardElevation="0dp"
     app:contentPaddingBottom="8dp"
-    app:contentPaddingLeft="4dp"
-    app:contentPaddingRight="4dp"
+    app:contentPaddingLeft="@dimen/activity_horizontal_margin"
+    app:contentPaddingRight="@dimen/activity_horizontal_margin"
     app:contentPaddingTop="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout

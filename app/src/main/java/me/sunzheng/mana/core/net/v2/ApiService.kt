@@ -63,7 +63,7 @@ interface ApiService {
      * @return
      */
     @GET("${HOME_PATH}/bangumi/{id}")
-    fun queryBangumiDetail(@Path("id") id: String): LiveData<ApiResponse<BangumiDetailWrapper>>?
+    fun queryBangumiDetail(@Path("id") id: String): LiveData<ApiResponse<BangumiDetailWrapper>>
 
 
     @POST("/api/watch/history/synchronize")
