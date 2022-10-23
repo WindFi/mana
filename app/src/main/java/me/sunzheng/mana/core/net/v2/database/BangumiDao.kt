@@ -1,16 +1,15 @@
 package me.sunzheng.mana.core.net.v2.database
 
-import androidx.lifecycle.LiveData
 import androidx.room.*
 import java.util.*
 
 @Dao
 interface BangumiDao {
-    @Query("SELECT * FROM bangumi WHERE type = :type AND status = :status")
-    fun queryList(type: Int = 2, status: Int = 1): LiveData<List<BangumiEntity>>
+    @Query("SELECT * FROM bangumi WHERE type = :type")
+    fun queryList(type: Int = 2): List<BangumiEntity>
 
     @Query("SELECT * FROM bangumi WHERE id = :id")
-    fun queryById(id: UUID): LiveData<BangumiEntity>
+    fun queryById(id: UUID): BangumiEntity
 
     @Update
     fun update(vararg model: BangumiEntity)
@@ -24,33 +23,38 @@ interface BangumiDao {
 
 @Dao
 interface FavirouteDao {
+
     @Transaction
     @Query("SELECT * FROM favorite WHERE status = :status AND userName = :userName")
-    fun queryList(status: Int, userName: String): LiveData<List<BangumiAndFavorites>>
+    fun queryList(status: Int, userName: String): List<BangumiAndFavorites>
 
-    @Query("SELECT * FROM bangumi WHERE id IN (SELECT bangumiId FROM favorite WHERE favorite.status = :status AND userName = :userName)")
-    fun queryBangumiList(status: Int, userName: String): LiveData<List<BangumiEntity>>
+    @Transaction
+//    @Query("SELECT * FROM bangumi WHERE id IN (SELECT bangumiId FROM favorite WHERE favorite.status = :status AND userName = :userName)")
+    @Query("SELECT * FROM favorite WHERE favorite.status = :status AND userName = :userName")
+    fun queryBangumiList(status: Int, userName: String): List<BangumiAndFavorites>
 
-    @Query("SELECT * FROM favorite WHERE bangumiId=:bangumiId")
-    fun queryByBangumiId(bangumiId: UUID): LiveData<FavriouteEntity?>
+    @Transaction
+    @Query("SELECT * FROM favorite WHERE bangumiId=:bangumiId AND userName = :userName")
+    fun queryByBangumiId(bangumiId: UUID, userName: String): BangumiAndFavorites?
 
     @Update
     fun update(vararg model: FavriouteEntity)
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(vararg model: FavriouteEntity)
 
     @Delete
     fun delete(vararg model: FavriouteEntity)
+
 }
 
 @Dao
 interface EpisodeDao {
     @Query("SELECT * FROM episode WHERE bangumiId = :bangumiId AND status = :status ORDER BY updateTime DESC")
-    fun queryListByBangumiId(bangumiId: UUID, status: Int): LiveData<List<EpisodeEntity>>
+    fun queryListByBangumiId(bangumiId: UUID, status: Int): List<EpisodeEntity>
 
     @Query("SELECT * FROM episode WHERE id = :id")
-    fun queryById(id: UUID): LiveData<EpisodeEntity?>
+    fun queryById(id: UUID): EpisodeEntity?
 
     @Update
     fun update(vararg model: EpisodeEntity)
@@ -65,13 +69,13 @@ interface EpisodeDao {
 @Dao
 interface VideoFileDao {
     @Query("SELECT * FROM videofile WHERE id = :id ")
-    fun queryById(id: UUID): LiveData<VideoFileEntity?>
+    fun queryById(id: UUID): VideoFileEntity?
 
     @Query("SELECT * FROM videofile WHERE bangumiId = :bangumiId")
-    fun queryListByBangumiId(bangumiId: UUID): LiveData<List<VideoFileEntity>?>
+    fun queryListByBangumiId(bangumiId: UUID): List<VideoFileEntity>?
 
     @Query("SELECT * FROM videofile WHERE episodeId = :episodeId ")
-    fun queryByEpisodeId(episodeId: UUID): LiveData<VideoFileEntity?>
+    fun queryByEpisodeId(episodeId: UUID): VideoFileEntity?
 
     @Update
     fun update(vararg model: VideoFileEntity)
@@ -86,13 +90,13 @@ interface VideoFileDao {
 @Dao
 interface WatchProgressDao {
     @Query("SELECT * FROM watchprogress WHERE id = :id ")
-    fun queryById(id: UUID): LiveData<WatchProgressEntity?>
+    fun queryById(id: UUID): WatchProgressEntity?
 
     @Query("SELECT * FROM watchprogress WHERE bangumiId = :bangumiId")
-    fun queryListByBangumiId(bangumiId: UUID): LiveData<List<WatchProgressEntity>?>
+    fun queryListByBangumiId(bangumiId: UUID): List<WatchProgressEntity>?
 
     @Query("SELECT * FROM watchprogress WHERE episodeId = :episodeId ")
-    fun queryByEpisodeId(episodeId: UUID): LiveData<WatchProgressEntity?>
+    fun queryByEpisodeId(episodeId: UUID): WatchProgressEntity?
 
     @Update
     fun update(vararg model: WatchProgressEntity)
@@ -102,4 +106,16 @@ interface WatchProgressDao {
 
     @Delete
     fun delete(vararg model: WatchProgressEntity)
+}
+
+@Dao
+interface OnAirDao {
+    @Query("SELECT * FROM onair, bangumi WHERE onair.bangumiId = bangumi.id  AND bangumi.type = :type")
+    fun queryList(type: Int): List<BangumiEntity>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(vararg model: RelationOnAir)
+
+    @Query("delete FROM onair")
+    fun deleteAll()
 }

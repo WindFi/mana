@@ -39,6 +39,8 @@ import me.sunzheng.mana.home.onair.OnAirFragment
 import me.sunzheng.mana.utils.HostUtil
 import me.sunzheng.mana.utils.PreferenceManager
 import me.sunzheng.mana.utils.RegexUtils
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -86,9 +88,27 @@ class MainActivity @Inject constructor() : AppCompatActivity(),
             AnnouceAdapter(datas)
     }
 
+    fun test() {
+        var startTime = Calendar.getInstance().apply {
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
+        var endTime = Calendar.getInstance().apply {
+            if (Calendar.getInstance().get(Calendar.MONTH) == 12) {
+                add(Calendar.YEAR, 1)
+                set(Calendar.MONTH, 1)
+            } else {
+                add(Calendar.MONTH, 1)
+            }
+            set(Calendar.DAY_OF_MONTH, 1)
+        }
+        var airDay = SimpleDateFormat("yyyy-MM-dd").parse("2022-10-13").time
+        startTime.timeInMillis <= airDay && endTime.timeInMillis >= airDay
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.mainView.toolbar)
+//        test()
         supportActionBar!!.setDisplayShowTitleEnabled(true)
         supportActionBar!!.setTitle(R.string.app_name)
         val drawer = findViewById<View>(R.id.drawer_layout) as DrawerLayout

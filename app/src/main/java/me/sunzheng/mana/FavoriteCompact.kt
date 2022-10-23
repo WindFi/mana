@@ -6,7 +6,6 @@ import android.content.res.ColorStateList
 import android.graphics.drawable.ColorDrawable
 import android.graphics.drawable.Drawable
 import android.graphics.drawable.RippleDrawable
-import android.os.Build
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 
@@ -23,34 +22,18 @@ object FavoriteCompact {
         R.color.favorite_abanoned
     )
 
-    fun setFavorite(status: Long, v: TextView) {
+    fun setFavorite(status: Int, v: TextView) {
         val statusString =
             v.resources.getStringArray(R.array.favorite_status_values)[status.toInt()]
-        var drawableCompat: DrawableCompat? = null
-        drawableCompat =
-            if (Build.VERSION.SDK_INT >= 21) LolipopDrawableCompatImpl(v.context) else BaseDrawableCompatImpl(
-                v.context
-            )
-        //        v.setBackground(drawableCompat.getDrawable(status,v));
-//        switch ((int) status) {
-//            case 1:
-//                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_wish));
-//                break;
-//            case 2:
-//                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_watched));
-//                break;
-//            case 3:
-//                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_watching));
-//                break;
-//            case 4:
-//                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_pause));
-//                break;
-//            case 5:
-//                v.setBackgroundColor(ContextCompat.getColor(v.getContext(), R.color.favorite_abanoned));
-//                break;
-//            default:
-//                break;
-//        }
+        var colorInt = when (status) {
+            1 -> R.color.favorite_wish
+            2 -> R.color.favorite_watched
+            3 -> R.color.favorite_watching
+            4 -> R.color.favorite_pause
+            5 -> R.color.favorite_abanoned
+            else -> R.color.favorite_abanoned
+        }
+        v.setBackgroundColor(ContextCompat.getColor(v.context, colorInt))
         v.text = statusString
     }
 

@@ -47,19 +47,25 @@ class FavriouteFragmentCompat @Inject constructor() : Fragment() {
             .commit()
         requireArguments().run {
             var status = getInt(ARGS_STATUS_INT, -1)
-            viewModel.filter(status).observe(viewLifecycleOwner) {
+            viewModel.filter(status).observe(viewLifecycleOwner) { it ->
                 when (it.code) {
                     Status.SUCCESS -> {
                         var f = if (it.data.isNullOrEmpty()) {
                             EmptyFragment()
                         } else {
-                            FavoritesFragment.newInstance(it.data)
+                            FavoritesFragment.newInstance(it.data.map { it.entity })
                         }
                         childFragmentManager.beginTransaction().replace(R.id.replace_layout, f)
                             .commit()
                     }
                     Status.LOADING -> {
-
+                        var f = if (it.data.isNullOrEmpty()) {
+                            EmptyFragment()
+                        } else {
+                            FavoritesFragment.newInstance(it.data.map { it.entity })
+                        }
+                        childFragmentManager.beginTransaction().replace(R.id.replace_layout, f)
+                            .commit()
                     }
                     Status.ERROR -> {
                         showToast(it.message ?: "")

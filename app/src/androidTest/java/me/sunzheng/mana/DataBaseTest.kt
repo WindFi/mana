@@ -53,8 +53,8 @@ class DataBaseTest {
         bangumiList.forEach {
             bangumiDao.insert(it)
         }
-        var result = LiveDataTestUtil.getValue(bangumiDao.queryList(type = 2, status = 1))
-        assert(result?.size == bangumiList.size)
+        var result = bangumiDao.queryList(type = 2)
+        assert(result.size == bangumiList.size)
 
         bangumiList.map { FavriouteEntity(bangumiId = it.id, status = 3, userName = userName) }
             .forEach {
@@ -66,8 +66,13 @@ class DataBaseTest {
         FavriouteEntity(bangumiList[0].id, status = 4, userName = userName).run {
             favriouteDao.insert(this)
         }
-        var mResult = LiveDataTestUtil.getValue(favriouteDao.queryBangumiList(3, userName))
-            ?.sortedBy { it.name?.toInt() }
-        assert(mResult?.size == bangumiList.size)
+        var mResult = favriouteDao.queryBangumiList(3, userName)
+            .sortedBy { it.entity.name?.toInt() }
+        assert(mResult.size == bangumiList.size)
+    }
+
+    @Test
+    fun updateFavrioute() {
+
     }
 }

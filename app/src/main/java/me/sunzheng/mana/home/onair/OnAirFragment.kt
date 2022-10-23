@@ -1,13 +1,12 @@
 package me.sunzheng.mana.home.onair
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.DividerItemDecoration
 import dagger.hilt.android.AndroidEntryPoint
 import me.sunzheng.mana.BangumiDetailsActivity
@@ -37,9 +36,7 @@ class OnAirFragment : Fragment() {
     }
 
     lateinit var binder: FragmentItemListBinding
-    val viewModel: MainViewModel by lazy {
-        ViewModelProviders.of(this)[MainViewModel::class.java]
-    }
+    val viewModel by viewModels<MainViewModel>()
     var type = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -63,17 +60,15 @@ class OnAirFragment : Fragment() {
 
     fun fetch() {
         binder.swiperefreshlayout.isRefreshing = true
-        Log.i("ThreadID", "fetch:${Thread.currentThread().id}")
         viewModel.queryAir(type).observe(viewLifecycleOwner, observable)
     }
 
     fun remove() {
         viewModel.queryAir(type).removeObserver(observable)
-
     }
 
     var observable =
-        Observer<Resource<List<me.sunzheng.mana.core.net.v2.database.BangumiEntity>>> { it ->
+        Observer<Resource<List<BangumiEntity>>> { it ->
             binder.swiperefreshlayout.isRefreshing = it.code == Status.LOADING
             if (it.code != Status.LOADING) {
                 remove()

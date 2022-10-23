@@ -53,9 +53,8 @@ class BangumiDetailsActivity @Inject constructor() : AppCompatActivity() {
         setContentView(R.layout.activity_bangumi_details)
         var extras = savedInstanceState?.getBundle("extras") ?: intent.extras
         extras?.getParcelable<BangumiEntity>(ARGS_ID_STR)?.run {
-            fragment = BangumiDetailsFragment.newInstance(this)
             supportFragmentManager.beginTransaction()
-                .replace(R.id.contentPanel, fragment, "fragment")
+                .replace(R.id.contentPanel, BangumiDetailsFragment.newInstance(this), "fragment")
                 .commit()
         }
     }

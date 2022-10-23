@@ -37,6 +37,9 @@ interface ApiService {
     @GET("${HOME_PATH}/on_air")
     fun listAllAir(@Query("type") type: Int): LiveData<ApiResponse<AirWrapper>>
 
+    @GET("${HOME_PATH}/on_air")
+    fun listAllAir2(@Query("type") type: Int): ApiResponse<AirWrapper>
+
     /**
      * List all bangumi base on the given query criteria.
      *
@@ -78,7 +81,7 @@ interface ApiService {
     fun putBangumiFavoriteStatus(
         @Path("id") id: String,
         @Body request: FavoriteStatusRequest
-    ): LiveData<ApiResponse<Response>>?
+    ): LiveData<ApiResponse<Response>>
 
     /**
      * Get the episode by specific id

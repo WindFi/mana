@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.gson.Gson
@@ -17,10 +18,7 @@ import me.sunzheng.mana.R
 import me.sunzheng.mana.core.net.ApiResponse
 import me.sunzheng.mana.core.net.v2.ApiService
 import me.sunzheng.mana.core.net.v2.NetworkBoundResource
-import me.sunzheng.mana.core.net.v2.database.BangumiDao
-import me.sunzheng.mana.core.net.v2.database.BangumiEntity
-import me.sunzheng.mana.core.net.v2.database.FavirouteDao
-import me.sunzheng.mana.core.net.v2.database.FavriouteEntity
+import me.sunzheng.mana.core.net.v2.database.*
 import me.sunzheng.mana.databinding.FragmentMyfavoritesBinding
 import me.sunzheng.mana.home.mybangumi.wrapper.FavoriteWrapper
 import me.sunzheng.mana.home.onair.OnAirItemRecyclerViewAdapter
@@ -42,7 +40,7 @@ class FavoritesFragment @Inject constructor() : Fragment() {
             arguments = Bundle().apply {
                 putParcelableArrayList(
                     ARGS_DATA_PARCEL_ARRAY,
-                    ArrayList<BangumiEntity>(list)
+                    ArrayList(list)
                 )
             }
         }
@@ -63,25 +61,26 @@ class FavoritesFragment @Inject constructor() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         args = savedInstanceState?.getBundle("args") ?: requireArguments()
-        args.getParcelableArrayList<BangumiEntity>(ARGS_DATA_PARCEL_ARRAY)?.let {
-            OnAirItemRecyclerViewAdapter(it) { v, _, _, m ->
-                if (m is BangumiEntity)
-                    BangumiDetailsActivity.newInstance(
-                        requireActivity(),
-                        m,
-                        v.findViewById(R.id.item_album)
+        args.getParcelableArrayList<BangumiEntity>(ARGS_DATA_PARCEL_ARRAY)
+            ?.let {
+                OnAirItemRecyclerViewAdapter(it) { v, _, _, m ->
+                    if (m is BangumiEntity)
+                        BangumiDetailsActivity.newInstance(
+                            requireActivity(),
+                            m,
+                            v.findViewById(R.id.item_album)
+                        )
+                }
+            }?.run {
+                binding.recyclerView.adapter = this
+                binding.recyclerView.itemAnimator = DefaultItemAnimator()
+                binding.recyclerView.addItemDecoration(
+                    DividerItemDecoration(
+                        requireContext(),
+                        DividerItemDecoration.VERTICAL
                     )
-            }
-        }?.run {
-            binding.recyclerView.adapter = this
-            binding.recyclerView.itemAnimator = DefaultItemAnimator()
-            binding.recyclerView.addItemDecoration(
-                DividerItemDecoration(
-                    requireContext(),
-                    DividerItemDecoration.VERTICAL
                 )
-            )
-        }
+            }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -122,27 +121,33 @@ class FavoritesRepository {
     lateinit var apiService: ApiService
     lateinit var userName: String
     fun query(status: Int, page: Int) =
-        object : NetworkBoundResource<List<BangumiEntity>, FavoriteWrapper>() {
+        object : NetworkBoundResource<List<BangumiAndFavorites>, FavoriteWrapper>() {
             override fun saveCallResult(item: FavoriteWrapper) {
                 item.data?.forEach {
                     bangumiDao.insert(Gson().fromJson(Gson().toJson(it), BangumiEntity::class.java))
                 }
-                item.data.map {
-                    FavriouteEntity(
+                item.data.forEach {
+                    var source = favriouteDao.queryByBangumiId(UUID.fromString(it.id), userName)
+                        ?.let { dataView ->
+                            dataView.state.apply {
+                                this.status = it.favoriteStatus
+                                unwatched_count = it.unwatched_count
+                            }
+                        } ?: FavriouteEntity(
                         UUID.fromString(it.id),
                         status = it.favoriteStatus,
                         userName = userName,
                         it.unwatched_count
                     )
-                }.forEach {
-                    favriouteDao.insert(it)
+                    favriouteDao.insert(source)
                 }
             }
 
-            override fun shouldFetch(data: List<BangumiEntity>?): Boolean = true
+            override fun shouldFetch(data: List<BangumiAndFavorites>?): Boolean = true
 
-            override fun loadFromDb(): LiveData<List<BangumiEntity>> =
-                favriouteDao.queryBangumiList(status, userName)
+            override fun loadFromDb(): LiveData<List<BangumiAndFavorites>> = liveData {
+                emit(favriouteDao.queryBangumiList(status, userName))
+            }
 
             override fun createCall(): LiveData<ApiResponse<FavoriteWrapper>> =
                 apiService.listMyBangumi(status)

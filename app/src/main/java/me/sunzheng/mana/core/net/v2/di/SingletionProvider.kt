@@ -7,6 +7,7 @@ import android.os.Build
 import android.text.TextUtils
 import androidx.multidex.MultiDexApplication
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import dagger.Module
 import dagger.Provides
@@ -16,10 +17,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.sunzheng.mana.core.net.LiveDataCallAdapterFactory
 import me.sunzheng.mana.core.net.v2.ApiService
-import me.sunzheng.mana.core.net.v2.database.AppDatabase
-import me.sunzheng.mana.core.net.v2.database.BangumiDao
-import me.sunzheng.mana.core.net.v2.database.EpisodeDao
-import me.sunzheng.mana.core.net.v2.database.FavirouteDao
+import me.sunzheng.mana.core.net.v2.database.*
 import me.sunzheng.mana.utils.PersistentHttpCookieStore
 import me.sunzheng.mana.utils.PreferenceManager
 import okhttp3.JavaNetCookieJar
@@ -56,15 +54,25 @@ object ViewModelModule {
         return retrofit.create(ApiService::class.java)
     }
 
+    @Provides
+    fun providerOnAirDao(database: AppDatabase): OnAirDao {
+        return database.onAirDao()
+    }
+
+    @Provides
+    fun providerWatchProgressDao(database: AppDatabase): WatchProgressDao {
+        return database.watchProgressDao()
+    }
+
     @Named("userName")
     @Provides
     fun providerUserName(@ApplicationContext context: Context): String {
         return context.getSharedPreferences(
             PreferenceManager.Global.STR_SP_NAME,
             Context.MODE_PRIVATE
-        )
-            .getString(PreferenceManager.Global.STR_USERNAME, "") ?: ""
+        ).getString(PreferenceManager.Global.STR_USERNAME, "") ?: ""
     }
+
 }
 
 @Module
@@ -74,9 +82,11 @@ object SingletionProvider {
     @Provides
     fun providerDataBase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "data-base")
-            .addMigrations(Migration(1, 2) {
+            .allowMainThreadQueries()
+            .addMigrations(Migration(3, 4) {
 
             })
+            .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
             .build()
     }
 

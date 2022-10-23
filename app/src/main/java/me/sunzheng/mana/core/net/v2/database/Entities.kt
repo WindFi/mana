@@ -131,6 +131,7 @@ data class BangumiEntity(
     var coverImage: CoverImage? = null
 ) : Parcelable
 
+@Parcelize
 @Entity(
     tableName = "favorite",
     foreignKeys = [ForeignKey(
@@ -145,12 +146,13 @@ data class FavriouteEntity(
     @ColumnInfo var userName: String,
     @ColumnInfo
     var unwatched_count: Int = 0,
-) {
+) : Parcelable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo
     var id: Long = 0
 }
 
+@Parcelize
 @Entity(
     tableName = "episode",
     foreignKeys = [ForeignKey(
@@ -219,7 +221,7 @@ data class EpisodeEntity(
     @SerializedName("thumbnail_image")
     @Expose
     val thumbnailImage: CoverImage? = null
-)
+) : Parcelable
 
 @Entity(tableName = "videofile")
 data class VideoFileEntity(
@@ -274,11 +276,13 @@ data class VideoFileEntity(
     val label: String? = null,
 )
 
+@Parcelize
 @Entity(tableName = "watchprogress")
 data class WatchProgressEntity(
     @PrimaryKey
     val id: Long,
-    @SerializedName("user_id") @Expose
+    @SerializedName("user_id")
+    @Expose
     var userId: UUID? = null,
     @SerializedName("last_watch_position")
     @Expose
@@ -303,5 +307,18 @@ data class WatchProgressEntity(
     @SerializedName("last_watch_time")
     @Expose
     val lastWatchTime: Float = 0.0f,
-)
+) : Parcelable
 
+@Parcelize
+@Entity(
+    tableName = "OnAir", foreignKeys = [ForeignKey(
+        entity = BangumiEntity::class,
+        parentColumns = ["id"],
+        childColumns = ["bangumiId"]
+    )], indices = [Index("bangumiId")]
+)
+data class RelationOnAir(
+    @PrimaryKey
+    @ColumnInfo
+    var bangumiId: UUID
+) : Parcelable

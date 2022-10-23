@@ -9,6 +9,7 @@ import me.sunzheng.mana.core.net.v2.database.FavirouteDao
 import me.sunzheng.mana.home.main.BangumiRepository
 import java.util.*
 import javax.inject.Inject
+import javax.inject.Named
 
 @HiltViewModel
 class BangumiDetailsViewModel @Inject constructor() : ViewModel() {
@@ -24,6 +25,9 @@ class BangumiDetailsViewModel @Inject constructor() : ViewModel() {
     @Inject
     lateinit var episodeDao: EpisodeDao
 
+    @Named("userName")
+    @Inject
+    lateinit var userName: String
     val repository: BangumiRepository by lazy {
         BangumiRepository().also {
             it.apiService = apiService
@@ -35,4 +39,10 @@ class BangumiDetailsViewModel @Inject constructor() : ViewModel() {
 
     fun fetchEpisodeList(bangumiId: UUID, userName: String) =
         repository.queryEpisodeList(bangumiId, 2, userName)
+
+    fun updateBangumiFavoriteState(bangumiId: UUID, status: Int, userName: String = this.userName) =
+        repository.updateBangumiFavrioteState(bangumiId, status, userName)
+
+    fun queryBangumiAndFavorite(bangumiId: UUID, userName: String) =
+        repository.queryBangumiAndFavriote(bangumiId, userName)
 }

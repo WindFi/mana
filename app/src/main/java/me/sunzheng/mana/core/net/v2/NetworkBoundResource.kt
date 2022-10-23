@@ -125,3 +125,94 @@ abstract class NetworkBoundResource<ResultType, RequestType>
     @MainThread
     abstract fun createCall(): LiveData<ApiResponse<RequestType>>
 }
+
+abstract class NetworkBoundResource2<ResultType, RequestType>
+@MainThread constructor() {
+    private val result = MediatorLiveData<Resource<ResultType>>()
+
+    init {
+        result.value = Resource.loading(null)
+        @Suppress("LeakingThis")
+        val dbSource = loadFromDb()
+        result.addSource(dbSource) { data ->
+            result.removeSource(dbSource)
+            if (shouldFetch(data)) {
+                fetchFromNetwork(dbSource)
+            } else {
+                result.addSource(dbSource) { newData ->
+                    setValue(Resource.success(newData))
+                }
+            }
+        }
+    }
+
+    @MainThread
+    private fun setValue(newValue: Resource<ResultType>) {
+        if (result.value != newValue) {
+            result.value = newValue
+        }
+    }
+
+    private fun fetchFromNetwork(dbSource: LiveData<ResultType>) {
+        val apiResponse = createCall()
+        // we re-attach dbSource as a new source, it will dispatch its latest value quickly
+        result.addSource(dbSource) { newData ->
+            setValue(Resource.loading(newData))
+        }
+        result.addSource(apiResponse) { response ->
+            result.removeSource(apiResponse)
+            result.removeSource(dbSource)
+            when (response) {
+                is ApiSuccessResponse -> {
+                    GlobalScope.launch(Dispatchers.IO) {
+                        saveCallResult(processResponse(response))
+                        // we specially request a new live data,
+                        // otherwise we will get immediately last cached value,
+                        // which may not be updated with latest results received from network.
+                        GlobalScope.launch(Dispatchers.Main) {
+                            var m = loadFromDb()
+                            result.addSource(m) { newData ->
+                                result.removeSource(m)
+                                setValue(Resource.success(newData))
+                            }
+                        }
+                    }
+                }
+                is ApiEmptyResponse -> {
+                    // reload from disk whatever we had
+                    var newDbSource = loadFromDb()
+                    result.addSource(newDbSource) { newData ->
+                        result.removeSource(newDbSource)
+                        setValue(Resource.success(newData))
+                    }
+                }
+                is ApiErrorResponse -> {
+                    onFetchFailed()
+                    result.addSource(dbSource) { newData ->
+                        result.removeSource(dbSource)
+                        setValue(Resource.error(response.errorMessage, newData))
+                    }
+                }
+            }
+        }
+    }
+
+    fun onFetchFailed() {}
+
+    fun asLiveData() = result as LiveData<Resource<ResultType>>
+
+    @WorkerThread
+    open fun processResponse(response: ApiSuccessResponse<RequestType>) = response.body
+
+    @WorkerThread
+    protected abstract fun saveCallResult(item: RequestType)
+
+    @MainThread
+    protected abstract fun shouldFetch(data: ResultType?): Boolean
+
+    @MainThread
+    protected abstract fun loadFromDb(): LiveData<ResultType>
+
+    @MainThread
+    abstract fun createCall(): LiveData<ApiResponse<RequestType>>
+}

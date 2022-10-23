@@ -45,7 +45,6 @@ class BangumiDetailsFragment : Fragment() {
             arguments = Bundle().apply { putParcelable(ARGS_DATA_PARCELABLE, data) }
         }
     }
-
     var mBannerImageView: ImageView? = null
     var mHeaderCollapsingToolbarLayout: CollapsingToolbarLayout? = null
     var mToolbar: Toolbar? = null
@@ -56,6 +55,8 @@ class BangumiDetailsFragment : Fragment() {
     var sharedPreferences: SharedPreferences? = null
 
     lateinit var binding: FragmentBangumidetailsBinding
+
+    //    @Inject lateinit var viewModel:BangumiDetailsViewModel
     val viewModel by viewModels<BangumiDetailsViewModel>()
     lateinit var args: Bundle
     override fun onCreateView(
@@ -87,10 +88,18 @@ class BangumiDetailsFragment : Fragment() {
         initToolbar(view)
         initContent(view)
         args.getParcelable<BangumiEntity>(ARGS_DATA_PARCELABLE)?.run {
-            binding.bangumiModel = this
-            setOriginName(this.airWeekday.toInt(), this.airDate!!)
-            // TODO: 2021/12/18 test it 
-            viewModel.fetchEpisodeList(id, "SunZheng").observe(viewLifecycleOwner) { it ->
+            var name = sharedPreferences
+                ?.getString(PreferenceManager.Global.STR_USERNAME, null)!!
+            viewModel.queryBangumiAndFavorite(id, userName = name)
+                .observe(viewLifecycleOwner) { dataView ->
+                    binding.bangumiModel = dataView
+                    binding.bangumiModel?.entity?.run {
+                        setOriginName(this.airWeekday.toInt(), this.airDate!!)
+                        setFavouriteStatus(dataView!!.state.status)
+                        // TODO: 2021/12/18 test it
+                    }
+                }
+            viewModel.fetchEpisodeList(id, name).observe(viewLifecycleOwner) { it ->
                 when (it.code) {
                     Status.SUCCESS -> {
                         binding.episodeModels = it.data
@@ -105,25 +114,25 @@ class BangumiDetailsFragment : Fragment() {
                     }
                     Status.LOADING -> {
                         binding.episodeModels = it.data
-                        binding.recyclerView.adapter = EpisodeAdapter { _, position, id, model ->
-                            Handler(Looper.getMainLooper())
-                                .postDelayed({
-                                    VideoPlayActivity.newInstance(
-                                        requireContext(),
-                                        binding.episodeModels!!.size - (position + 1),
-                                        binding.episodeModels
-                                    ).run {
-                                        requireContext().startActivity(this)
-                                    }
-                                }, 300)
-                        }
+                        binding.recyclerView.adapter =
+                            EpisodeAdapter { _, position, id, model ->
+                                Handler(Looper.getMainLooper())
+                                    .postDelayed({
+                                        VideoPlayActivity.newInstance(
+                                            requireContext(),
+                                            binding.episodeModels!!.size - (position + 1),
+                                            binding.episodeModels
+                                        ).run {
+                                            requireContext().startActivity(this)
+                                        }
+                                    }, 300)
+                            }
                         var adapter = binding.recyclerView.adapter as EpisodeAdapter
                         adapter.submitList(it.data)
                     }
                 }
             }
         }
-
     }
 
     private val supportActionBar: ActionBar?
@@ -181,15 +190,30 @@ class BangumiDetailsFragment : Fragment() {
                 } else if (item.itemId == R.id.pop_abanoned) {
                     status = 5
                 }
-//                mPresenter!!.changeBangumiFavoriteState(status)
-                // TODO: 2021/12/3 viewModel.changeBangumiFavoriteState 
+                viewModel.updateBangumiFavoriteState(
+                    binding.bangumiModel!!.entity.id,
+                    status
+                ).observe(viewLifecycleOwner) {
+                    when (it.code) {
+                        Status.SUCCESS -> {
+                            binding.bangumiModel?.state?.status = status
+                            setFavouriteStatus(status)
+                        }
+                        Status.LOADING -> {
+                            setFavouriteStatus(status)
+                        }
+                        Status.ERROR -> {
+                            setFavouriteStatus(binding.bangumiModel?.state?.status ?: 0)
+                        }
+                    }
+                }
                 true
             })
             popupMenu.show()
         }
         binding.recyclerView.isNestedScrollingEnabled = false
         //add padding buttom
-        // TODO: 2021/12/3 ????底边距 
+        // TODO: 2021/12/3 ????底边距
         binding.bangumidetailsHeaderConstraint.setPadding(
             0,
             0,
@@ -233,7 +257,7 @@ class BangumiDetailsFragment : Fragment() {
         binding.bangumidetailsOriginnameTextview.text = resultString
     }
 
-    fun setFavouriteStatus(status: Long) {
+    fun setFavouriteStatus(status: Int) {
         FavoriteCompact.setFavorite(status, binding.bangumidetailsFaviortestatusTextview)
     }
 
