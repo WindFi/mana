@@ -10,7 +10,7 @@ import me.sunzheng.mana.home.episode.Record;
 /**
  * Created by Sun on 2017/11/15.
  */
-
+@Deprecated
 public class SynchronizeEpisodeHistoryWrapper {
     @SerializedName("records")
     @Expose

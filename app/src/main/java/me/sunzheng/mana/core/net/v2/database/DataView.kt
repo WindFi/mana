@@ -18,7 +18,7 @@ data class BangumiAndFavorites(
 @Parcelize
 data class EpisodeAndWatchprogress(
     @Relation(
-        parentColumn = "id", entityColumn = "episodeId"
+        parentColumn = "episodeId", entityColumn = "id"
     )
     var episodeEntity: EpisodeEntity,
     @Embedded

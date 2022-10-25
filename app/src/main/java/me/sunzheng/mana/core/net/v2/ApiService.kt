@@ -36,10 +36,6 @@ interface ApiService {
      */
     @GET("${HOME_PATH}/on_air")
     fun listAllAir(@Query("type") type: Int): LiveData<ApiResponse<AirWrapper>>
-
-    @GET("${HOME_PATH}/on_air")
-    fun listAllAir2(@Query("type") type: Int): ApiResponse<AirWrapper>
-
     /**
      * List all bangumi base on the given query criteria.
      *
@@ -70,7 +66,7 @@ interface ApiService {
 
 
     @POST("/api/watch/history/synchronize")
-    fun synchronizeEpisodeHistory(@Body request: SynchronizeEpisodeHistoryWrapper): LiveData<ApiResponse<Response>>?
+    fun synchronizeEpisodeHistory(@Body request: SynchronizeEpisodeHistoryWrapper): LiveData<ApiResponse<Response>>
 
     /**
      * @param id

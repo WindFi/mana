@@ -50,8 +50,14 @@ interface FavirouteDao {
 
 @Dao
 interface EpisodeDao {
-    @Query("SELECT * FROM episode WHERE bangumiId = :bangumiId AND status = :status ORDER BY updateTime DESC")
-    fun queryListByBangumiId(bangumiId: UUID, status: Int): List<EpisodeEntity>
+    @Transaction
+    @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
+    @Query("SELECT * FROM episode LEFT JOIN  watchprogress ON episode.id = watchprogress.episodeId WHERE episode.bangumiId = :bangumiId AND status = :status AND userName = :userName ORDER BY updateTime DESC")
+    fun queryListByBangumiId(
+        bangumiId: UUID,
+        status: Int,
+        userName: String
+    ): List<EpisodeAndWatchprogress>
 
     @Query("SELECT * FROM episode WHERE id = :id")
     fun queryById(id: UUID): EpisodeEntity?
@@ -89,14 +95,14 @@ interface VideoFileDao {
 
 @Dao
 interface WatchProgressDao {
-    @Query("SELECT * FROM watchprogress WHERE id = :id ")
+    @Query("SELECT * FROM watchprogress WHERE _id = :id ")
     fun queryById(id: UUID): WatchProgressEntity?
 
-    @Query("SELECT * FROM watchprogress WHERE bangumiId = :bangumiId")
-    fun queryListByBangumiId(bangumiId: UUID): List<WatchProgressEntity>?
+    @Query("SELECT * FROM watchprogress WHERE bangumiId = :bangumiId AND userName = :userName")
+    fun queryListByBangumiId(bangumiId: UUID, userName: String): List<WatchProgressEntity>?
 
-    @Query("SELECT * FROM watchprogress WHERE episodeId = :episodeId ")
-    fun queryByEpisodeId(episodeId: UUID): WatchProgressEntity?
+    @Query("SELECT * FROM watchprogress WHERE episodeId = :episodeId AND userName = :userName")
+    fun queryByEpisodeId(episodeId: UUID, userName: String): WatchProgressEntity?
 
     @Update
     fun update(vararg model: WatchProgressEntity)
@@ -110,6 +116,7 @@ interface WatchProgressDao {
 
 @Dao
 interface OnAirDao {
+    @RewriteQueriesToDropUnusedColumns
     @Query("SELECT * FROM onair, bangumi WHERE onair.bangumiId = bangumi.id  AND bangumi.type = :type")
     fun queryList(type: Int): List<BangumiEntity>
 

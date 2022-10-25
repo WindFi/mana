@@ -56,7 +56,6 @@ class BangumiDetailsFragment : Fragment() {
 
     lateinit var binding: FragmentBangumidetailsBinding
 
-    //    @Inject lateinit var viewModel:BangumiDetailsViewModel
     val viewModel by viewModels<BangumiDetailsViewModel>()
     lateinit var args: Bundle
     override fun onCreateView(
@@ -104,7 +103,7 @@ class BangumiDetailsFragment : Fragment() {
                     Status.SUCCESS -> {
                         binding.episodeModels = it.data
                         var adapter = binding.recyclerView.adapter as EpisodeAdapter
-                        adapter.submitList(it.data?.sortedBy { episode -> episode.bgmEpsId }
+                        adapter.submitList(it.data?.sortedBy { episode -> episode.episodeEntity.bgmEpsId }
                             ?.reversed())
                     }
                     Status.ERROR -> {
@@ -121,7 +120,7 @@ class BangumiDetailsFragment : Fragment() {
                                         VideoPlayActivity.newInstance(
                                             requireContext(),
                                             binding.episodeModels!!.size - (position + 1),
-                                            binding.episodeModels
+                                            binding.episodeModels!!.map { it.episodeEntity }
                                         ).run {
                                             requireContext().startActivity(this)
                                         }
@@ -232,20 +231,6 @@ class BangumiDetailsFragment : Fragment() {
         )
     }
 
-//    override fun setWeekDay(updateDate: Long) {
-//        if (mWeekDayTextView == null) return
-//        mWeekDayTextView!!.text = updateDate.toString() + ""
-//    }
-//
-//    override fun setAirDate(startDate: String) {
-//        if (mAirDateTextView == null) return
-//        mAirDateTextView!!.text = startDate
-//    }
-
-    fun setSummary(descript: CharSequence) {
-        binding.bangumidetailsSummaryTextview.text = descript
-    }
-
     fun setOriginName(day: Int, etc: CharSequence) {
 //        mBangumiDetails.getAirWeekday(), mBangumiDetails.getAirDate()
         val dayInWeek = ArrarysResourceUtils.dayInWeek(activity, day)
@@ -266,24 +251,6 @@ class BangumiDetailsFragment : Fragment() {
         mCNTitleTextView!!.text = name
     }
 
-    fun setEpisode(eps_now: Int, eps: Int) {
-        val charSequence: CharSequence = String.format(
-            getString(R.string.title_episode_textview),
-            eps_now.toString() + "",
-            eps.toString() + ""
-        )
-        mEpisodeLabelTextView!!.text = charSequence
-    }
-
-    fun setAdapter(adapter: RecyclerView.Adapter<*>?) {
-//        if (mRecyclerView == null) return
-//        if (mRecyclerView!!.adapter == null) mRecyclerView!!.adapter =
-//            adapter else mRecyclerView!!.swapAdapter(adapter, true)
-//        if (mRecyclerView!!.layoutManager == null) mRecyclerView!!.layoutManager =
-//            LinearLayoutManager(
-//                activity
-//            )
-    }
 
 
     private fun getNavigationBarHeight(orientation: Int): Int {

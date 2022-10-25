@@ -18,7 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestBuilder
 import com.bumptech.glide.request.RequestOptions
+import kotlinx.coroutines.runBlocking
 import me.sunzheng.mana.R
+import me.sunzheng.mana.core.net.v2.database.EpisodeAndWatchprogress
 import me.sunzheng.mana.core.net.v2.database.EpisodeEntity
 import me.sunzheng.mana.utils.HostUtil.makeUp
 import me.sunzheng.mana.utils.LanguageSwitchUtils
@@ -28,15 +30,24 @@ import me.sunzheng.mana.utils.PreferenceManager
  * Created by Sun on 2017/7/14.
  */
 class EpisodeAdapter(var onItemClickListener: ((View, Int, Long, EpisodeEntity) -> Unit)? = null) :
-    ListAdapter<EpisodeEntity, EpisodeAdapter.ViewHolder>(object :
-        DiffUtil.ItemCallback<EpisodeEntity>() {
-        override fun areItemsTheSame(oldItem: EpisodeEntity, newItem: EpisodeEntity): Boolean =
-            oldItem.id == newItem.id
+    ListAdapter<EpisodeAndWatchprogress, EpisodeAdapter.ViewHolder>(object :
+        DiffUtil.ItemCallback<EpisodeAndWatchprogress>() {
+        override fun areItemsTheSame(
+            oldItem: EpisodeAndWatchprogress,
+            newItem: EpisodeAndWatchprogress
+        ): Boolean =
+            oldItem.episodeEntity.id == newItem.episodeEntity.id
 
-        override fun areContentsTheSame(oldItem: EpisodeEntity, newItem: EpisodeEntity): Boolean =
+        override fun areContentsTheSame(
+            oldItem: EpisodeAndWatchprogress,
+            newItem: EpisodeAndWatchprogress
+        ): Boolean =
             oldItem.hashCode() == newItem.hashCode()
 
-        override fun getChangePayload(oldItem: EpisodeEntity, newItem: EpisodeEntity): Any = newItem
+        override fun getChangePayload(
+            oldItem: EpisodeAndWatchprogress,
+            newItem: EpisodeAndWatchprogress
+        ): Any = newItem
     }) {
     var mHandler = Handler(Looper.getMainLooper())
     var host: String? = null
@@ -47,7 +58,7 @@ class EpisodeAdapter(var onItemClickListener: ((View, Int, Long, EpisodeEntity) 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position)
+        val item = getItem(position).episodeEntity
         if (TextUtils.isEmpty(host)) {
             host = holder.itemView.context.getSharedPreferences(
                 PreferenceManager.Global.STR_SP_NAME,
@@ -58,16 +69,6 @@ class EpisodeAdapter(var onItemClickListener: ((View, Int, Long, EpisodeEntity) 
         holder.mTitleTextView.text = item.nameCn
         if (item.status == 2L) {
             holder.itemView.setOnClickListener { v ->
-//                val context = v.context
-//                mHandler.postDelayed({
-//                    val intent =
-//                        VideoPlayActivity.newInstance(
-//                            context,
-//                            itemCount - (position + 1),
-//                            currentList
-//                        )
-//                    context.startActivity(intent)
-//                }, 300)
                 onItemClickListener?.invoke(v, position, getItemId(position), item)
             }
             holder.itemView.isClickable = true
@@ -96,16 +97,15 @@ class EpisodeAdapter(var onItemClickListener: ((View, Int, Long, EpisodeEntity) 
             LanguageSwitchUtils.switchLanguageToJa(holder.itemView.context, item.name, item.nameCn)
         //        holder.mTitleTextView.setText(TextUtils.isEmpty(item.getNameCn()) ? item.getName() : item.getNameCn());
         holder.mUpdateDateTextView.text = item.airdate
-        // TODO: 2021/12/5  watchProgress
-//        val watchProgress = item.watchProgress
-//        if (watchProgress == null) {
-//            holder.mProgressBar.visibility = View.GONE
-//        } else {
-//            holder.mProgressBar.visibility = View.VISIBLE
-//            holder.mProgressBar.max = 100
-//            holder.mProgressBar.progress =
-//                if (item.watchProgress.percentage * 100 < 1) 1 else (item.watchProgress.percentage * 100.0).toInt()
-//        }
+        // watchProgress
+        getItem(position).watchProgress?.run {
+            holder.mProgressBar.visibility = View.VISIBLE
+            holder.mProgressBar.max = 100
+            holder.mProgressBar.progress =
+                if (percentage * 100 < 1) 1 else (percentage * 100.0).toInt()
+        } ?: runBlocking {
+            holder.mProgressBar.visibility = View.GONE
+        }
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

@@ -277,37 +277,65 @@ data class VideoFileEntity(
 )
 
 @Parcelize
-@Entity(tableName = "watchprogress")
+@Entity(
+    tableName = "watchprogress", foreignKeys = [
+        ForeignKey(
+            entity = EpisodeEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["episodeId"]
+        ),
+        ForeignKey(
+            entity = BangumiEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["bangumiId"]
+        )],
+    indices = [Index("episodeId"), Index("bangumiId")]
+)
+
 data class WatchProgressEntity(
-    @PrimaryKey
-    val id: Long,
+    @SerializedName("id")
+    @Expose
+    @ColumnInfo(name = "rid")
+    var id: UUID? = null,
     @SerializedName("user_id")
     @Expose
     var userId: UUID? = null,
+    @ColumnInfo
+    var userName: String? = null,
     @SerializedName("last_watch_position")
     @Expose
-    val lastWatchPosition: Float = 0.0f,
+    @ColumnInfo
+    var lastWatchPosition: Float = 0.0f,
 
     @SerializedName("bangumi_id")
     @Expose
-    val bangumiId: UUID? = null,
+    @ColumnInfo
+    var bangumiId: UUID? = null,
 
     @SerializedName("watch_status")
     @Expose
-    val watchStatus: Long = 0,
+    @ColumnInfo
+    var watchStatus: Long = 0,
 
     @SerializedName("episode_id")
     @Expose
-    val episodeId: UUID? = null,
+    @ColumnInfo
+    var episodeId: UUID? = null,
 
     @SerializedName("percentage")
     @Expose
-    val percentage: Float = 0.0f,
+    @ColumnInfo
+    var percentage: Float = 0.0f,
 
     @SerializedName("last_watch_time")
     @Expose
-    val lastWatchTime: Float = 0.0f,
-) : Parcelable
+    @ColumnInfo
+    var lastWatchTime: Float = 0.0f,
+) : Parcelable {
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo
+    var _id: Long = 0
+}
 
 @Parcelize
 @Entity(

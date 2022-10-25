@@ -21,7 +21,7 @@
 
         <variable
             name="episodeModels"
-            type="List&lt;me.sunzheng.mana.core.net.v2.database.EpisodeEntity&gt;" />
+            type="List&lt;me.sunzheng.mana.core.net.v2.database.EpisodeAndWatchprogress&gt;" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout

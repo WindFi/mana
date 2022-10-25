@@ -63,7 +63,7 @@ class BangumiRepository {
     lateinit var favriouteDao: FavirouteDao
     lateinit var episodeDao: EpisodeDao
     lateinit var onAirDao: OnAirDao
-
+    lateinit var watchProgressDao: WatchProgressDao
     fun queryOnAir(type: Int, userName: String) =
         object : NetworkBoundResource<List<BangumiEntity>, AirWrapper>() {
             override fun saveCallResult(item: AirWrapper) {
@@ -92,65 +92,39 @@ class BangumiRepository {
             }
 
             override fun shouldFetch(data: List<BangumiEntity>?): Boolean = true
-
-            //            current_day = datetime.today()
-//            start_time = datetime(current_day.year, current_day.month, 1)
-//            if current_day.month == 12:
-//            next_year = current_day.year + 1
-//            next_month = 1
-//            else:
-//            next_year = current_day.year
-//            next_month = current_day.month + 1
-//            end_time = datetime(next_year, next_month, 1)
             override fun loadFromDb(): LiveData<List<BangumiEntity>> = liveData {
                 emit(onAirDao.queryList(type))
             }
-//                liveData {
-//                    emit(bangumiDao.queryList(type)?.filter { it ->
-//                        var startTime = Calendar.getInstance().apply {
-//                            set(Calendar.DAY_OF_MONTH, 1)
-//                            set(Calendar.HOUR_OF_DAY, 0)
-//                            set(Calendar.MINUTE, 0)
-//                            set(Calendar.SECOND, 0)
-//                            set(Calendar.MILLISECOND, 0)
-//                        }
-//                        var endTime = Calendar.getInstance().apply {
-//                            if (Calendar.getInstance().get(Calendar.MONTH) == 12) {
-//                                add(Calendar.YEAR, 1)
-//                                set(Calendar.MONTH, 1)
-//                            } else {
-//                                add(Calendar.MONTH, 1)
-//                            }
-//                            set(Calendar.DAY_OF_MONTH, 1)
-//                            set(Calendar.HOUR_OF_DAY, 0)
-//                            set(Calendar.MINUTE, 0)
-//                            set(Calendar.SECOND, 0)
-//                            set(Calendar.MILLISECOND, 0)
-//                        }
-//                        var airDay = SimpleDateFormat("yyyy-MM-dd").parse(it.airDate).time
-//
-//                        var filter =
-//                            startTime.timeInMillis <= airDay && endTime.timeInMillis >= airDay
-////                        if(filter)
-//                        Log.i(
-//                            "times",
-//                            "${it.nameCn},${startTime.timeInMillis},${airDay},${endTime.timeInMillis}"
-//                        )
-//                        filter
-//                    })
-//                }
-
-
             override fun createCall() = apiService.listAllAir(type)
         }.asLiveData()
 
     fun queryEpisodeList(id: UUID, status: Int, userName: String) =
-        object : NetworkBoundResource<List<EpisodeEntity>, BangumiDetailWrapper>() {
+        object : NetworkBoundResource<List<EpisodeAndWatchprogress>, BangumiDetailWrapper>() {
             override fun saveCallResult(item: BangumiDetailWrapper) {
                 item.bangumiDetails.episodes.map {
-                    Gson().fromJson(Gson().toJson(it), EpisodeEntity::class.java)
+                    Gson().fromJson(
+                        Gson().toJson(it),
+                        EpisodeEntity::class.java
+                    ) to Gson().fromJson(
+                        Gson().toJson(it.watchProgress),
+                        WatchProgressEntity::class.java
+                    )
                 }.forEach {
-                    episodeDao.insert(it)
+                    // TODO:  这里的代码需要优化一下
+//               ============================================这里需要优化========================================
+                    var em = watchProgressDao.queryByEpisodeId(it.first.id, userName)?.let { old ->
+                        it.second?.apply {
+                            this._id = old._id
+                            this.userName = userName
+                        }
+                    } ?: it.second?.apply {
+                        this.userName = userName
+                    }
+                    em?.run {
+                        watchProgressDao.insert(em)
+                    }
+//                    =================================================到这里为止====================================
+                    episodeDao.insert(it.first)
                 }
                 bangumiDao.insert(
                     Gson().fromJson(
@@ -174,10 +148,10 @@ class BangumiRepository {
                 }
             }
 
-            override fun shouldFetch(data: List<EpisodeEntity>?): Boolean = true
+            override fun shouldFetch(data: List<EpisodeAndWatchprogress>?): Boolean = true
 
-            override fun loadFromDb(): LiveData<List<EpisodeEntity>> =
-                liveData { emit(episodeDao.queryListByBangumiId(id, status)) }
+            override fun loadFromDb(): LiveData<List<EpisodeAndWatchprogress>> =
+                liveData { emit(episodeDao.queryListByBangumiId(id, status, userName)) }
 
 
             override fun createCall(): LiveData<ApiResponse<BangumiDetailWrapper>> =
@@ -216,8 +190,20 @@ class BangumiRepository {
                     FavoriteStatusRequest().apply { this.status = status }
                 )
         }.asLiveData()
-    // TODO: 2021/12/4
-//    fun queryEpisodeAndProgress(id:UUID,userId:String)
-    // TODO: 2021/12/4 updateFavrioute 
-    // TODO: 2021/12/4 updateWatchProgress 
+    // TODO: 2021/12/4 updateWatchProgress
+//    fun updateWatchProgress(vararg watchProgressEntity: WatchProgressEntity,userName:String,sync:Boolean=false)=object:NetworkBoundResource<WatchProgressEntity,Response>(){
+//        override fun saveCallResult(item: Response) {
+//            TODO("Not yet implemented")
+//        }
+//
+//        override fun shouldFetch(data: WatchProgressEntity?)=sync
+//
+//        override fun loadFromDb(): LiveData<WatchProgressEntity> {
+//            TODO("Not yet implemented")
+//        }
+//
+//        override fun createCall(): LiveData<ApiResponse<Response>> {
+//            TODO("Not yet implemented")
+//        }
+//    }
 }

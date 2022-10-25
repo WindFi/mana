@@ -6,6 +6,7 @@ import me.sunzheng.mana.core.net.v2.ApiService
 import me.sunzheng.mana.core.net.v2.database.BangumiDao
 import me.sunzheng.mana.core.net.v2.database.EpisodeDao
 import me.sunzheng.mana.core.net.v2.database.FavirouteDao
+import me.sunzheng.mana.core.net.v2.database.WatchProgressDao
 import me.sunzheng.mana.home.main.BangumiRepository
 import java.util.*
 import javax.inject.Inject
@@ -25,6 +26,9 @@ class BangumiDetailsViewModel @Inject constructor() : ViewModel() {
     @Inject
     lateinit var episodeDao: EpisodeDao
 
+    @Inject
+    lateinit var watchProgressDao: WatchProgressDao
+
     @Named("userName")
     @Inject
     lateinit var userName: String
@@ -34,6 +38,7 @@ class BangumiDetailsViewModel @Inject constructor() : ViewModel() {
             it.bangumiDao = bangumiDao
             it.favriouteDao = favriouteDao
             it.episodeDao = episodeDao
+            it.watchProgressDao = watchProgressDao
         }
     }
 
