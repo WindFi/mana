@@ -28,7 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import me.sunzheng.mana.BangumiDetailsActivity
 import me.sunzheng.mana.FavoriteCompact
 import me.sunzheng.mana.R
-import me.sunzheng.mana.VideoPlayActivity
+import me.sunzheng.mana.VideoPlayerActivity
 import me.sunzheng.mana.core.net.Status
 import me.sunzheng.mana.core.net.v2.database.BangumiEntity
 import me.sunzheng.mana.core.net.v2.showToast
@@ -117,7 +117,7 @@ class BangumiDetailsFragment : Fragment() {
                             EpisodeAdapter { _, position, id, model ->
                                 Handler(Looper.getMainLooper())
                                     .postDelayed({
-                                        VideoPlayActivity.newInstance(
+                                        VideoPlayerActivity.newInstance(
                                             requireContext(),
                                             binding.episodeModels!!.size - (position + 1),
                                             binding.episodeModels!!.map { it.episodeEntity }

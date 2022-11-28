@@ -55,7 +55,8 @@ dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.core:core-ktx:1.6.0'
     implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation("androidx.fragment:fragment-ktx:1.3.1")
+    implementation 'androidx.fragment:fragment-ktx:1.3.1'
+    implementation 'androidx.activity:activity-ktx:1.3.1'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
@@ -75,6 +76,7 @@ dependencies {
     implementation deps.rxjava2
     implementation deps.okhttp_logging_interceptor
     implementation deps.glide
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.3'
     kapt deps.glide_processor
     implementation deps.common3
     implementation deps.okhttp_urlconnection

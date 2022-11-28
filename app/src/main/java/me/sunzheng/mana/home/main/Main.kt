@@ -101,31 +101,6 @@ class BangumiRepository {
     fun queryEpisodeList(id: UUID, status: Int, userName: String) =
         object : NetworkBoundResource<List<EpisodeAndWatchprogress>, BangumiDetailWrapper>() {
             override fun saveCallResult(item: BangumiDetailWrapper) {
-                item.bangumiDetails.episodes.map {
-                    Gson().fromJson(
-                        Gson().toJson(it),
-                        EpisodeEntity::class.java
-                    ) to Gson().fromJson(
-                        Gson().toJson(it.watchProgress),
-                        WatchProgressEntity::class.java
-                    )
-                }.forEach {
-                    // TODO:  这里的代码需要优化一下
-//               ============================================这里需要优化========================================
-                    var em = watchProgressDao.queryByEpisodeId(it.first.id, userName)?.let { old ->
-                        it.second?.apply {
-                            this._id = old._id
-                            this.userName = userName
-                        }
-                    } ?: it.second?.apply {
-                        this.userName = userName
-                    }
-                    em?.run {
-                        watchProgressDao.insert(em)
-                    }
-//                    =================================================到这里为止====================================
-                    episodeDao.insert(it.first)
-                }
                 bangumiDao.insert(
                     Gson().fromJson(
                         Gson().toJson(item.bangumiDetails),
@@ -146,6 +121,34 @@ class BangumiRepository {
                     )
                     favriouteDao.insert(model)
                 }
+                item.bangumiDetails.episodes.map {
+                    Gson().fromJson(
+                        Gson().toJson(it),
+                        EpisodeEntity::class.java
+                    ) to it.watchProgress?.let {
+                        Gson().fromJson(
+                            Gson().toJson(it),
+                            WatchProgressEntity::class.java
+                        ) ?: null
+                    }
+                }.forEach {
+                    // TODO:  这里的代码需要优化一下
+//               ============================================这里需要优化========================================
+                    episodeDao.insert(it.first)
+                    var em = watchProgressDao.queryByEpisodeId(it.first.id, userName)?.let { old ->
+                        it.second?.apply {
+                            this._id = old._id
+                            this.userName = userName
+                        }
+                    } ?: it.second?.apply {
+                        this.userName = userName
+                    }
+                    em?.run {
+                        watchProgressDao.insert(em)
+                    }
+//                    =================================================到这里为止====================================
+                }
+
             }
 
             override fun shouldFetch(data: List<EpisodeAndWatchprogress>?): Boolean = true

@@ -52,7 +52,7 @@ interface FavirouteDao {
 interface EpisodeDao {
     @Transaction
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
-    @Query("SELECT * FROM episode LEFT JOIN  watchprogress ON episode.id = watchprogress.episodeId WHERE episode.bangumiId = :bangumiId AND status = :status AND userName = :userName ORDER BY updateTime DESC")
+    @Query("SELECT * FROM episode LEFT JOIN  watchprogress ON episode.id = watchprogress.episodeId WHERE episode.bangumiId = :bangumiId AND status = :status AND (userName = :userName OR userName isnull) ORDER BY updateTime DESC")
     fun queryListByBangumiId(
         bangumiId: UUID,
         status: Int,
@@ -82,6 +82,10 @@ interface VideoFileDao {
 
     @Query("SELECT * FROM videofile WHERE episodeId = :episodeId ")
     fun queryByEpisodeId(episodeId: UUID): VideoFileEntity?
+
+    @Transaction
+    @Query("SELECT * FROM videofile LEFT JOIN watchprogress ON videofile.episodeId = watchprogress.episodeId WHERE videofile.episodeId = :episodeId AND (userName = :userName OR userName isnull)")
+    fun queryByEpisodeId(episodeId: UUID, userName: String): VideoFileAndWatchProgress?
 
     @Update
     fun update(vararg model: VideoFileEntity)

@@ -50,6 +50,11 @@ object ViewModelModule {
     }
 
     @Provides
+    fun providerVideoFileDao(database: AppDatabase): VideoFileDao {
+        return database.videoFileDao()
+    }
+
+    @Provides
     fun providerApiService(retrofit: Retrofit): ApiService {
         return retrofit.create(ApiService::class.java)
     }
@@ -83,7 +88,7 @@ object SingletionProvider {
     fun providerDataBase(@ApplicationContext context: Context): AppDatabase {
         return Room.databaseBuilder(context, AppDatabase::class.java, "data-base")
             .allowMainThreadQueries()
-            .addMigrations(Migration(3, 4) {
+            .addMigrations(Migration(5, 6) {
 
             })
             .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)

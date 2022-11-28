@@ -7,10 +7,6 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <!-- To auto-complete the email text field in the login form with the user's emails -->
-    <!-- <uses-permission android:name="android.permission.GET_ACCOUNTS" /> -->
-    <!-- <uses-permission android:name="android.permission.READ_PROFILE" /> -->
-    <!-- <uses-permission android:name="android.permission.READ_CONTACTS" /> -->
     <application
         android:name=".utils.App"
         android:allowBackup="true"
@@ -18,8 +14,19 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:usesCleartextTraffic="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".VideoPlayerActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/AppTheme.VideoPlayActivity">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".MainActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
@@ -44,8 +51,8 @@
         <activity
             android:name=".SearchResultActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
-            android:launchMode="singleTask"
             android:exported="true"
+            android:launchMode="singleTask"
             android:theme="@style/AppTheme.SearchResultActivity">
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -65,8 +72,8 @@
             android:theme="@style/AppTheme.MyFavoritesActivity" />
         <activity
             android:name=".LaunchActivity"
-            android:exported="true"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
+            android:exported="true"
             android:theme="@style/AppTheme.LaunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

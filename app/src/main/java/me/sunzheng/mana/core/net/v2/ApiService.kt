@@ -86,7 +86,7 @@ interface ApiService {
      * @return
      */
     @GET("${HOME_PATH}/episode/{id}")
-    fun queryEpisode(@Path("id") id: String): LiveData<ApiResponse<EpisodeWrapper>>?
+    fun queryEpisode(@Path("id") id: String): LiveData<ApiResponse<EpisodeWrapper>>
 
     /**
      * Send a feedback about current episode and video_file.

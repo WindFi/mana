@@ -205,10 +205,6 @@ data class EpisodeEntity(
     @SerializedName("thumbnail_color")
     @Expose
     val thumbnailColor: String? = null,
-
-//    @SerializedName("delete_mark")
-//    @Expose
-//    val deleteMark: Any? = null,
     @ColumnInfo
     @SerializedName("create_time")
     @Expose
@@ -223,7 +219,21 @@ data class EpisodeEntity(
     val thumbnailImage: CoverImage? = null
 ) : Parcelable
 
-@Entity(tableName = "videofile")
+@Parcelize
+@Entity(
+    tableName = "videofile", foreignKeys = [
+        ForeignKey(
+            entity = EpisodeEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["episodeId"]
+        ),
+        ForeignKey(
+            entity = BangumiEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["bangumiId"]
+        )],
+    indices = [Index("episodeId"), Index("bangumiId")]
+)
 data class VideoFileEntity(
     @PrimaryKey
     val id: UUID,
@@ -257,7 +267,7 @@ data class VideoFileEntity(
 
     @SerializedName("episode_id")
     @Expose
-    val episodeId: String? = null,
+    val episodeId: UUID? = null,
 
     @SerializedName("resolution_h")
     @Expose
@@ -265,7 +275,7 @@ data class VideoFileEntity(
 
     @SerializedName("bangumi_id")
     @Expose
-    val bangumiId: String? = null,
+    val bangumiId: UUID? = null,
 
     @SerializedName("duration")
     @Expose
@@ -274,7 +284,7 @@ data class VideoFileEntity(
     @SerializedName("label")
     @Expose
     val label: String? = null,
-)
+) : Parcelable
 
 @Parcelize
 @Entity(

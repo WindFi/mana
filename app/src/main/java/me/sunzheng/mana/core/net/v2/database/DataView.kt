@@ -17,10 +17,21 @@ data class BangumiAndFavorites(
 
 @Parcelize
 data class EpisodeAndWatchprogress(
-    @Relation(
-        parentColumn = "episodeId", entityColumn = "id"
-    )
-    var episodeEntity: EpisodeEntity,
+
     @Embedded
+    var episodeEntity: EpisodeEntity,
+    @Relation(
+        parentColumn = "id", entityColumn = "episodeId"
+    )
     var watchProgress: WatchProgressEntity? = null
+) : Parcelable
+
+@Parcelize
+data class VideoFileAndWatchProgress(
+    @Embedded
+    var videoFile: VideoFileEntity,
+    @Relation(
+        parentColumn = "episodeId", entityColumn = "episodeId"
+    )
+    var watchProgress: WatchProgressEntity?
 ) : Parcelable
