@@ -67,10 +67,6 @@ import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
-// TODO: feedback
-// TODO: 字幕组选择
-
-// TODO: 进度保存
 // TODO: 缓存
 @AndroidEntryPoint
 class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoControllerListener {
