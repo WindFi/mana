@@ -10,12 +10,11 @@ android {
         release {
             keyAlias String.valueOf(project.keyAlias)
             keyPassword String.valueOf(project.keyPassword)
-            storeFile file(String.valueOf(project.storeFile))
-            storePassword String.valueOf(project.storePassword)
+//            storeFile file(String.valueOf(project.storeFile))
+//            storePassword String.valueOf(project.storePassword)
         }
     }
     compileSdkVersion build_versions.compileSdkVersion
-    buildToolsVersion build_versions.build_tools
     defaultConfig {
         applicationId "me.sunzheng.mana"
         minSdkVersion build_versions.min_sdk
