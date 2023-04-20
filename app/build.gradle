@@ -20,8 +20,8 @@ android {
         applicationId "me.sunzheng.mana"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
-        versionCode 40
-        versionName "1.6.01"
+        versionCode 101
+        versionName "2.0.2"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.release
@@ -49,6 +49,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+    namespace 'me.sunzheng.mana'
 }
 
 dependencies {
