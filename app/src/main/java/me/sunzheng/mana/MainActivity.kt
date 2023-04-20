@@ -12,7 +12,11 @@ import android.os.Looper
 import android.text.TextUtils
 import android.util.Log
 import android.util.TypedValue
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -40,7 +44,7 @@ import me.sunzheng.mana.utils.HostUtil
 import me.sunzheng.mana.utils.PreferenceManager
 import me.sunzheng.mana.utils.RegexUtils
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -217,30 +221,41 @@ class MainActivity @Inject constructor() : AppCompatActivity(),
         val drawer = findViewById<View>(R.id.drawer_layout) as DrawerLayout
         drawer.closeDrawer(GravityCompat.START)
         val intent = Intent()
-        if (id == R.id.nav_settings) {
-            intent.component = ComponentName(this, SettingsActivity::class.java)
-            handler.postDelayed(
-                { if (intent.component != null) startActivity(intent) },
-                CLICK_DELAY_MILLIONSECONDS
-            )
-        } else if (id == R.id.nav_history) {
-            intent.component = ComponentName(this, MyFavoritesActivity::class.java)
-            handler.postDelayed(
-                { if (intent.component != null) startActivity(intent) },
-                CLICK_DELAY_MILLIONSECONDS
-            )
-        } else if (id == R.id.nav_exit) {
-            val sharedPreferences =
-                getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, MODE_PRIVATE)
-            sharedPreferences.edit().putBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false)
-                .commit()
-            intent.component = ComponentName(this, LaunchActivity::class.java)
-            handler.postDelayed({
-                if (intent.component != null) startActivity(intent)
-                finish()
-            }, CLICK_DELAY_MILLIONSECONDS)
+        return when (id) {
+            R.id.nav_settings -> {
+                intent.component = ComponentName(this, SettingsActivity::class.java)
+                handler.postDelayed(
+                    { if (intent.component != null) startActivity(intent) },
+                    CLICK_DELAY_MILLIONSECONDS
+                )
+                true
+            }
+
+            R.id.nav_history -> {
+                intent.component = ComponentName(this, MyFavoritesActivity::class.java)
+                handler.postDelayed(
+                    { if (intent.component != null) startActivity(intent) },
+                    CLICK_DELAY_MILLIONSECONDS
+                )
+                true
+            }
+
+            R.id.nav_exit -> {
+                val sharedPreferences =
+                    getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, MODE_PRIVATE)
+                sharedPreferences.edit()
+                    .putBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false)
+                    .commit()
+                intent.component = ComponentName(this, LaunchActivity::class.java)
+                handler.postDelayed({
+                    if (intent.component != null) startActivity(intent)
+                    finish()
+                }, CLICK_DELAY_MILLIONSECONDS)
+                true
+            }
+
+            else -> false
         }
-        return false
     }
 
     /**
@@ -266,7 +281,8 @@ class MainActivity @Inject constructor() : AppCompatActivity(),
             if (item.position == 1) {
                 holder.itemView.setOnClickListener {
                     val typedValue = TypedValue()
-                    val a = obtainStyledAttributes(typedValue.data, intArrayOf(R.attr.colorPrimary))
+                    val a =
+                        obtainStyledAttributes(typedValue.data, intArrayOf(R.attr.colorPrimary))
                     val color = a.getColor(0, 0)
                     a.recycle()
                     //                        see: https://stackoverflow.com/questions/27611173/how-to-get-accent-color-programmatically/28777489?utm_medium=organic&utm_source=google_rich_qa&utm_campaign=google_rich_qa
@@ -305,9 +321,11 @@ class MainActivity @Inject constructor() : AppCompatActivity(),
             }
             request?.into(holder.mImageView)
             if (item.bangumi != null) {
-                holder.mTextView.text = if (isJaFirst) item.bangumi.name else item.bangumi.nameCn
+                holder.mTextView.text =
+                    if (isJaFirst) item.bangumi.name else item.bangumi.nameCn
             }
-            holder.mTextView.visibility = if (item.bangumi == null) View.INVISIBLE else View.VISIBLE
+            holder.mTextView.visibility =
+                if (item.bangumi == null) View.INVISIBLE else View.VISIBLE
         }
 
         override fun getItemCount(): Int {
