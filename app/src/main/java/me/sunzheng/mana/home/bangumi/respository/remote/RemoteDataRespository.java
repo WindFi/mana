@@ -37,14 +37,14 @@ public class RemoteDataRespository implements DataRespository {
     @Override
     public Completable update(BangumiDetailWrapper bangumiDetailWrapper) {
         final FavoriteStatusRequest request = new FavoriteStatusRequest();
-        request.status = (int) bangumiDetailWrapper.getBangumiDetails().getFavoriteStatus();
+        request.status = bangumiDetailWrapper.getBangumiDetails().getFavoriteStatus();
         return Completable.create(new CompletableOnSubscribe() {
             @Override
             public void subscribe(final CompletableEmitter e) throws Exception {
                 apiService.changeBangumiFavoriteStatus(id, request).doOnSuccess(new Consumer<Response>() {
                     @Override
                     public void accept(Response response) throws Exception {
-                        if (response.status == 0)
+                        if (response.getStatus() == 0)
                             e.onComplete();
                         else
                             e.onError(new UnknownError("status change faild"));

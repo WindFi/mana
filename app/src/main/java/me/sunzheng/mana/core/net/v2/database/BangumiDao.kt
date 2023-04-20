@@ -52,7 +52,7 @@ interface FavirouteDao {
 interface EpisodeDao {
     @Transaction
     @SuppressWarnings(RoomWarnings.CURSOR_MISMATCH)
-    @Query("SELECT * FROM episode LEFT JOIN  watchprogress ON episode.id = watchprogress.episodeId WHERE episode.bangumiId = :bangumiId AND status = :status AND (userName = :userName OR userName isnull) ORDER BY updateTime DESC")
+    @Query("SELECT *,episode.bangumiId=:bangumiId FROM episode LEFT JOIN  watchprogress ON episode.id = watchprogress.episodeId WHERE episode.bangumiId = :bangumiId AND status = :status AND (userName = :userName OR userName isnull) ORDER BY updateTime DESC")
     fun queryListByBangumiId(
         bangumiId: UUID,
         status: Int,
@@ -81,11 +81,7 @@ interface VideoFileDao {
     fun queryListByBangumiId(bangumiId: UUID): List<VideoFileEntity>?
 
     @Query("SELECT * FROM videofile WHERE episodeId = :episodeId ")
-    fun queryByEpisodeId(episodeId: UUID): VideoFileEntity?
-
-    @Transaction
-    @Query("SELECT * FROM videofile LEFT JOIN watchprogress ON videofile.episodeId = watchprogress.episodeId WHERE videofile.episodeId = :episodeId AND (userName = :userName OR userName isnull)")
-    fun queryByEpisodeId(episodeId: UUID, userName: String): VideoFileAndWatchProgress?
+    fun queryByEpisodeId(episodeId: UUID): List<VideoFileEntity>?
 
     @Update
     fun update(vararg model: VideoFileEntity)
@@ -99,13 +95,14 @@ interface VideoFileDao {
 
 @Dao
 interface WatchProgressDao {
-    @Query("SELECT * FROM watchprogress WHERE _id = :id ")
+    @Query("SELECT * FROM watchprogress WHERE rid = :id ")
     fun queryById(id: UUID): WatchProgressEntity?
 
     @Query("SELECT * FROM watchprogress WHERE bangumiId = :bangumiId AND userName = :userName")
     fun queryListByBangumiId(bangumiId: UUID, userName: String): List<WatchProgressEntity>?
 
-    @Query("SELECT * FROM watchprogress WHERE episodeId = :episodeId AND userName = :userName")
+    //    @SuppressWarnings
+    @Query("SELECT * FROM watchprogress WHERE episodeId = :episodeId AND userName = :userName ORDER BY lastWatchTime DESC")
     fun queryByEpisodeId(episodeId: UUID, userName: String): WatchProgressEntity?
 
     @Update

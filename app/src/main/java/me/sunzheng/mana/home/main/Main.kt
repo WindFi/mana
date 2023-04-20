@@ -67,7 +67,7 @@ class BangumiRepository {
     fun queryOnAir(type: Int, userName: String) =
         object : NetworkBoundResource<List<BangumiEntity>, AirWrapper>() {
             override fun saveCallResult(item: AirWrapper) {
-                item.data?.forEach {
+                item.data?.takeIf { it.isNotEmpty() }?.forEach {
                     var bangumiEntity =
                         Gson().fromJson(Gson().toJson(it), BangumiEntity::class.java)
                     var favriouteEntity = FavriouteEntity(
@@ -85,7 +85,7 @@ class BangumiRepository {
                         }
                     favriouteDao.insert(source ?: favriouteEntity)
                 }
-                item.data?.map { RelationOnAir(it.id) }?.run {
+                item.data?.takeIf { it.isNotEmpty() }?.map { RelationOnAir(it.id) }?.run {
                     onAirDao.deleteAll()
                     onAirDao.insert(*this.toTypedArray())
                 }
@@ -137,7 +137,7 @@ class BangumiRepository {
                     episodeDao.insert(it.first)
                     var em = watchProgressDao.queryByEpisodeId(it.first.id, userName)?.let { old ->
                         it.second?.apply {
-                            this._id = old._id
+                            this.id = old.id
                             this.userName = userName
                         }
                     } ?: it.second?.apply {

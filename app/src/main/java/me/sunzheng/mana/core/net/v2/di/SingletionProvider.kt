@@ -78,6 +78,14 @@ object ViewModelModule {
         ).getString(PreferenceManager.Global.STR_USERNAME, "") ?: ""
     }
 
+    @Named(PreferenceManager.Global.STR_KEY_HOST)
+    @Provides
+    fun providerHost(@ApplicationContext context: Context): String {
+        return context.getSharedPreferences(
+            PreferenceManager.Global.STR_SP_NAME,
+            Context.MODE_PRIVATE
+        ).getString(PreferenceManager.Global.STR_KEY_HOST, "") ?: ""
+    }
 }
 
 @Module

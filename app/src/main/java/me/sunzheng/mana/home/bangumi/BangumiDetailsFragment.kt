@@ -31,6 +31,7 @@ import me.sunzheng.mana.R
 import me.sunzheng.mana.VideoPlayerActivity
 import me.sunzheng.mana.core.net.Status
 import me.sunzheng.mana.core.net.v2.database.BangumiEntity
+import me.sunzheng.mana.core.net.v2.parseMediaDescription
 import me.sunzheng.mana.core.net.v2.showToast
 import me.sunzheng.mana.databinding.FragmentBangumidetailsBinding
 import me.sunzheng.mana.utils.ArrarysResourceUtils
@@ -62,7 +63,7 @@ class BangumiDetailsFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             layoutInflater,
             R.layout.fragment_bangumidetails,
@@ -101,6 +102,9 @@ class BangumiDetailsFragment : Fragment() {
             viewModel.fetchEpisodeList(id, name).observe(viewLifecycleOwner) { it ->
                 when (it.code) {
                     Status.SUCCESS -> {
+//                        it.data?.forEach {
+//                            Log.i("bbk","${it.episodeEntity.id?.toString()?:"episodeId:null"}/${it.watchProgress?.id?.toString()?:"watchprogress:null"}")
+//                        }
                         binding.episodeModels = it.data
                         var adapter = binding.recyclerView.adapter as EpisodeAdapter
                         adapter.submitList(it.data?.sortedBy { episode -> episode.episodeEntity.bgmEpsId }
@@ -119,8 +123,11 @@ class BangumiDetailsFragment : Fragment() {
                                     .postDelayed({
                                         VideoPlayerActivity.newInstance(
                                             requireContext(),
+                                            this.id,
                                             binding.episodeModels!!.size - (position + 1),
-                                            binding.episodeModels!!.map { it.episodeEntity }
+                                            binding.episodeModels!!.map {
+                                                it.episodeEntity.parseMediaDescription("")
+                                            }
                                         ).run {
                                             requireContext().startActivity(this)
                                         }

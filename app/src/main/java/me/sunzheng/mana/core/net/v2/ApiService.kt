@@ -5,11 +5,10 @@ import me.sunzheng.mana.core.net.ApiResponse
 import me.sunzheng.mana.core.net.v2.wrappers.AirWrapper
 import me.sunzheng.mana.home.FavoriteStatusRequest
 import me.sunzheng.mana.home.bangumi.Response
+import me.sunzheng.mana.home.bangumi.WatchProgressResponse
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper
-import me.sunzheng.mana.home.bangumi.wrapper.request.SynchronizeEpisodeHistoryWrapper
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper
 import me.sunzheng.mana.home.feedback.FeedbackRequestWrapper
-import me.sunzheng.mana.home.feedback.FeedbackResponseWrapper
 import me.sunzheng.mana.home.main.ResponseWrapper
 import me.sunzheng.mana.home.mybangumi.wrapper.FavoriteWrapper
 import me.sunzheng.mana.home.search.SearchResultWrapper
@@ -36,6 +35,7 @@ interface ApiService {
      */
     @GET("${HOME_PATH}/on_air")
     fun listAllAir(@Query("type") type: Int): LiveData<ApiResponse<AirWrapper>>
+
     /**
      * List all bangumi base on the given query criteria.
      *
@@ -66,7 +66,13 @@ interface ApiService {
 
 
     @POST("/api/watch/history/synchronize")
-    fun synchronizeEpisodeHistory(@Body request: SynchronizeEpisodeHistoryWrapper): LiveData<ApiResponse<Response>>
+    fun synchronizeEpisodeHistory(@Body request: SynchronizeEpisodeHistoryRequest): LiveData<ApiResponse<WatchProgressResponse>>
+
+    @POST("/api/watch/history/{episode_id}")
+    fun updateWatchProgress(
+        @Path("episode_id") id: String,
+        @Body request: Record
+    ): LiveData<ApiResponse<WatchProgressResponse>>
 
     /**
      * @param id
@@ -94,7 +100,7 @@ interface ApiService {
      * @return
      */
     @POST("${HOME_PATH}/feedback")
-    fun postFeedBack(@Body request: FeedbackRequestWrapper): LiveData<ApiResponse<FeedbackResponseWrapper>>?
+    fun postFeedBack(@Body request: FeedbackRequestWrapper): LiveData<ApiResponse<Response>>
 
     /**
      * Will only get announcement which current time is between start_time and end_time

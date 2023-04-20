@@ -284,7 +284,11 @@ data class VideoFileEntity(
     @SerializedName("label")
     @Expose
     val label: String? = null,
-) : Parcelable
+) : Parcelable {
+    override fun toString(): String {
+        return this.label ?: ""
+    }
+}
 
 @Parcelize
 @Entity(
@@ -303,10 +307,11 @@ data class VideoFileEntity(
 )
 
 data class WatchProgressEntity(
+    @PrimaryKey
     @SerializedName("id")
     @Expose
     @ColumnInfo(name = "rid")
-    var id: UUID? = null,
+    var id: UUID,
     @SerializedName("user_id")
     @Expose
     var userId: UUID? = null,
@@ -341,11 +346,11 @@ data class WatchProgressEntity(
     @Expose
     @ColumnInfo
     var lastWatchTime: Float = 0.0f,
-) : Parcelable {
-    @PrimaryKey(autoGenerate = true)
+    @SerializedName("is_finished")
+    @Expose
     @ColumnInfo
-    var _id: Long = 0
-}
+    var isFinised: Boolean = false
+) : Parcelable
 
 @Parcelize
 @Entity(

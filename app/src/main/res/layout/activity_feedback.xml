@@ -1,75 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="8dp"
-        tools:context="me.sunzheng.mana.FeedbackActivity">
+        android:fitsSystemWindows="true">
 
-        <RadioGroup
-            android:id="@+id/feedback_radiogroup"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            android:layout_height="match_parent"
+            android:padding="8dp"
+            tools:context="me.sunzheng.mana.FeedbackActivity">
 
-            <androidx.appcompat.widget.AppCompatRadioButton
-                android:id="@+id/feedback_radiobutton_0"
-                android:layout_width="wrap_content"
+            <RadioGroup
+                android:id="@+id/feedback_radiogroup"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="有画面无声音"
-                android:textColor="@color/radiobutton_text_selector" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.appcompat.widget.AppCompatRadioButton
-                android:id="@+id/feedback_radiobutton_1"
-                android:layout_width="wrap_content"
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/feedback_radiobutton_0"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="有画面无声音"
+                    android:textColor="@color/radiobutton_text_selector" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/feedback_radiobutton_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="有声音无画面"
+                    android:textColor="@color/radiobutton_text_selector" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/feedback_radiobutton_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="无画面无声音"
+                    android:textColor="@color/radiobutton_text_selector" />
+
+                <androidx.appcompat.widget.AppCompatRadioButton
+                    android:id="@+id/feedback_etc_radiobutton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="其他"
+                    android:textColor="@color/radiobutton_text_selector" />
+            </RadioGroup>
+
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/feedback_edittext"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="有声音无画面"
-                android:textColor="@color/radiobutton_text_selector" />
+                android:focusable="false"
+                android:hint="@string/hint_want_to_say_something_edittext"
+                android:imeOptions="actionSend"
+                android:inputType="text"
+                android:maxLength="40"
+                android:maxLines="1"
+                app:layout_constraintTop_toBottomOf="@id/feedback_radiogroup" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.appcompat.widget.AppCompatRadioButton
-                android:id="@+id/feedback_radiobutton_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="无画面无声音"
-                android:textColor="@color/radiobutton_text_selector" />
-
-            <androidx.appcompat.widget.AppCompatRadioButton
-                android:id="@+id/feedback_etc_radiobutton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="其他"
-                android:textColor="@color/radiobutton_text_selector" />
-        </RadioGroup>
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/feedback_edittext"
+        <ProgressBar
+            android:id="@+id/progressbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:focusable="false"
-            android:hint="@string/hint_want_to_say_something_edittext"
-            android:imeOptions="actionSend"
-            android:inputType="text"
-            android:maxLength="40"
-            android:maxLines="1"
-            app:layout_constraintStart_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/feedback_radiogroup" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:layout_height="match_parent"
+            android:background="#f0f0f0"
+            android:backgroundTint="@android:color/white"
+            android:visibility="gone" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="@dimen/fab_margin"
-        app:elevation="4dp"
-        app:srcCompat="@drawable/ic_menu_send"
-        app:useCompatPadding="true" />
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="@dimen/fab_margin"
+            app:elevation="4dp"
+            app:srcCompat="@drawable/ic_menu_send"
+            app:useCompatPadding="true" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

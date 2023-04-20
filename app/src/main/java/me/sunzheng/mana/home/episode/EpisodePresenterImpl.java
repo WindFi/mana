@@ -48,7 +48,7 @@ import me.sunzheng.mana.utils.PreferenceManager;
 /**
  * Created by Sun on 2018/1/2.
  */
-
+@Deprecated
 public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter {
     public final static String TAG = EpisodePresenterImpl.class.getSimpleName();
     HomeApiService.Episode eApiService;
@@ -319,7 +319,6 @@ public class EpisodePresenterImpl implements HomeContract.VideoPlayer.Presenter 
                     }).subscribe(new Consumer<Response>() {
                         @Override
                         public void accept(Response response) throws Exception {
-                            Log.i(TAG, response.message);
                         }
                     }, new Consumer<Throwable>() {
                         @Override

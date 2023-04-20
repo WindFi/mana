@@ -1,13 +1,15 @@
 package me.sunzheng.mana.videoplayer
 
+import android.support.v4.media.MediaDescriptionCompat
+import android.util.Log
 import androidx.lifecycle.*
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
-import me.sunzheng.mana.core.WatchProgress
 import me.sunzheng.mana.core.net.ApiResponse
-import me.sunzheng.mana.core.net.v2.ApiService
-import me.sunzheng.mana.core.net.v2.NetworkBoundResource
+import me.sunzheng.mana.core.net.ApiSuccessResponse
+import me.sunzheng.mana.core.net.v2.*
 import me.sunzheng.mana.core.net.v2.database.*
+import me.sunzheng.mana.home.bangumi.WatchProgressResponse
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper
 import java.util.*
 import javax.inject.Inject
@@ -22,11 +24,17 @@ class VideoPlayerVideoModel @Inject constructor(private val state: SavedStateHan
     @Inject
     lateinit var userName: String
 
+    @Named("host")
+    @Inject
+    lateinit var host: String
+
     @Inject
     lateinit var videoFileDao: VideoFileDao
 
     @Inject
     lateinit var watchProgressDao: WatchProgressDao
+
+    lateinit var bangumiId: String
 
     val repository: VideoRepository by lazy {
         VideoRepository().also {
@@ -39,10 +47,53 @@ class VideoPlayerVideoModel @Inject constructor(private val state: SavedStateHan
     // TODO: 需要处理一下savedinstance 的问题 要保存 position items
     val isPlaying = MutableLiveData(false)
     val position = MutableLiveData(0)
+    var isJaFirst = false
+
+    val mediaDescritionLiveData by lazy {
+        MutableLiveData<MediaDescriptionCompat>()
+    }
+    val videoFileLiveData by lazy {
+        MutableLiveData<VideoFileEntity>()
+    }
+    val brighnessLiveData by lazy {
+        MutableLiveData<Float>()
+    }
+    val soundLiveData by lazy {
+        MutableLiveData<Float>()
+    }
+
+    //    进度条
+    val seekPositionLiveData by lazy {
+        MutableLiveData<Long>()
+    }
+    val watchProgressLiveData: MutableLiveData<WatchProgressEntity>? by lazy {
+        MutableLiveData()
+    }
+
     fun fetchVideoFiles(episodeId: UUID) = repository.fetchVideoFiles(episodeId, userName)
+    fun fetchWatchProgress(episodeId: UUID) =
+        repository.fetchWatchProgress(userName, episodeId)
 
-    fun updateWatchProgress(userName: String = this.userName, watchProgress: WatchProgress) {
-
+    fun updateWatchProgress(
+        bangumiId: String,
+        userName: String = this.userName,
+        episodeEntity: EpisodeEntity,
+        lastWatchPosition: Float,
+        duration: Float,
+        watchprocessEntity: WatchProgressEntity? = null
+    ) = run {
+        var record = watchprocessEntity?.parseRecord() ?: Record()
+        record.apply {
+            Log.i("aabb", "bangumiid:${episodeEntity.bangumiId}")
+            this.userName = userName
+            this.bangumiId = bangumiId.toUUID()
+            this.episodeId = episodeEntity.id
+            this.lastWatchPosition = lastWatchPosition
+            this.lastWatchTime = System.currentTimeMillis()
+            this.percentage = lastWatchPosition / duration
+            this.isFinised = lastWatchPosition >= duration * 0.95
+        }
+        repository.updateWatchProgresss(userName, record)
     }
 }
 
@@ -51,41 +102,64 @@ class VideoRepository {
     lateinit var videoFileDao: VideoFileDao
     lateinit var watchProgressDao: WatchProgressDao
     fun fetchVideoFiles(episodeId: UUID, userName: String) =
-        object : NetworkBoundResource<VideoFileAndWatchProgress?, EpisodeWrapper>() {
+        object : NetworkBoundResource<List<VideoFileEntity>?, EpisodeWrapper>() {
             override fun saveCallResult(item: EpisodeWrapper) {
-                item.videoFiles.map {
+                item.videoFiles?.map {
                     Gson().fromJson(
                         Gson().toJson(it),
                         VideoFileEntity::class.java
                     )
+                }?.forEach {
+                    videoFileDao.insert(it)
                 }
-                    .run {
-                        videoFileDao.insert(*this.toTypedArray())
-                    }
                 item.watchProgress?.run {
                     var local = watchProgressDao.queryByEpisodeId(episodeId, userName)
-                    var m = Gson().fromJson(Gson().toJson(this), WatchProgressEntity::class.java)
+                    var m =
+                        Gson().fromJson(Gson().toJson(this), WatchProgressEntity::class.java)
                     m.id = local!!.id
                     m.userName = userName
+//                    这一段会产生重复内容
                     watchProgressDao.insert(m)
                 }
             }
 
-            override fun shouldFetch(data: VideoFileAndWatchProgress?): Boolean = true
+            override fun shouldFetch(data: List<VideoFileEntity>?): Boolean = true
 
             override fun loadFromDb() = liveData {
-                emit(videoFileDao.queryByEpisodeId(episodeId, userName))
+                var m = videoFileDao.queryByEpisodeId(episodeId)
+                emit(
+                    m
+                )
             }
 
             override fun createCall(): LiveData<ApiResponse<EpisodeWrapper>> =
                 apiService.queryEpisode(episodeId.toString())
         }.asLiveData()
 
-    fun fetchWatchProgress(userName: String, episodeId: UUID) {
+    fun fetchWatchProgress(userName: String, episodeId: UUID) =
+        watchProgressDao.queryByEpisodeId(episodeId, userName)
 
-    }
+    fun updateWatchProgresss(userName: String, record: Record) =
+        object : NetworkBoundResource<WatchProgressEntity?, WatchProgressResponse>() {
+            override fun processResponse(response: ApiSuccessResponse<WatchProgressResponse>): WatchProgressResponse {
+                return response.body
+            }
 
-    fun updateWatchProgress(userName: String, episodeId: UUID, record: WatchProgressEntity) {
-//        请求体需要转换一下
-    }
+            override fun saveCallResult(item: WatchProgressResponse) {
+                record.takeIf { item.id != null }?.apply { this.id = item.id!!.toUUID() }?.let {
+                    it.parseWatchProgressEntity()
+                }?.run {
+                    watchProgressDao.insert(this)
+                }
+            }
+
+            override fun shouldFetch(data: WatchProgressEntity?) = true
+
+            override fun loadFromDb() =
+                liveData { emit(watchProgressDao.queryByEpisodeId(record.episodeId!!, userName)) }
+
+            override fun createCall() = apiService.synchronizeEpisodeHistory(
+                SynchronizeEpisodeHistoryRequest(ArrayList<Record>().apply { this.add(record) })
+            )
+        }.asLiveData()
 }
