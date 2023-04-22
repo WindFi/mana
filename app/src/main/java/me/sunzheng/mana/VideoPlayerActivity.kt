@@ -38,6 +38,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.preference.PreferenceManager
+import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.Player
@@ -468,6 +469,18 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
 
             override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {
                 super.onTimelineChanged(timeline, manifest, reason)
+            }
+
+            override fun onPlayerError(error: ExoPlaybackException?) {
+                error?.run {
+                    Log.i(
+                        "${VideoPlayerActivity::class.java.simpleName}",
+                        "${this.sourceException.message}"
+                    )
+                    showToast(this.sourceException.message ?: this.sourceException.toString())
+                }
+
+                super.onPlayerError(error)
             }
 
         })
