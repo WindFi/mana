@@ -1,14 +1,18 @@
 package me.sunzheng.mana.core.net.v2
 
+import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import kotlinx.android.parcel.Parcelize
 import java.util.UUID
 
+@Parcelize
 data class SynchronizeEpisodeHistoryRequest(
     @SerializedName("records")
     val items: List<Record>
-)
+) : Parcelable
 
+@Parcelize
 data class Record(
     @SerializedName("id")
     @Expose
@@ -43,4 +47,4 @@ data class Record(
     @SerializedName("is_finished")
     @Expose
     var isFinised: Boolean = false
-)
+) : Parcelable

@@ -57,7 +57,7 @@ public class SearchPresenterImpl implements HomeContract.Search.Presenter {
                             mView.empty();
                             mView.loadMoreable(false);
                         } else {
-                            mView.setAdapter(new SearchResultAdapter(list));
+//                            mView.setAdapter(new SearchResultAdapter(list));
                             mView.loadMoreable(list.size() < searchResultWrapper.getTotal());
                         }
                     }

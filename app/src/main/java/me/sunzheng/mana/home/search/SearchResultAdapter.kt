@@ -1,87 +1,110 @@
-package me.sunzheng.mana.home.search;
+package me.sunzheng.mana.home.search
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-
-import androidx.cardview.widget.CardView;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
-
-import java.util.List;
-
-import me.sunzheng.mana.R;
-import me.sunzheng.mana.core.BangumiModel;
-import me.sunzheng.mana.utils.ArrarysResourceUtils;
-import me.sunzheng.mana.utils.LanguageSwitchUtils;
+import android.app.Activity
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.cardview.widget.CardView
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SortedList
+import androidx.recyclerview.widget.SortedListAdapterCallback
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import me.sunzheng.mana.BangumiDetailsActivity
+import me.sunzheng.mana.R
+import me.sunzheng.mana.core.net.v2.database.BangumiEntity
+import me.sunzheng.mana.utils.ArrarysResourceUtils
+import me.sunzheng.mana.utils.LanguageSwitchUtils
 
 /**
  * Created by Sun on 2017/6/20.
  */
+class SearchResultAdapter(var values: List<BangumiEntity>) : RecyclerView.Adapter<ViewHolder>() {
+    val mValues: SortedList<BangumiEntity> = SortedList(
+        BangumiEntity::class.java,
+        object : SortedListAdapterCallback<BangumiEntity?>(this) {
+            override fun compare(o1: BangumiEntity?, o2: BangumiEntity?): Int = 0
 
-public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ViewHolder> {
-    List<BangumiModel> mValues;
+            override fun areContentsTheSame(
+                oldItem: BangumiEntity?,
+                newItem: BangumiEntity?
+            ): Boolean = oldItem?.id == newItem?.id
 
-    public SearchResultAdapter(List<BangumiModel> list) {
-        this.mValues = list;
+            override fun areItemsTheSame(item1: BangumiEntity?, item2: BangumiEntity?): Boolean =
+                item1?.id == item2?.id
+
+        }
+    )
+
+    init {
+        mValues.addAll(values)
     }
 
-    @Override
-    public int getItemCount() {
-        return mValues.size();
+    override fun getItemCount(): Int {
+        return mValues.size()
     }
 
-    @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_onairfragment, parent, false);
-        return new ViewHolder(view);
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_onairfragment, parent, false)
+        return ViewHolder(view)
     }
 
-
-    @Override
-    public void onBindViewHolder(final ViewHolder holder, final int position) {
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // TODO: 2021/12/7 implement it
-//                BangumiDetailsActivity.newInstance((Activity) v.getContext(), mValues.get(position), holder.mImageView);
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.itemView.setOnClickListener {
+            mValues.run {
+                BangumiDetailsActivity.newInstance(
+                    it.context as Activity,
+                    mValues[position],
+                    holder.mImageView
+                )
             }
-        });
-        Glide.with(holder.itemView.getContext())
-                .load(mValues.get(position).getImage())
-                .apply(new RequestOptions()
-                        .placeholder(new ColorDrawable(Color.parseColor(mValues.get(position).getCover_color()))))
-                .into(holder.mImageView);
-        holder.mTitleTextView.setText(LanguageSwitchUtils.switchLanguageToJa(holder.itemView.getContext(), mValues.get(position).getName(), mValues.get(position).getNameCn()));
-        holder.mSummaryTextView.setText(mValues.get(position).getSummary());
-        String dayInWeek = ArrarysResourceUtils.dayInWeek(holder.itemView.getContext(), (int) mValues.get(position).getAirWeekday());
-        String resultString = holder.itemView.getContext().getString(R.string.formatter_day_airdate, mValues.get(position).getAirDate(), dayInWeek);
-//        int color= ContextCompat.getColor(holder.itemView.getContext(),R.color.colorPrimary);
+        }
+        Glide.with(holder.itemView.context)
+            .load(mValues[position].image)
+            .apply(
+                RequestOptions()
+                    .placeholder(ColorDrawable(Color.parseColor(mValues[position].cover_color)))
+            )
+            .into(holder.mImageView)
+        holder.mTitleTextView.text = LanguageSwitchUtils.switchLanguageToJa(
+            holder.itemView.context,
+            mValues[position].name,
+            mValues[position].nameCn
+        )
+        holder.mSummaryTextView.text = mValues[position].summary
+        val dayInWeek = ArrarysResourceUtils.dayInWeek(
+            holder.itemView.context,
+            mValues[position].airWeekday.toInt()
+        )
+        val resultString = holder.itemView.context.getString(
+            R.string.formatter_day_airdate,
+            mValues[position].airDate,
+            dayInWeek
+        )
+        //        int color= ContextCompat.getColor(holder.itemView.getContext(),R.color.colorPrimary);
 //        SpannableStringBuilder spannableStringBuilder=new SpannableStringBuilder(resultString);
 //        spannableStringBuilder.setSpan(new ForegroundColorSpan(color),resultString.indexOf(dayInWeek),resultString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-
-        holder.mEtcTextView.setText(resultString);
+        holder.mEtcTextView.text = resultString
     }
+}
 
-    protected final static class ViewHolder extends RecyclerView.ViewHolder {
-        public final CardView mView;
-        public final TextView mTitleTextView, mSummaryTextView, mEtcTextView;
-        public final ImageView mImageView;
+class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+    val mView: CardView
+    val mTitleTextView: TextView
+    val mSummaryTextView: TextView
+    val mEtcTextView: TextView
+    val mImageView: ImageView
 
-        public ViewHolder(View view) {
-            super(view);
-            mView = (CardView) view;
-            mTitleTextView = view.findViewById(R.id.item_title_textview);
-            mImageView = view.findViewById(R.id.item_album);
-            mSummaryTextView = view.findViewById(R.id.item_subtitle_textview);
-            mEtcTextView = view.findViewById(R.id.item_etc_textview);
-        }
+    init {
+        mView = view as CardView
+        mTitleTextView = view.findViewById(R.id.item_title_textview)
+        mImageView = view.findViewById(R.id.item_album)
+        mSummaryTextView = view.findViewById(R.id.item_subtitle_textview)
+        mEtcTextView = view.findViewById(R.id.item_etc_textview)
     }
 }
