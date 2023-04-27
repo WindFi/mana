@@ -14,6 +14,7 @@ import android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
 import android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
 import android.media.AudioManager.STREAM_MUSIC
 import android.net.ConnectivityManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -26,14 +27,18 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowInsets
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GestureDetectorCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
@@ -50,7 +55,6 @@ import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.util.Util
 import dagger.hilt.android.AndroidEntryPoint
-import me.sunzheng.mana.VideoPlayActivity.PresenterGestureDetector
 import me.sunzheng.mana.core.net.Status
 import me.sunzheng.mana.core.net.v2.database.EpisodeEntity
 import me.sunzheng.mana.core.net.v2.database.VideoFileEntity
@@ -80,6 +84,9 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
 
         @JvmStatic
         val KEY_BANGUMI_ID_STR = "${VideoPlayerActivity::class.simpleName}_bangumiId"
+
+        @JvmStatic
+        val AUTOSAVE_INTERVAL_MILLION = 1000 * 60L
         fun newInstance(
             context: Context,
             bangumiId: UUID,
@@ -190,7 +197,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
             when (it.what) {
                 1 -> {
                     logWatchProgressRunnable.run()
-                    mHandler.sendEmptyMessageDelayed(1, 5000)
+                    mHandler.sendEmptyMessageDelayed(1, AUTOSAVE_INTERVAL_MILLION)
                     true
                 }
 
@@ -199,6 +206,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setSupportActionBar(binding.toolbar)
@@ -220,9 +228,9 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                 player.prepare(this)
             }
         }
-        var bundle = savedInstanceState?.getBundle("args") ?: intent.extras
+        var bundle = savedInstanceState?.getBundle("args") ?: intent.extras!!
 //   TODO:=================这里需要优化 前面的bangumiId 没有从episodeEntity 里面传过来=================================
-        viewModel.bangumiId = bundle!!.getString(KEY_BANGUMI_ID_STR, "")
+        viewModel.bangumiId = bundle.getString(KEY_BANGUMI_ID_STR, "")
 //===============================================================================================================
         viewModel.mediaDescritionLiveData.observe(this) { mediaDescriptionCompat ->
             (binding.sourceList.adapter as ArrayAdapter<VideoFileEntity>).clear()
@@ -247,7 +255,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                                 }
                             }
                             mHandler.removeCallbacksAndMessages(logWatchProgressRunnable)
-                            mHandler.sendEmptyMessageDelayed(1, 5000)
+                            mHandler.sendEmptyMessageDelayed(1, AUTOSAVE_INTERVAL_MILLION)
                         }
 
                         Status.ERROR -> it?.message?.run {
@@ -303,7 +311,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         }
         binding.player.controllerAutoShow = true
         binding.player.controllerShowTimeoutMs = 3000
-
+//==================================== init?====================================
         var position = bundle.getInt(KEY_POSITION_INT, 0)
         var offset = binding.listviewEpisode.count - position - 1
         viewModel.position.postValue(position)
@@ -314,10 +322,19 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                 null
             ), offset, binding.listviewEpisode.adapter.getItemId(offset)
         )
-        WindowInsetsControllerCompat(
-            window,
-            binding.player
-        ).hide(android.view.WindowInsets.Type.statusBars())
+
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            WindowInsetsControllerCompat(
+                window,
+                binding.player
+            ).hide(
+                WindowInsets.Type.statusBars()
+                    .or(WindowInsets.Type.navigationBars())
+            )
+            insets
+        }
+//=======================================================================
     }
 
     override fun onStart() {
@@ -643,36 +660,38 @@ class NormalGenstureDetector(
     val windowManager: WindowManager by lazy {
         context.windowManager
     }
+    val MEASURE_LENGTH = 72.0f
     var isScrolling = false
     var isValid = false
     var sourceX = 0.0f
     var sourceY = 0.0f
     var isLeft = false
     var isVertical = false
-    override fun onDown(e: MotionEvent?): Boolean {
+
+    override fun onDown(e: MotionEvent): Boolean {
         isScrolling = false
         Log.i("${NormalGenstureDetector::class.simpleName}", "onDown")
         return true
     }
 
-    override fun onSingleTapConfirmed(e: MotionEvent?): Boolean {
+    override fun onSingleTapConfirmed(e: MotionEvent): Boolean {
         Log.i("${NormalGenstureDetector::class.simpleName}", "onSingleTapConfirmed")
         controller?.singleClick()
         return true
     }
 
     override fun onScroll(
-        e1: MotionEvent?,
-        e2: MotionEvent?,
+        e1: MotionEvent,
+        e2: MotionEvent,
         distanceX: Float,
         distanceY: Float
     ): Boolean {
 //        var mu = areaDetector(e1,e2)
 //        return isScrolling && isInVaildArea(e1)&&controller.scroll(mu,e1!!,if(distanceX>distanceY)distanceX else distanceY)
-        var str = e1?.let { "e1.x:${it.x} " } ?: ""
-        str += e1?.let { "e1.y:${e1.y} " }
-        str += e2?.let { "e2.x:${e2.x} " }
-        str += e2?.let { "e2.y:${e2.y} " }
+        var str = e1.let { "e1.x:${it.x} " }
+        str += e1.let { "e1.y:${e1.y} " }
+        str += e2.let { "e2.x:${e2.x} " }
+        str += e2.let { "e2.y:${e2.y} " }
         str += "distanceX:$distanceX distanceY:$distanceY"
         Log.i("${NormalGenstureDetector::class.simpleName}", "onScroll:$str")
 //        横屏的时候 坐标系也旋转过来了 所以要先进行xy判断 再判断distance
@@ -695,14 +714,14 @@ class NormalGenstureDetector(
             if (!isValid) return true
             if (!isVertical) {
                 val unit: Float =
-                    ((e2.x - sourceX) / PresenterGestureDetector.MEASURE_LENGTH).toInt().toFloat()
+                    ((e2.x - sourceX) / MEASURE_LENGTH).toInt().toFloat()
                 if (Math.abs(unit) > 0) {
                     sourceX = e2.x
                 }
                 controller?.seekTo(unit)
             } else {
                 val unit: Float =
-                    ((sourceY - e2.y) / PresenterGestureDetector.MEASURE_LENGTH).toInt().toFloat()
+                    ((sourceY - e2.y) / MEASURE_LENGTH).toInt().toFloat()
                 if (Math.abs(unit) > 0) {
                     sourceY = e2.y
                 }
@@ -716,7 +735,7 @@ class NormalGenstureDetector(
         return true
     }
 
-    override fun onDoubleTap(e: MotionEvent?): Boolean {
+    override fun onDoubleTap(e: MotionEvent): Boolean {
         Log.i("${NormalGenstureDetector::class.simpleName}", "onDoubleTap")
         controller?.playState()
         return super.onDoubleTap(e)

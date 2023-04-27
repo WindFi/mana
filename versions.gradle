@@ -20,10 +20,10 @@ versions.guava = '21.0'
 versions.exoplayer = '2.9.0'
 versions.androidx='1.0.0-alpha1'
 versions.material='1.3.0'
-versions.kotlin_version = '1.6.21'
+versions.kotlin_version = '1.8.10'
 versions.kotlin_corotinues='1.4.30'
 versions.lifecycle_version='2.3.1'
-versions.room_version='2.4.0-beta01'
+versions.room_version = '2.5.1'
 
 ext.versions = versions
 def deps = [:]
@@ -97,16 +97,16 @@ deps.multidex = "androidx.multidex:multidex:$versions.supportMultidexVersion"
 deps.okhttp_urlconnection = "com.squareup.okhttp3:okhttp-urlconnection:$versions.okhttpUrlConnection"
 deps.constraint_layout = "com.android.support.constraint:constraint-layout:$versions.constraintlayout"
 deps.exoplayer = "com.google.android.exoplayer:exoplayer:$versions.exoplayer"
-deps.material="com.google.android.material:material:$versions.material"
+deps.material = "com.google.android.material:material:$versions.material"
 deps.junit = "junit:junit:$versions.junit"
 
 ext.deps = deps
 
 def build_versions = [:]
 build_versions.min_sdk = 16
-build_versions.target_sdk = 31
-build_versions.build_tools = "31.0.0"
-build_versions.compileSdkVersion = 31
+build_versions.target_sdk = 33
+build_versions.build_tools = "33.0.2"
+build_versions.compileSdkVersion = 33
 ext.build_versions = build_versions
 
 ext.addRepos = this.&addRepos

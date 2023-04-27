@@ -1,17 +1,17 @@
-package me.sunzheng.mana.home.search;
+package me.sunzheng.mana.home.search
 
-import android.content.SearchRecentSuggestionsProvider;
+import android.content.SearchRecentSuggestionsProvider
 
 /**
  * Created by Sun on 2017/9/11.
  */
+class HistorySuggestionProvider : SearchRecentSuggestionsProvider() {
+    init {
+        setupSuggestions(AUTHORITY, MODE)
+    }
 
-public class HistorySuggestionProvider extends SearchRecentSuggestionsProvider {
-    public final static String AUTHORITY = "me.sunzheng.mana.historysugestionprovider";
-    public final static int MODE = DATABASE_MODE_QUERIES;
-
-    public HistorySuggestionProvider() {
-        super();
-        setupSuggestions(AUTHORITY, MODE);
+    companion object {
+        const val AUTHORITY = "me.sunzheng.mana.historysugestionprovider"
+        const val MODE = DATABASE_MODE_QUERIES
     }
 }

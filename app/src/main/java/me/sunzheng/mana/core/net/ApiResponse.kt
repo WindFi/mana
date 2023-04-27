@@ -1,11 +1,6 @@
 package me.sunzheng.mana.core.net
 
-import android.util.Log
-import androidx.collection.ArrayMap
-import me.sunzheng.mana.core.net.ApiResponse
 import retrofit2.Response
-import java.io.IOException
-import java.lang.NumberFormatException
 import java.util.regex.Pattern
 
 /**
@@ -29,7 +24,7 @@ sealed class ApiResponse<T> {
                 } else {
                     ApiSuccessResponse(
                         body = body,
-                        linkHeader = response.headers()?.get("link")
+                        linkHeader = response.headers().get("link")
                     )
                 }
             } else {

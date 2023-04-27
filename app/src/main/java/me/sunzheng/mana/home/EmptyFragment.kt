@@ -14,7 +14,7 @@ class EmptyFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentEmptyBinding.inflate(inflater)
         return binding.root
     }
@@ -26,7 +26,7 @@ class LoadingFragment : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentLoadingBinding.inflate(inflater)
         return binding.root
     }

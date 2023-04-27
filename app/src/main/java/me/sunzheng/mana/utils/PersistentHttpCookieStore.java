@@ -59,10 +59,10 @@ public class PersistentHttpCookieStore implements CookieStore {
         cookieSP = context.getSharedPreferences(PREFS_COOKIE, Context.MODE_PRIVATE);
 
         // get each cookie's URI string
-        Set<String> cookiesURL = cookieSP.getStringSet(COOKIES_URI, Collections.<String>emptySet());
+        Set<String> cookiesURL = cookieSP.getStringSet(COOKIES_URI, Collections.emptySet());
         for (String uri : cookiesURL) {
             // get corresponding cookies' key of the shared preference
-            Set<String> cookiesName = cookieSP.getStringSet(uri, Collections.<String>emptySet());
+            Set<String> cookiesName = cookieSP.getStringSet(uri, Collections.emptySet());
 
             // get corresponding cookies
             List<HttpCookie> httpCookies = new ArrayList<>();
@@ -103,7 +103,7 @@ public class PersistentHttpCookieStore implements CookieStore {
             // add new cookie's URL string
             // see http://stackoverflow.com/q/14034803
             Set<String> cookiesURL = new HashSet<>(cookieSP.getStringSet(COOKIES_URI,
-                    Collections.<String>emptySet()));
+                    Collections.emptySet()));
             cookiesURL.add(uriString);
 
             editor.putStringSet(COOKIES_URI, cookiesURL);
@@ -111,7 +111,7 @@ public class PersistentHttpCookieStore implements CookieStore {
 
         // add corresponding cookies
         Set<String> cookiesName = new HashSet<>(cookieSP.getStringSet(uriString,
-                Collections.<String>emptySet()));
+                Collections.emptySet()));
         String cookieNameWithUri = uriString + httpCookie.getName();
         cookiesName.add(cookieNameWithUri);
 
@@ -209,7 +209,7 @@ public class PersistentHttpCookieStore implements CookieStore {
             SharedPreferences.Editor editor = cookieSP.edit();
             String uriString = uri.toString();
             Set<String> cookiesName = new HashSet<>(cookieSP.getStringSet(uriString,
-                    Collections.<String>emptySet()));
+                    Collections.emptySet()));
             String cookieNameWithURI = uriString + httpCookie.getName();
 
             // remove cookie's URI string

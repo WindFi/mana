@@ -23,8 +23,8 @@ public interface AccountApiService {
     }
 
     interface Register {
-        @POST("/api/user/register")
-        Observable<LoginResponse> register(@Body RegisterRequest request);
+//        @POST("/api/user/register")
+//        Observable<LoginResponse> register(@Body RegisterRequest request);
 
     }
 

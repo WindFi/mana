@@ -13,12 +13,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.textfield.TextInputEditText;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.core.util.PatternsCompat;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.material.textfield.TextInputEditText;
+
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.account.AccountContrant;
 import me.sunzheng.mana.utils.PreferenceManager;
@@ -50,8 +51,8 @@ public class HostFragment extends Fragment implements AccountContrant.Start.View
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         sharedPreferences = getActivity().getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, Context.MODE_PRIVATE);
-        mTextInputEidtText = (TextInputEditText) view.findViewById(R.id.dialog_host_textinputedittext);
-        mButton = (AppCompatButton) view.findViewById(R.id.dialog_host_button);
+        mTextInputEidtText = view.findViewById(R.id.dialog_host_textinputedittext);
+        mButton = view.findViewById(R.id.dialog_host_button);
         mTextInputEidtText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {

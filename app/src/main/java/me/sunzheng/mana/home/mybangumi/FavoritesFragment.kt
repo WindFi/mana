@@ -52,7 +52,7 @@ class FavoritesFragment @Inject constructor() : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentMyfavoritesBinding.inflate(inflater)
         binding.lifecycleOwner = this
         return binding.root

@@ -35,7 +35,7 @@ class FavriouteFragmentCompat @Inject constructor() : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentFavoriteCompatBinding.inflate(inflater)
         binding.lifecycleOwner = this
         return binding.root

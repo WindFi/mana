@@ -49,7 +49,7 @@ object FavoriteCompact {
 
     @TargetApi(21)
     internal class LolipopDrawableCompatImpl(mContext: Context) : DrawableCompat(mContext) {
-        override fun getDrawable(status: Long, v: TextView): Drawable? {
+        override fun getDrawable(status: Long, v: TextView): Drawable {
             val cstatus = arrayOf(intArrayOf(android.R.attr.state_pressed))
             return RippleDrawable(
                 ColorStateList(cstatus, colors),

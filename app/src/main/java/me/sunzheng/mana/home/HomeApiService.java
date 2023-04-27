@@ -4,13 +4,9 @@ import io.reactivex.Observable;
 import io.reactivex.Single;
 import me.sunzheng.mana.home.bangumi.Response;
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper;
-import me.sunzheng.mana.home.bangumi.wrapper.request.SynchronizeEpisodeHistoryWrapper;
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper;
-import me.sunzheng.mana.home.feedback.FeedbackRequestWrapper;
-import me.sunzheng.mana.home.feedback.FeedbackResponseWrapper;
 import me.sunzheng.mana.home.main.ResponseWrapper;
 import me.sunzheng.mana.home.mybangumi.wrapper.FavoriteWrapper;
-import me.sunzheng.mana.home.onair.wrapper.AirWrapper;
 import me.sunzheng.mana.home.search.SearchResultWrapper;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
@@ -46,8 +42,8 @@ public interface HomeApiService {
          * @param type 2:新番 6:日剧
          * @return
          */
-        @GET(PATH)
-        Single<AirWrapper> listAll(@Query("type") int type);
+//        @GET(PATH)
+//        Single<AirWrapper> listAll(@Query("type") int type);
     }
 
     interface Bangumi {
@@ -83,8 +79,8 @@ public interface HomeApiService {
         @POST("/api/watch/favorite/bangumi/{id}")
         Single<Response> changeBangumiFavoriteStatus(@Path("id") String id, @Body FavoriteStatusRequest request);
 
-        @POST("/api/watch/history/synchronize")
-        Observable<Response> synchronizeEpisodeHistory(@Body SynchronizeEpisodeHistoryWrapper request);
+//        @POST("/api/watch/history/synchronize")
+//        Observable<Response> synchronizeEpisodeHistory(@Body SynchronizeEpisodeHistoryWrapper request);
     }
 
     interface Episode {
@@ -108,8 +104,8 @@ public interface HomeApiService {
          *
          * @return
          */
-        @POST(PATH)
-        Observable<FeedbackResponseWrapper> send(@Body FeedbackRequestWrapper request);
+//        @POST(PATH)
+//        Observable<FeedbackResponseWrapper> send(@Body FeedbackRequestWrapper request);
     }
 
     interface Announce {

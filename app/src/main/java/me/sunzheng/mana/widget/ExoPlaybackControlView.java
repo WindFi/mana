@@ -6,6 +6,11 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.SeekBar;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.widget.AppCompatSeekBar;
+import androidx.appcompat.widget.AppCompatTextView;
+
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
@@ -14,10 +19,6 @@ import com.google.android.exoplayer2.util.Util;
 import java.util.Formatter;
 import java.util.Locale;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatSeekBar;
-import androidx.appcompat.widget.AppCompatTextView;
 import me.sunzheng.mana.R;
 
 /**
@@ -61,7 +62,7 @@ public class ExoPlaybackControlView extends FrameLayout {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser) {
-                    seekTo((long) progress);
+                    seekTo(progress);
                 }
             }
 

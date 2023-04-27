@@ -40,30 +40,30 @@ android {
         enabled = true
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
     productFlavors {
     }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
     namespace 'me.sunzheng.mana'
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.core:core-ktx:1.6.0'
-    implementation 'androidx.appcompat:appcompat:1.3.1'
-    implementation 'androidx.fragment:fragment-ktx:1.3.1'
-    implementation 'androidx.activity:activity-ktx:1.3.1'
-    implementation 'com.google.android.material:material:1.3.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata-core-ktx:2.5.1'
+    implementation 'androidx.core:core-ktx:1.10.0'
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.fragment:fragment-ktx:1.5.6'
+    implementation 'androidx.activity:activity-ktx:1.7.0'
+    implementation 'com.google.android.material:material:1.8.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-core-ktx:2.6.1'
 //    implementation 'androidx.lifecycle:lifecycle-extensions:2.3.1'
-//    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.4.0'
-//    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
 //    implementation "org.jetbrains.kotlin:kotlin-stdlib:$versions.kotlin_version"
 
     implementation deps.rxandroid
@@ -115,8 +115,8 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.4.1-alpha03'
     androidTestImplementation 'androidx.test:rules:1.4.1-alpha03'
 
-    implementation "com.google.dagger:hilt-android:2.38.1"
-    kapt "com.google.dagger:hilt-android-compiler:2.38.1"
+    implementation "com.google.dagger:hilt-android:2.45"
+    kapt "com.google.dagger:hilt-android-compiler:2.45"
 //    annotationProcessor("androidx.room:room-compiler:$roomVersion")
 //
 //    // To use Kotlin annotation processing tool (kapt)

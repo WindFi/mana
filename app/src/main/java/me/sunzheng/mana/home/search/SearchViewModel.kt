@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import me.sunzheng.mana.core.net.Resource
 import me.sunzheng.mana.core.net.v2.ApiService
 import me.sunzheng.mana.core.net.v2.NetworkBoundResource
 import me.sunzheng.mana.core.net.v2.SearchResult
@@ -29,7 +30,7 @@ class SearchViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun query(word: String) = liveData {
+    fun query(word: String) = liveData<Resource<List<BangumiEntity>>> {
         key = word
         page = 1
         count = 30

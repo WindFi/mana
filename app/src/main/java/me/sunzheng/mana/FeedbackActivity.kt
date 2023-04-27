@@ -45,8 +45,8 @@ class FeedbackActivity @Inject constructor() : AppCompatActivity() {
         var savedInstanceState = savedInstanceState
         super.onCreate(savedInstanceState)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        if (savedInstanceState == null) savedInstanceState = intent.extras
-        episodeId = savedInstanceState!!.getString(ARGS_EPISODE_ID_STR)
+        if (savedInstanceState == null) savedInstanceState = intent.extras!!
+        episodeId = savedInstanceState.getString(ARGS_EPISODE_ID_STR)
         videoFileId = savedInstanceState.getString(ARGS_EPISODE_ID_STR)
 
         binding.feedbackRadiogroup.setOnCheckedChangeListener { group, checkedId ->
@@ -112,6 +112,8 @@ class FeedbackActivity @Inject constructor() : AppCompatActivity() {
                                 .show()
                         }
                     }
+
+                    else -> {}
                 }
             }
         })

@@ -5,7 +5,6 @@ import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import android.content.pm.PackageManager
 import android.os.Build
 import android.text.TextUtils
-import android.util.Log
 import androidx.core.os.LocaleListCompat
 import androidx.multidex.MultiDexApplication
 import com.bumptech.glide.Glide
@@ -112,7 +111,7 @@ class App : MultiDexApplication() {
         get() = applicationInfo.loadLabel(packageManager).toString()
     val language: String
         get() = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            LocaleListCompat.getDefault()[0].language
+            LocaleListCompat.getDefault()[0]!!.language
         } else Locale.getDefault().language
 
     fun initGlobalPreferences() {
@@ -125,22 +124,6 @@ class App : MultiDexApplication() {
             __sharedPreferences.edit()
                 .putBoolean(getString(PreferenceManager.Global.RES_JA_FIRST_BOOL), isJaLanguage)
                 .commit()
-        }
-    }
-
-    fun logOver4kChars(tag: String?, body: String) {
-        if (body.length > 4000) {
-            val chunkCount = body.length / 4000
-            for (i in 0 until chunkCount + 1) {
-                val max = 4000 * (i + 1)
-                if (max > body.length) {
-                    Log.i(tag, body.substring(4000 * i))
-                } else {
-                    Log.i(tag, body.substring(4000 * i, max))
-                }
-            }
-        } else {
-            Log.i(tag, body)
         }
     }
 }

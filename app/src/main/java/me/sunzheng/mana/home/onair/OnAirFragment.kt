@@ -41,7 +41,7 @@ class OnAirFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binder = FragmentItemListBinding.inflate(inflater)
         binder.lifecycleOwner = this
         return binder.root
@@ -107,7 +107,7 @@ class OnAirFragment : Fragment() {
                 }
                 Status.SUCCESS -> {
 //                if(binder.recyclerview.adapter==null)
-                    it?.data?.run {
+                    it.data?.run {
                         binder.recyclerview.adapter = OnAirItemRecyclerViewAdapter(
                             this
                         ) { v, _, _, m ->

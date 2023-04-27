@@ -12,12 +12,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
-import com.google.android.material.textfield.TextInputEditText;
-
 import androidx.annotation.Nullable;
-import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.fragment.app.Fragment;
+
+import com.google.android.material.textfield.TextInputEditText;
+
 import me.sunzheng.mana.MainActivity;
 import me.sunzheng.mana.R;
 import me.sunzheng.mana.account.AccountContrant;
@@ -64,9 +64,9 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_login, container, false);
-        loginUserNameEditText = (TextInputEditText) view.findViewById(R.id.login_username_textinputedittext);
-        loginPassWordEditText = (TextInputEditText) view.findViewById(R.id.login_passowrd_textinputedittext);
-        ((AppCompatButton) view.findViewById(android.R.id.button1)).setOnClickListener(new android.view.View.OnClickListener() {
+        loginUserNameEditText = view.findViewById(R.id.login_username_textinputedittext);
+        loginPassWordEditText = view.findViewById(R.id.login_passowrd_textinputedittext);
+        view.findViewById(android.R.id.button1).setOnClickListener(new android.view.View.OnClickListener() {
             @Override
             public void onClick(android.view.View v) {
                 try {
@@ -78,7 +78,7 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
                 }
             }
         });
-        checkBox = (AppCompatCheckBox) view.findViewById(R.id.checkbox);
+        checkBox = view.findViewById(R.id.checkbox);
         checkBox.setChecked(sharedPreferences.getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false));
         return view;
     }
@@ -103,7 +103,7 @@ public class LoginFragment extends Fragment implements AccountContrant.Login.Vie
         if (context instanceof OnFragmentInteractionListener) {
             mListener = (OnFragmentInteractionListener) context;
         } else {
-            throw new RuntimeException(context.toString()
+            throw new RuntimeException(context
                     + " must implement OnFragmentInteractionListener");
         }
     }

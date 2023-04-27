@@ -110,9 +110,9 @@ class SearchResultActivity : AppCompatActivity() {
                     if (response.data?.isEmpty() == true) {
                         showEmptyView(true)
                     } else {
-                        response.data?.takeIf { it.isNotEmpty() }.run {
+                        response.data?.takeIf { it.isNotEmpty() }?.run {
                             showEmptyView(false)
-                            var adapter = SearchResultAdapter(this!!)
+                            var adapter = SearchResultAdapter(this)
                             if (binding.recyclerView.adapter == null) binding.recyclerView.adapter =
                                 adapter else binding.recyclerView.swapAdapter(adapter, false)
                         }
