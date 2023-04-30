@@ -1,65 +1,68 @@
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="me.sunzheng.mana.account.login.LoginFragment">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/username_form"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="20dp">
+        android:layout_height="match_parent"
+        tools:context="me.sunzheng.mana.account.login.LoginFragment">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/login_username_textinputedittext"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/username_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="16"
-            android:hint="@string/hint_fragment_login_username"
-            android:imeOptions="actionNext"
-            android:inputType="text"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:layout_editor_absoluteX="20dp">
 
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/password_form"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/username_form"
-        app:passwordToggleEnabled="true"
-        tools:layout_editor_absoluteX="20dp">
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/login_username_textinputedittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="16"
+                android:hint="@string/hint_fragment_login_username"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/login_passowrd_textinputedittext"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/password_form"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="16"
-            android:hint="@string/hint_fragment_login_password"
-            android:inputType="textPassword"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/username_form"
+            app:passwordToggleEnabled="true"
+            tools:layout_editor_absoluteX="20dp">
 
-    <androidx.appcompat.widget.AppCompatCheckBox
-        android:id="@+id/checkbox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/text_fragment_remember"
-        app:layout_constraintStart_toStartOf="@+id/password_form"
-        app:layout_constraintTop_toBottomOf="@+id/password_form" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/login_password_textinputedittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="16"
+                android:hint="@string/hint_fragment_login_password"
+                android:inputType="textPassword"
+                android:maxLines="1" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@android:id/button1"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:ems="40"
-        android:text="@string/title_fragment_login_button"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/checkbox" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.appcompat.widget.AppCompatCheckBox
+            android:id="@+id/checkbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/text_fragment_remember"
+            app:layout_constraintStart_toStartOf="@+id/password_form"
+            app:layout_constraintTop_toBottomOf="@+id/password_form" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@android:id/button1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="40"
+            android:text="@string/title_fragment_login_button"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -14,3 +14,7 @@ data class WatchProgressResponse(
     var status: Long = 0,
     var id: String? = null
 )
+
+data class DefaultResponse(
+    var msg: String? = null
+)

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import me.sunzheng.mana.core.net.ApiResponse
 import me.sunzheng.mana.core.net.v2.wrappers.AirWrapper
 import me.sunzheng.mana.home.FavoriteStatusRequest
+import me.sunzheng.mana.home.bangumi.DefaultResponse
 import me.sunzheng.mana.home.bangumi.Response
 import me.sunzheng.mana.home.bangumi.WatchProgressResponse
 import me.sunzheng.mana.home.bangumi.wrapper.BangumiDetailWrapper
@@ -116,4 +117,7 @@ interface ApiService {
         @Query("order_by") order: String,
         @Query("name") name: String
     ): LiveData<ApiResponse<SearchResult>>
+
+    @POST("/api/user/login")
+    fun login(@Body request: SignInRequest): LiveData<ApiResponse<DefaultResponse>>
 }

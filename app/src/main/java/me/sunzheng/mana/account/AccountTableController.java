@@ -1,11 +1,9 @@
 package me.sunzheng.mana.account;
 
 import androidx.fragment.app.FragmentManager;
-import me.sunzheng.mana.R;
+
 import me.sunzheng.mana.account.config.HostFragment;
-import me.sunzheng.mana.account.config.StartPresenterImpl;
 import me.sunzheng.mana.account.login.LoginFragment;
-import me.sunzheng.mana.account.login.LoginPresenterImpl;
 
 /**
  * Created by Sun on 2017/7/31.
@@ -21,7 +19,7 @@ public class AccountTableController {
     public AccountTableController(int replaceId, FragmentManager fragmentManager) {
         this.replaceId = replaceId;
         this.fragmentManager = fragmentManager;
-        presenter = new AccountTablePresenter(new StartPresenterImpl(hostDialogFragment));
+//        presenter = new AccountTablePresenter(new StartPresenterImpl(hostDialogFragment));
         createElements();
     }
 
@@ -30,12 +28,12 @@ public class AccountTableController {
     }
 
     public void loginViewShow(AccountApiService.Login apiService) {
-        presenter.setLoginPresenter(new LoginPresenterImpl(loginFragment, apiService));
-        loginFragment.setPresenter(presenter);
-        fragmentManager.beginTransaction()
-                .setCustomAnimations(R.anim.slide_in_right, android.R.anim.slide_out_right, R.anim.slide_in_right, android.R.anim.slide_out_right)
-                .addToBackStack("host")
-                .replace(replaceId, loginFragment)
-                .commit();
+//        presenter.setLoginPresenter(new LoginPresenterImpl(loginFragment, apiService));
+//        loginFragment.setPresenter(presenter);
+//        fragmentManager.beginTransaction()
+//                .setCustomAnimations(R.anim.slide_in_right, android.R.anim.slide_out_right, R.anim.slide_in_right, android.R.anim.slide_out_right)
+//                .addToBackStack("host")
+//                .replace(replaceId, loginFragment)
+//                .commit();
     }
 }

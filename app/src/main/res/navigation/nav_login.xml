@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_login"
+    app:startDestination="@id/fragment_host">
+    <fragment
+        android:id="@+id/fragment_host"
+        android:name="me.sunzheng.mana.account.config.HostFragment"
+        android:label="Configuration"
+        tools:layout="@layout/fragment_hostdialog">
+        <action
+            android:id="@+id/action_destination_host_to_login"
+            app:destination="@id/fragment_username" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/fragment_username"
+        android:name="me.sunzheng.mana.account.login.LoginFragment"
+        android:label="SignIn"
+        tools:layout="@layout/fragment_login">
+        <action android:id="@+id/action_destination_login" />
+    </fragment>
+</navigation>

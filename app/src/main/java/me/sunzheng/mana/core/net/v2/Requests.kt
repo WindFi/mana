@@ -48,3 +48,16 @@ data class Record(
     @Expose
     var isFinised: Boolean = false
 ) : Parcelable
+
+@Parcelize
+data class SignInRequest(
+    @SerializedName("name")
+    @Expose
+    var name: String,
+    @SerializedName("password")
+    @Expose
+    var password: String,
+    @SerializedName("remember")
+    @Expose
+    var remember: Boolean = false
+) : Parcelable
