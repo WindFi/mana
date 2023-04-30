@@ -50,8 +50,6 @@ class BangumiDetailsFragment : Fragment() {
     var mHeaderCollapsingToolbarLayout: CollapsingToolbarLayout? = null
     var mToolbar: Toolbar? = null
     var mCNTitleTextView: AppCompatTextView? = null
-    var mOriginTitleTextView: AppCompatTextView? = null
-    var mEpisodeLabelTextView: AppCompatTextView? = null
     var mRecyclerView: RecyclerView? = null
     var sharedPreferences: SharedPreferences? = null
 
@@ -220,12 +218,12 @@ class BangumiDetailsFragment : Fragment() {
         binding.recyclerView.isNestedScrollingEnabled = false
         //add padding buttom
         // TODO: 2021/12/3 ????底边距
-        binding.bangumidetailsHeaderConstraint.setPadding(
-            0,
-            0,
-            0,
-            getNavigationBarHeight(resources.configuration.orientation)
-        )
+//        binding.bangumidetailsHeaderConstraint.setPadding(
+//            0,
+//            0,
+//            0,
+//            getNavigationBarHeight(resources.configuration.orientation)
+//        )
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
