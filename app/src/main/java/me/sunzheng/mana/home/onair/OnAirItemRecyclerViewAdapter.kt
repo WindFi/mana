@@ -24,7 +24,7 @@ class OnAirItemRecyclerViewAdapter(
     var onItemClickListener: ((View, Int, Long, Any) -> Unit)? = null
 ) :
     RecyclerView.Adapter<OnAirItemRecyclerViewAdapter.ViewHolder>() {
-    private val mValues: SortedList<BangumiEntity> = SortedList(
+    val mValues: SortedList<BangumiEntity> = SortedList(
         BangumiEntity::class.java,
         object : SortedListAdapterCallback<BangumiEntity?>(this) {
             override fun compare(o1: BangumiEntity?, o2: BangumiEntity?): Int = 0
@@ -35,8 +35,7 @@ class OnAirItemRecyclerViewAdapter(
             ): Boolean = oldItem?.id == newItem?.id
 
             override fun areItemsTheSame(item1: BangumiEntity?, item2: BangumiEntity?): Boolean =
-                item1?.id == item2?.id
-
+                item1?.hashCode() == item2?.hashCode()
         }
     )
 

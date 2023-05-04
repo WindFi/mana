@@ -4,15 +4,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import dagger.hilt.android.AndroidEntryPoint
+import me.sunzheng.mana.BangumiDetailsActivity
 import me.sunzheng.mana.R
 import me.sunzheng.mana.core.net.Status
+import me.sunzheng.mana.core.net.v2.database.BangumiEntity
 import me.sunzheng.mana.core.net.v2.showToast
 import me.sunzheng.mana.databinding.FragmentFavoriteCompatBinding
 import me.sunzheng.mana.home.EmptyFragment
-import me.sunzheng.mana.home.LoadingFragment
+import me.sunzheng.mana.home.onair.OnAirItemRecyclerViewAdapter
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -30,7 +33,7 @@ class FavriouteFragmentCompat @Inject constructor() : Fragment() {
     }
 
     lateinit var binding: FragmentFavoriteCompatBinding
-    val viewModel: MyFavoriteViewModel by viewModels()
+    val viewModel: MyFavoriteViewModel by activityViewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -43,8 +46,6 @@ class FavriouteFragmentCompat @Inject constructor() : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        childFragmentManager.beginTransaction().replace(R.id.replace_layout, LoadingFragment())
-            .commit()
         requireArguments().run {
             var status = getInt(ARGS_STATUS_INT, -1)
             viewModel.filter(status).observe(viewLifecycleOwner) { it ->
@@ -53,20 +54,41 @@ class FavriouteFragmentCompat @Inject constructor() : Fragment() {
                         var f = if (it.data.isNullOrEmpty()) {
                             EmptyFragment()
                         } else {
-                            FavoritesFragment.newInstance(it.data.map { it.entity })
+//                            FavoritesFragment.newInstance(it.data.map { it.entity })
                         }
-                        childFragmentManager.beginTransaction().replace(R.id.replace_layout, f)
-                            .commit()
+                        binding.textview.isVisible = it.data.isNullOrEmpty()
+
+                        it.data?.map { it.entity }?.run {
+                            if (binding.adapter == null) binding.adapter =
+                                OnAirItemRecyclerViewAdapter(this) { v, _, _, m ->
+                                    if (m is BangumiEntity)
+                                        BangumiDetailsActivity.newInstance(
+                                            requireActivity(),
+                                            m,
+                                            v.findViewById(R.id.item_album)
+                                        )
+                                } else {
+                                var adapter = binding.adapter
+                                adapter?.mValues?.addAll(this)
+                                adapter?.notifyDataSetChanged()
+                            }
+                        }
+
                     }
+
                     Status.LOADING -> {
-                        var f = if (it.data.isNullOrEmpty()) {
-                            EmptyFragment()
-                        } else {
-                            FavoritesFragment.newInstance(it.data.map { it.entity })
+                        it.data?.map { it.entity }?.run {
+                            binding.adapter = OnAirItemRecyclerViewAdapter(this) { v, _, _, m ->
+                                if (m is BangumiEntity)
+                                    BangumiDetailsActivity.newInstance(
+                                        requireActivity(),
+                                        m,
+                                        v.findViewById(R.id.item_album)
+                                    )
+                            }
                         }
-                        childFragmentManager.beginTransaction().replace(R.id.replace_layout, f)
-                            .commit()
                     }
+
                     Status.ERROR -> {
                         showToast(it.message ?: "")
                     }

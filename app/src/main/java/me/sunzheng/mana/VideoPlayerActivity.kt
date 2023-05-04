@@ -297,7 +297,9 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         binding.listviewEpisode.onItemClickListener =
             OnItemClickListener { parent, view, position, id ->
                 parent?.run {
-                    viewModel.position.postValue(position)
+                    if (viewModel.position.value != position) {
+                        viewModel.position.postValue(position)
+                    }
                     hideViewWithAnimation(this)
                 }
             }

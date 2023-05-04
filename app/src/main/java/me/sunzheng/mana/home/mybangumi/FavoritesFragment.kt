@@ -146,7 +146,12 @@ class FavoritesRepository {
             override fun shouldFetch(data: List<BangumiAndFavorites>?): Boolean = true
 
             override fun loadFromDb(): LiveData<List<BangumiAndFavorites>> = liveData {
-                emit(favriouteDao.queryBangumiList(status, userName))
+                emit(
+                    if (status != 0) favriouteDao.queryBangumiList(
+                        status,
+                        userName
+                    ) else favriouteDao.queryBangumiListAll(status, userName)
+                )
             }
 
             override fun createCall(): LiveData<ApiResponse<FavoriteWrapper>> =
