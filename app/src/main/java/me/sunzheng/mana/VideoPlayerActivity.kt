@@ -42,16 +42,23 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.preference.PreferenceManager
+import com.google.android.exoplayer2.DefaultLoadControl
+import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.LoadControl
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.upstream.cache.Cache
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
 import dagger.hilt.android.AndroidEntryPoint
 import me.sunzheng.mana.core.net.Status
@@ -71,7 +78,6 @@ import java.util.Locale
 import java.util.UUID
 import javax.inject.Inject
 
-// TODO: 缓存
 @AndroidEntryPoint
 class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoControllerListener {
     companion object {
@@ -110,20 +116,29 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
     private val player: ExoPlayer by lazy {
         ExoPlayerFactory.newSimpleInstance(
             this,
-            DefaultTrackSelector(AdaptiveTrackSelection.Factory())
+            DefaultRenderersFactory(this),
+            DefaultTrackSelector(AdaptiveTrackSelection.Factory()),
+            loaderController
         )
     }
+
+    private val cache: Cache by lazy {
+        SimpleCache(cacheFile, LeastRecentlyUsedCacheEvictor(1024 * 1024 * 256))
+    }
     private val dataSourceFactory: DataSource.Factory by lazy {
-//        var cache = SimpleCache(cacheFile, LeastRecentlyUsedCacheEvictor(1024 * 1024 * 256))
-//        CacheDataSourceFactory(
-//            cache,
-//            DefaultHttpDataSourceFactory(Util.getUserAgent(this, packageName)),
-//            CacheDataSource.FLAG_BLOCK_ON_CACHE
-//        )
-        DefaultDataSourceFactory(this, Util.getUserAgent(this, packageName))
+        CacheDataSourceFactory(
+            cache,
+            DefaultHttpDataSourceFactory(Util.getUserAgent(this, packageName)),
+            CacheDataSource.FLAG_BLOCK_ON_CACHE
+        )
     }
     private val cacheFile: File by lazy {
         File(externalCacheDir, "mediaCache")
+    }
+    private val loaderController: LoadControl by lazy {
+        DefaultLoadControl.Builder().apply {
+            setBufferDurationsMs(1000 * 20, 1000 * 60 * 24, 1000 * 10, 1000 * 10)
+        }.createDefaultLoadControl()
     }
     val isAutoPlay: Boolean by lazy {
         PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isAutoplay", false)
@@ -146,7 +161,6 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
     val audioManager: AudioManager by lazy {
         getSystemService(AUDIO_SERVICE) as AudioManager
     }
-    lateinit var dataSource: DataSource
     val audioRequest: AudioFocusRequest.Builder by lazy {
         AudioFocusRequest.Builder(AUDIOFOCUS_GAIN).apply {
             setOnAudioFocusChangeListener {
@@ -401,10 +415,13 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
 
     override fun onDestroy() {
         unregisterReceiver(broadcastReceiver)
-        audioManager.abandonAudioFocusRequest(audioRequest.build())
         super.onDestroy()
         player.release()
+        cache.release()
         mHandler.removeCallbacksAndMessages(logWatchProgressRunnable)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioManager.abandonAudioFocusRequest(audioRequest.build())
+        }
     }
 
     fun showControllerUI() {
@@ -487,7 +504,6 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
 
     private fun setup() {
         volumeControlStream = STREAM_MUSIC
-        audioManager.requestAudioFocus(audioRequest.build())
         IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY).run {
             registerReceiver(broadcastReceiver, this)
         }
@@ -575,6 +591,10 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                 binding.viewgroupProgress.isVisible = false
             }, 3000)
         }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            audioManager.requestAudioFocus(audioRequest.build())
+        }
     }
 
     fun showBrightnessVal(value: Int) {
@@ -593,16 +613,6 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         binding.viewgroupValue.postDelayed({
             binding.viewgroupValue.isVisible = false
         }, 3000)
-    }
-
-
-    private fun onVideoResize(vWidth: Int, vHeight: Int) {
-        val size = windowManager.currentWindowMetrics.bounds
-        val scaleX = size.left.toFloat() / vWidth
-        val scaleY = size.bottom.toFloat() / vHeight
-        val scaleRate = scaleX / scaleY
-        binding.player.resizeMode =
-            if (scaleRate < 1) AspectRatioFrameLayout.RESIZE_MODE_FIXED_WIDTH else AspectRatioFrameLayout.RESIZE_MODE_FIXED_HEIGHT
     }
 
     fun hideViewWithAnimation(view: View) {
@@ -643,7 +653,8 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
     }
 
     private fun startPlay() {
-        player.playWhenReady = false
+        player.playWhenReady = true
+        player.retry()
     }
 
     private fun stopPlay() {
@@ -653,6 +664,9 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
     private fun isListViewShowing() =
         binding.listviewEpisode.isVisible || binding.sourceListRoot.isVisible
 
+    /**
+     * unused
+     */
     private fun viewWithAnimation(view: View) = view.run {
         animation = AnimationUtils.loadAnimation(
             context,
