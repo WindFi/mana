@@ -308,15 +308,6 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
 
             }
 
-        binding.listviewEpisode.onItemClickListener =
-            OnItemClickListener { parent, view, position, id ->
-                parent?.run {
-                    if (viewModel.position.value != position) {
-                        viewModel.position.postValue(position)
-                    }
-                    hideViewWithAnimation(this)
-                }
-            }
         binding.player.setControllerVisibilityListener {
             when (it) {
                 View.VISIBLE -> supportActionBar?.show()
@@ -328,7 +319,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
 //==================================== init?====================================
         var position = bundle.getInt(KEY_POSITION_INT, 0)
         var offset = binding.listviewEpisode.count - position - 1
-        viewModel.position.postValue(position)
+        viewModel.position.postValue(offset)
         binding.listviewEpisode.performItemClick(
             binding.listviewEpisode.adapter.getView(
                 offset,
@@ -336,6 +327,15 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                 null
             ), offset, binding.listviewEpisode.adapter.getItemId(offset)
         )
+        binding.listviewEpisode.onItemClickListener =
+            OnItemClickListener { parent, view, position, id ->
+                parent?.run {
+                    if (viewModel.position.value != position) {
+                        viewModel.position.postValue(position)
+                    }
+                    hideViewWithAnimation(this)
+                }
+            }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowInsetsController =
                 WindowCompat.getInsetsController(window, window.decorView)

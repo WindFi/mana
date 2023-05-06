@@ -1,7 +1,6 @@
 package me.sunzheng.mana.videoplayer
 
 import android.support.v4.media.MediaDescriptionCompat
-import android.util.Log
 import androidx.lifecycle.*
 import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -84,7 +83,6 @@ class VideoPlayerVideoModel @Inject constructor(private val state: SavedStateHan
     ) = run {
         var record = watchprocessEntity?.parseRecord() ?: Record()
         record.apply {
-            Log.i("aabb", "bangumiid:${episodeEntity.bangumiId}")
             this.userName = userName
             this.bangumiId = bangumiId.toUUID()
             this.episodeId = episodeEntity.id
