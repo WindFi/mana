@@ -577,7 +577,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                     Util.getStringForTime(
                         StringBuilder(),
                         Formatter(StringBuilder(), Locale.getDefault()),
-                        player.currentPosition
+                        player.currentPosition.coerceAtLeast(0)
                     )
                 }/${
                     Util.getStringForTime(
