@@ -123,7 +123,8 @@ class BangumiDetailsFragment : Fragment() {
                                             requireContext(),
                                             this.id,
                                             binding.episodeModels!!.size - (position + 1),
-                                            binding.episodeModels!!.map {
+                                            binding.episodeModels!!.sortedBy { it.episodeEntity.episodeNo }
+                                                .reversed().map {
                                                 it.episodeEntity.parseMediaDescription("")
                                             }
                                         ).run {
