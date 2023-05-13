@@ -1,6 +1,5 @@
 package me.sunzheng.mana
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -33,21 +32,19 @@ class LoginActivity @Inject constructor() : AppCompatActivity() {
 
         appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
-//        var vn =ActivityNavigator(this)
-//        navController.navigatorProvider += vn
-        binding.fab.setOnClickListener { v ->
-            // TODO:  implement it :  goto next
-            when (navController.currentDestination?.id) {
-                R.id.fragment_host -> {
-                    navController.navigate(R.id.action_destination_host_to_login)
-                }
 
-                R.id.fragment_username -> {
-                    startActivity(Intent(this, MainActivity::class.java))
-                }
-            }
-        }
 
+//        binding.fab.setOnClickListener { v ->
+//            when (navController.currentDestination?.id) {
+//                R.id.fragment_host -> {
+//                    navController.navigate(R.id.action_destination_host_to_login)
+//                }
+//
+//                R.id.fragment_username -> {
+//                    navController.navigate(R.id.action_destination_to_main)
+//                }
+//            }
+//        }
     }
 
     fun onSave() {

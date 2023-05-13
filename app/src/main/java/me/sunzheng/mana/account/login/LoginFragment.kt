@@ -1,7 +1,6 @@
 package me.sunzheng.mana.account.login
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,7 +9,8 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import me.sunzheng.mana.MainActivity
+import androidx.navigation.fragment.findNavController
+import me.sunzheng.mana.R
 import me.sunzheng.mana.account.AccountViewModel
 import me.sunzheng.mana.core.net.Status
 import me.sunzheng.mana.core.net.v2.showToast
@@ -105,9 +105,9 @@ class LoginFragment : Fragment() {
                 binding.loginPasswordTextinputedittext.text.toString()
             )
             .commit()
-//        findNavController().navigate(R.id.action_destination_login)
-        startActivity(Intent(requireContext(), MainActivity::class.java))
-        requireActivity().finish()
+        findNavController().navigate(R.id.action_destination_authenrize_to_main)
+//        startActivity(Intent(requireContext(), MainActivity::class.java))
+//        requireActivity().finish()
     }
 
     companion object {

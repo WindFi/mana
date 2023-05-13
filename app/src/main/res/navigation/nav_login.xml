@@ -3,7 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_login"
-    app:startDestination="@id/fragment_host">
+    app:startDestination="@id/fragment_authenrize">
+    <action
+        android:id="@+id/action_destination_authenrize_to_main"
+        app:destination="@+id/activity_main"
+        app:popUpTo="@id/activity_main"
+        app:popUpToInclusive="true" />
+    <action
+        android:id="@+id/action_destination_authenrize_to_host"
+        app:destination="@id/fragment_host"
+        app:popUpTo="@id/fragment_host"
+        app:popUpToInclusive="true" />
+
+    <fragment
+        android:id="@+id/fragment_authenrize"
+        android:name="me.sunzheng.mana.AuthenrizeFragment" />
+
     <fragment
         android:id="@+id/fragment_host"
         android:name="me.sunzheng.mana.account.config.HostFragment"
@@ -13,12 +28,14 @@
             android:id="@+id/action_destination_host_to_login"
             app:destination="@id/fragment_username" />
     </fragment>
-
     <fragment
         android:id="@+id/fragment_username"
         android:name="me.sunzheng.mana.account.login.LoginFragment"
         android:label="SignIn"
-        tools:layout="@layout/fragment_login">
-        <action android:id="@+id/action_destination_login" />
-    </fragment>
+        tools:layout="@layout/fragment_login" />
+    <activity
+        android:id="@+id/activity_main"
+        android:name="me.sunzheng.mana.MainActivity"
+        android:label="@string/app_name"
+        tools:layout="@layout/activity_main"></activity>
 </navigation>
