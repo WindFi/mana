@@ -12,6 +12,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.util.PatternsCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import com.google.android.material.snackbar.Snackbar
 import me.sunzheng.mana.R
 import me.sunzheng.mana.databinding.FragmentHostdialogBinding
@@ -34,13 +35,13 @@ class HostFragment : Fragment() {
     ): View {
         return binding.root
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         sharedPreferences = requireActivity().getSharedPreferences(
             PreferenceManager.Global.STR_SP_NAME,
             Context.MODE_PRIVATE
         )
+        NavigationUI.setupWithNavController(binding.toolbar, findNavController())
         binding.dialogHostTextinputedittext.setOnEditorActionListener { _, actionId, _ ->
             when (actionId) {
                 EditorInfo.IME_ACTION_GO -> {
@@ -57,7 +58,6 @@ class HostFragment : Fragment() {
                 ""
             ) ?: ""
         )
-
         binding.dialogHostButton.setOnClickListener { v ->
             var host = binding.dialogHostTextinputedittext.text.toString()
             if (TextUtils.isEmpty(

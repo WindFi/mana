@@ -1,6 +1,5 @@
 package me.sunzheng.mana.home.search
 
-import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
@@ -14,7 +13,6 @@ import androidx.recyclerview.widget.SortedList
 import androidx.recyclerview.widget.SortedListAdapterCallback
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import me.sunzheng.mana.BangumiDetailsActivity
 import me.sunzheng.mana.R
 import me.sunzheng.mana.core.net.v2.database.BangumiEntity
 import me.sunzheng.mana.utils.ArrarysResourceUtils
@@ -23,7 +21,10 @@ import me.sunzheng.mana.utils.LanguageSwitchUtils
 /**
  * Created by Sun on 2017/6/20.
  */
-class SearchResultAdapter(var values: List<BangumiEntity>) : RecyclerView.Adapter<ViewHolder>() {
+class SearchResultAdapter(
+    var values: List<BangumiEntity>,
+    var onItemClickListener: ((view: View, position: Int, id: Long, model: Any) -> Unit)? = null
+) : RecyclerView.Adapter<ViewHolder>() {
     val mValues: SortedList<BangumiEntity> = SortedList(
         BangumiEntity::class.java,
         object : SortedListAdapterCallback<BangumiEntity?>(this) {
@@ -55,14 +56,16 @@ class SearchResultAdapter(var values: List<BangumiEntity>) : RecyclerView.Adapte
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+
         holder.itemView.setOnClickListener {
-            mValues.run {
-                BangumiDetailsActivity.newInstance(
-                    it.context as Activity,
-                    mValues[position],
-                    holder.mImageView
-                )
-            }
+            onItemClickListener?.invoke(it, position, 0, mValues[position])
+//            mValues.run {
+//                BangumiDetailsActivity.newInstance(
+//                    it.context as Activity,
+//                    mValues[position],
+//                    holder.mImageView
+//                )
+//            }
         }
         Glide.with(holder.itemView.context)
             .load(mValues[position].image)

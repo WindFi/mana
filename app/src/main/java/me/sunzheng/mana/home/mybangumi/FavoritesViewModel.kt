@@ -1,93 +1,19 @@
 package me.sunzheng.mana.home.mybangumi
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
-import androidx.recyclerview.widget.DefaultItemAnimator
-import androidx.recyclerview.widget.DividerItemDecoration
 import com.google.gson.Gson
-import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.lifecycle.HiltViewModel
-import me.sunzheng.mana.BangumiDetailsActivity
-import me.sunzheng.mana.R
 import me.sunzheng.mana.core.net.ApiResponse
 import me.sunzheng.mana.core.net.v2.ApiService
 import me.sunzheng.mana.core.net.v2.NetworkBoundResource
 import me.sunzheng.mana.core.net.v2.database.*
-import me.sunzheng.mana.databinding.FragmentMyfavoritesBinding
 import me.sunzheng.mana.home.mybangumi.wrapper.FavoriteWrapper
-import me.sunzheng.mana.home.onair.OnAirItemRecyclerViewAdapter
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
-
-/**
- * Created by Sun on 2017/6/22.
- */
-@AndroidEntryPoint
-class FavoritesFragment @Inject constructor() : Fragment() {
-    companion object {
-        @JvmStatic
-        val ARGS_DATA_PARCEL_ARRAY = "${FavoritesFragment::class.java.simpleName}_data"
-
-        @JvmStatic
-        fun newInstance(list: List<BangumiEntity>) = FavoritesFragment().apply {
-            arguments = Bundle().apply {
-                putParcelableArrayList(
-                    ARGS_DATA_PARCEL_ARRAY,
-                    ArrayList(list)
-                )
-            }
-        }
-    }
-
-    lateinit var binding: FragmentMyfavoritesBinding
-    lateinit var args: Bundle
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentMyfavoritesBinding.inflate(inflater)
-        binding.lifecycleOwner = this
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        args = savedInstanceState?.getBundle("args") ?: requireArguments()
-        args.getParcelableArrayList<BangumiEntity>(ARGS_DATA_PARCEL_ARRAY)
-            ?.let {
-                OnAirItemRecyclerViewAdapter(it) { v, _, _, m ->
-                    if (m is BangumiEntity)
-                        BangumiDetailsActivity.newInstance(
-                            requireActivity(),
-                            m,
-                            v.findViewById(R.id.item_album)
-                        )
-                }
-            }?.run {
-                binding.recyclerView.adapter = this
-                binding.recyclerView.itemAnimator = DefaultItemAnimator()
-                binding.recyclerView.addItemDecoration(
-                    DividerItemDecoration(
-                        requireContext(),
-                        DividerItemDecoration.VERTICAL
-                    )
-                )
-            }
-    }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        outState.putBundle("args", args)
-        super.onSaveInstanceState(outState)
-    }
-}
 
 @HiltViewModel
 class MyFavoriteViewModel @Inject constructor() : ViewModel() {
@@ -99,6 +25,10 @@ class MyFavoriteViewModel @Inject constructor() : ViewModel() {
 
     @Inject
     lateinit var apiService: ApiService
+
+    val positionLiveData: MutableLiveData<Int> by lazy {
+        MutableLiveData()
+    }
 
     @Named("userName")
     @Inject

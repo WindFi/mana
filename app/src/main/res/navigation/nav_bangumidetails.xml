@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_bangumidetails"
+    app:startDestination="@id/fragment_bangumidetails">
+    <fragment
+        android:id="@+id/fragment_bangumidetails"
+        android:name="me.sunzheng.mana.home.bangumi.BangumiDetailsFragment"
+        tools:layout="@layout/fragment_bangumidetails">
+        <argument
+            android:name="model"
+            app:argType="me.sunzheng.mana.core.net.v2.database.BangumiEntity"
+            app:nullable="false" />
+        <action
+            android:id="@+id/to_videoplayer"
+            app:destination="@+id/activity_videoplayer" />
+    </fragment>
+    <activity
+        android:id="@+id/activity_videoplayer"
+        android:name="me.sunzheng.mana.VideoPlayerActivity"
+        tools:layout="@layout/activity_video_player">
+        <argument
+            android:name="items"
+            app:argType="android.support.v4.media.MediaDescriptionCompat[]"
+            app:nullable="false" />
+        <argument
+            android:name="position"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="id"
+            app:argType="string"
+            app:nullable="false" />
+    </activity>
+    <activity
+        android:id="@+id/to_feedback"
+        android:name="me.sunzheng.mana.FeedbackActivity"
+        android:label="@string/app_name">
+        <argument
+            android:name="episodeid"
+            app:argType="string"
+            app:nullable="false" />
+        <argument
+            android:name="videofileid"
+            app:argType="string"
+            app:nullable="false" />
+    </activity>
+</navigation>

@@ -112,7 +112,15 @@ class SearchResultActivity : AppCompatActivity() {
                     } else {
                         response.data?.takeIf { it.isNotEmpty() }?.run {
                             showEmptyView(false)
-                            var adapter = SearchResultAdapter(this)
+                            var adapter = SearchResultAdapter(this) { v, p, id, m ->
+                                if (m is BangumiEntity) {
+                                    BangumiDetailsActivity.newInstance(
+                                        this@SearchResultActivity,
+                                        m,
+                                        v.findViewById(R.id.item_album)
+                                    )
+                                }
+                            }
                             if (binding.recyclerView.adapter == null) binding.recyclerView.adapter =
                                 adapter else binding.recyclerView.swapAdapter(adapter, false)
                         }
@@ -129,7 +137,15 @@ class SearchResultActivity : AppCompatActivity() {
 
                 Status.LOADING -> {
                     response.data?.run {
-                        var adapter = SearchResultAdapter(this)
+                        var adapter = SearchResultAdapter(this) { v, p, id, m ->
+                            if (m is BangumiEntity) {
+                                BangumiDetailsActivity.newInstance(
+                                    this@SearchResultActivity,
+                                    m,
+                                    v.findViewById(R.id.item_album)
+                                )
+                            }
+                        }
                         if (binding.recyclerView.adapter == null) binding.recyclerView.adapter =
                             adapter else binding.recyclerView.swapAdapter(adapter, false)
                     }

@@ -26,6 +26,7 @@
                 app:popupTheme="@style/AppTheme.PopupOverlay" />
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
+                android:id="@+id/header_collaspingtoolbarlayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:layout_scrollFlags="scroll|enterAlways|enterAlwaysCollapsed"

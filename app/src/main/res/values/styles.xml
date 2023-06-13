@@ -119,7 +119,7 @@
 
     <style name="AppTheme.SearchResultActivity" parent="AppTheme.NoActionBar" />
 
-    <style name="AppTheme.LoginActivity">
+    <style name="AppTheme.LoginActivity" parent="AppTheme.NoActionBar">
         <item name="colorAccent">@color/colorPrimary</item>
     </style>
 

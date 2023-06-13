@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_main"
+    android:label="@string/app_name"
+    app:startDestination="@id/fragment_main">
+    <action
+        android:id="@+id/any_to_bangumidetails"
+        app:destination="@id/activity_bangumidetails" />
+    <action
+        android:id="@+id/any_to_bangumidetailsfragment"
+        app:destination="@id/fragment_bangumidetails" />
+
+    <fragment
+        android:id="@+id/fragment_main"
+        android:name="me.sunzheng.mana.MainFragment"
+        android:label="@string/app_name"
+        tools:layout="@layout/fragment_main">
+        <action
+            android:id="@+id/main_to_settings"
+            app:destination="@id/activity_settings" />
+        <action
+            android:id="@+id/main_to_favrioute"
+            app:destination="@id/activity_myfavrioute" />
+        <!--        <action-->
+        <!--            android:id="@+id/main_to_favrioute"-->
+        <!--            app:enterAnim="@anim/transition_push_enter_right"-->
+        <!--            app:exitAnim="@anim/transition_push_exit_right"-->
+        <!--            app:popEnterAnim="@anim/transition_pop_enter_right"-->
+        <!--            app:popExitAnim="@anim/transition_pop_exit_right"-->
+        <!--            app:destination="@id/fragment_favrioute"/>-->
+    </fragment>
+    <fragment
+        android:id="@+id/fragment_favrioute"
+        android:name="me.sunzheng.mana.home.mybangumi.FavriouteFragmentCompat"
+        android:label="@string/title_activity_favorites"
+        tools:layout="@layout/fragment_favorite_compat" />
+
+    <fragment
+        android:id="@+id/fragment_bangumidetails"
+        android:name="me.sunzheng.mana.home.bangumi.BangumiDetailsFragment"
+        tools:layout="@layout/fragment_bangumidetails">
+        <argument
+            android:name="model"
+            app:argType="me.sunzheng.mana.core.net.v2.database.BangumiEntity"
+            app:nullable="false" />
+    </fragment>
+    <activity
+        android:id="@+id/activity_myfavrioute"
+        android:name="me.sunzheng.mana.MyFavoritesActivity"
+        tools:layout="@layout/fragment_favorite_compat" />
+    <activity
+        android:id="@+id/activity_bangumidetails"
+        android:name="me.sunzheng.mana.BangumiDetailsActivity"
+        tools:layout="@layout/fragment_bangumidetails">
+        <argument
+            android:name="model"
+            app:argType="me.sunzheng.mana.core.net.v2.database.BangumiEntity"
+            app:nullable="false" />
+        <!--        <argument-->
+        <!--            android:name="id"-->
+        <!--            app:argType="string"-->
+        <!--            app:nullable="false" />-->
+        <!--        <argument-->
+        <!--            android:name="imageurl"-->
+        <!--            app:argType="string"-->
+        <!--            app:nullable="false" />-->
+        <!--        <argument-->
+        <!--            android:name="title"-->
+        <!--            app:argType="string"-->
+        <!--            app:nullable="false" />-->
+    </activity>
+    <activity
+        android:id="@+id/activity_search_result"
+        android:name="me.sunzheng.mana.SearchResultActivity"
+        tools:layout="@layout/activity_search_result" />
+
+    <activity
+        android:id="@+id/activity_settings"
+        android:name="me.sunzheng.mana.SettingsActivity"
+        tools:layout="@layout/activity_setting" />
+    <activity
+        android:id="@+id/activity_videoplayer"
+        android:name="me.sunzheng.mana.VideoPlayerActivity"
+        tools:layout="@layout/activity_video_player" />
+
+</navigation>

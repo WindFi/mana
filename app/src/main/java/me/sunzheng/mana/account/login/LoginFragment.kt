@@ -10,7 +10,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import me.sunzheng.mana.R
+import androidx.navigation.ui.NavigationUI
 import me.sunzheng.mana.account.AccountViewModel
 import me.sunzheng.mana.core.net.Status
 import me.sunzheng.mana.core.net.v2.showToast
@@ -85,6 +85,7 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        NavigationUI.setupWithNavController(binding.toolbar, findNavController())
         val isRememberd =
             sharedPreferences.getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false)
         if (isRememberd) onLoginSuccess()
@@ -105,7 +106,8 @@ class LoginFragment : Fragment() {
                 binding.loginPasswordTextinputedittext.text.toString()
             )
             .commit()
-        findNavController().navigate(R.id.action_destination_authenrize_to_main)
+        viewModel.checkIsLogin(requireContext())
+//        findNavController().navigate(R.id.action_destination_authenrize_to_main)
 //        startActivity(Intent(requireContext(), MainActivity::class.java))
 //        requireActivity().finish()
     }

@@ -5,9 +5,9 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
-import androidx.navigation.ui.setupActionBarWithNavController
 import dagger.hilt.android.AndroidEntryPoint
 import me.sunzheng.mana.account.AccountViewModel
 import me.sunzheng.mana.databinding.ActivityLoginBinding
@@ -21,42 +21,36 @@ class LoginActivity @Inject constructor() : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
 
-    val viewModel = viewModels<AccountViewModel>()
+    val viewModel by viewModels<AccountViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        setSupportActionBar(binding.toolbar)
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
+        viewModel.isLoginLiveData.observe(this) {
+            var id = when (it) {
+                false -> {
+                    R.navigation.nav_login
+                }
 
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
-
-        appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-
-
-//        binding.fab.setOnClickListener { v ->
-//            when (navController.currentDestination?.id) {
-//                R.id.fragment_host -> {
-//                    navController.navigate(R.id.action_destination_host_to_login)
-//                }
-//
-//                R.id.fragment_username -> {
-//                    navController.navigate(R.id.action_destination_to_main)
-//                }
-//            }
-//        }
+                true -> {
+                    R.navigation.nav_main
+                }
+            }
+            var fragment = NavHostFragment.create(id)
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .setPrimaryNavigationFragment(fragment)
+                .commit()
+        }
+        replace()
     }
 
-    fun onSave() {
-//        controller!!.loginViewShow(
-//            (applicationContext as App).retrofit.create(
-//                AccountApiService.Login::class.java
-//            )
-//        )
+    fun replace() {
+        viewModel.checkIsLogin(this)
     }
 
     override fun onNavigateUp(): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment_content_main)
+        val navController = findNavController(supportFragmentManager.primaryNavigationFragment!!.id)
         return navController.navigateUp(appBarConfiguration)
                 || super.onSupportNavigateUp()
     }
