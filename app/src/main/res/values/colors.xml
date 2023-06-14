@@ -10,4 +10,12 @@
     <color name="favorite_pause">@color/brow</color>
     <color name="favorite_abanoned">@color/grey</color>
     <color name="colorLightPrimary">#d78f8c</color>
+
+
+    <color name="black">#FF1B1C1D</color>
+    <color name="system_neutral1_900">#191C1E</color>
+    <color name="system_neutral2_700">#40484D</color>
+
+    <color name="system_neutral1_100">#E1E3E5</color>
+    <color name="system_neutral2_200">#C0C7CD</color>
 </resources>

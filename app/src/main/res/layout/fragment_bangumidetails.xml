@@ -152,7 +152,6 @@
                         android:layout_marginTop="8dp"
                         android:text='@{String.format(@string/title_episode_textview,episodeModels.isEmpty()?0:episodeModels.size(),bangumiModel.entity.eps)}'
                         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                        android:textColor="@android:color/black"
                         tools:text="@string/title_episode_textview" />
                 </RelativeLayout>
 

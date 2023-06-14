@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.DayNight.DarkActionBar">
+        <item name="cardBackgroundColor">@android:color/black</item>
+        <item name="backgroundColor">@color/black</item>
+        <item name="indicatorColor">@color/colorPrimary</item>
+        <item name="titleTextColor">@color/colorPrimary</item>
+        <item name="android:textColorSecondary">@color/default_color_secondary_dark_text</item>
+    </style>
+
+    <style name="AppTheme.AppBarOverlay">
+        <item name="android:textColorPrimary">@color/colorPrimary</item>
+    </style>
+</resources>

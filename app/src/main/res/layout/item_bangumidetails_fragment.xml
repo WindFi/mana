@@ -44,7 +44,6 @@
             android:maxLength="40"
             android:maxLines="2"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-            android:textColor="@android:color/black"
             app:layout_constraintStart_toEndOf="@+id/item_album"
             app:layout_constraintTop_toTopOf="@+id/item_album"
             tools:text="title" />

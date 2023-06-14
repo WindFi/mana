@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:foreground="?attr/selectableItemBackground"
+        app:cardBackgroundColor="?attr/cardBackgroundColor"
         app:cardElevation="0dp"
         app:contentPadding="@dimen/activity_horizontal_margin">
 
@@ -40,7 +41,6 @@
                     android:gravity="start|left"
                     android:maxLines="3"
                     android:textAppearance="@style/TextAppearance.AppCompat.Medium"
-                    android:textColor="@android:color/black"
                     tools:text="title" />
 
                 <androidx.appcompat.widget.AppCompatTextView

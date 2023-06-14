@@ -5,13 +5,17 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@android:color/white</item>
+        <item name="colorAccent">@android:color/black</item>
         <item name="autoCompleteTextViewStyle">@style/SuggestionAutoCompleteTextViewStyle</item>
         <item name="textAppearanceSearchResultTitle">@style/SuggestionTitleStyle</item>
         <item name="colorButtonNormal">@color/colorPrimary</item>
         <item name="colorControlHighlight">@android:color/darker_gray</item>
         <item name="android:textAppearanceButton">@style/TextAppearance.Button</item>
         <item name="android:progressBarStyle">@style/Widget.AppTheme.Progressbar</item>
+        <item name="cardBackgroundColor">@android:color/white</item>
+        <item name="backgroundColor">@android:color/white</item>
+        <item name="indicatorColor">@android:color/white</item>
+        <item name="android:textColorSecondary">@color/default_color_secondary_text</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -27,7 +31,7 @@
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Dark" />
 
     <style name="Widget.App.ActionButton" parent="@style/Widget.AppCompat.ActionButton">
         <item name="textAllCaps">false</item>
@@ -131,7 +135,7 @@
 
     <style name="AppTheme.VideoPlayActivity" parent="AppTheme.NoActionBar.FullScreen" />
 
-    <style name="AppTheme.FeedbackActivity" parent="AppTheme">
+    <style name="AppTheme.FeedbackActivity">
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:textAppearance">@style/TextAppearance.RadioButton</item>
     </style>

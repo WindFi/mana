@@ -17,7 +17,6 @@
         android:layout_height="wrap_content"
         android:ellipsize="marquee"
         android:ems="15"
-        android:maxLines="1"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:singleLine="true" />
 
 </LinearLayout>
