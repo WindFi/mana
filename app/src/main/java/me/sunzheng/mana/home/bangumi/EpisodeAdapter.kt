@@ -3,8 +3,6 @@ package me.sunzheng.mana.home.bangumi
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Handler
-import android.os.Looper
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -49,7 +47,6 @@ class EpisodeAdapter(var onItemClickListener: ((View, Int, Long, EpisodeEntity) 
             newItem: EpisodeAndWatchprogress
         ): Any = newItem
     }) {
-    var mHandler = Handler(Looper.getMainLooper())
     var host: String? = null
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -83,12 +80,15 @@ class EpisodeAdapter(var onItemClickListener: ((View, Int, Long, EpisodeEntity) 
         val request: RequestBuilder<*> = Glide.with(holder.itemView.context)
             .load(coverImage?.url ?: "")
 
-        var options = RequestOptions()
+        val options = RequestOptions()
         item.thumbnailImage?.dominantColor?.run {
-            options.placeholder(ColorDrawable(Color.parseColor(item.thumbnailImage.dominantColor)))
+            try {
+                options.placeholder(ColorDrawable(Color.parseColor(item.thumbnailImage.dominantColor)))
+            } catch (e: Exception) {
+                options.placeholder(ColorDrawable(Color.parseColor(item.thumbnailColor)))
+            }
         }
-        request.apply(options)
-        request.into(holder.mImageView)
+        request.apply(options).into(holder.mImageView)
         holder.mEpisodeNoTextView.text = holder.itemView.context.getString(
             R.string.episode_template,
             item.episodeNo.toString() + ""

@@ -7,7 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
-import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -46,6 +45,7 @@ class BangumiDetailsFragment : Fragment() {
             arguments = Bundle().apply { putParcelable(ARGS_DATA_PARCELABLE, data) }
         }
     }
+
     var mBannerImageView: ImageView? = null
     var mHeaderCollapsingToolbarLayout: CollapsingToolbarLayout? = null
     var mToolbar: Toolbar? = null
@@ -57,6 +57,7 @@ class BangumiDetailsFragment : Fragment() {
 
     val viewModel by viewModels<BangumiDetailsViewModel>()
     lateinit var args: Bundle
+    var isJaFirst: Boolean = false
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -79,40 +80,50 @@ class BangumiDetailsFragment : Fragment() {
             Context.MODE_PRIVATE
         )
         args = savedInstanceState?.getBundle("args") ?: requireArguments()
+        isJaFirst = sharedPreferences!!.getBoolean(
+            getString(PreferenceManager.Global.RES_JA_FIRST_BOOL),
+            false
+        )
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initToolbar(view)
-        initContent(view)
         args.getParcelable<BangumiEntity>(ARGS_DATA_PARCELABLE)?.run {
-            var name = sharedPreferences
+            Log.i("fuckyou", "11111:${this.name}")
+            initToolbar(view)
+            initContent(view, this)
+            val name = sharedPreferences
                 ?.getString(PreferenceManager.Global.STR_USERNAME, null)!!
+
+            setOriginName(this.airWeekday.toInt(), this.airDate!!)
             viewModel.queryBangumiAndFavorite(id, userName = name)
                 .observe(viewLifecycleOwner) { dataView ->
                     binding.bangumiModel = dataView
-                    binding.bangumiModel?.entity?.run {
-                        setOriginName(this.airWeekday.toInt(), this.airDate!!)
-                        setFavouriteStatus(dataView!!.state.status)
-                        // TODO: 2021/12/18 test it
+                    dataView?.run {
+                        binding.bangumiModel?.run {
+                            setFavouriteStatus(dataView.state.status)
+                        }
                     }
                 }
             viewModel.fetchEpisodeList(id, name).observe(viewLifecycleOwner) { it ->
                 when (it.code) {
                     Status.SUCCESS -> {
+                        Log.i("fuckyou", "33333")
 //                        it.data?.forEach {
 //                            Log.i("bbk","${it.episodeEntity.id?.toString()?:"episodeId:null"}/${it.watchProgress?.id?.toString()?:"watchprogress:null"}")
 //                        }
                         binding.episodeModels = it.data
-                        var adapter = binding.recyclerView.adapter as EpisodeAdapter
+                        val adapter = binding.recyclerView.adapter as EpisodeAdapter
                         adapter.submitList(it.data?.sortedBy { episode -> episode.episodeEntity.bgmEpsId }
                             ?.reversed())
                     }
+
                     Status.ERROR -> {
                         it.message?.run {
                             showToast(this)
                         }
                     }
+
                     Status.LOADING -> {
                         binding.episodeModels = it.data
                         binding.recyclerView.adapter =
@@ -125,14 +136,14 @@ class BangumiDetailsFragment : Fragment() {
                                             binding.episodeModels!!.size - (position + 1),
                                             binding.episodeModels!!.sortedBy { it.episodeEntity.episodeNo }
                                                 .reversed().map {
-                                                it.episodeEntity.parseMediaDescription("")
-                                            }
+                                                    it.episodeEntity.parseMediaDescription("")
+                                                }
                                         ).run {
                                             requireContext().startActivity(this)
                                         }
                                     }, 300)
                             }
-                        var adapter = binding.recyclerView.adapter as EpisodeAdapter
+                        val adapter = binding.recyclerView.adapter as EpisodeAdapter
                         adapter.submitList(it.data)
                     }
                 }
@@ -151,28 +162,29 @@ class BangumiDetailsFragment : Fragment() {
         mToolbar = view.findViewById(R.id.toolbar)
         mBannerImageView = view.findViewById(R.id.banner_imageview)
         mHeaderCollapsingToolbarLayout = view.findViewById(R.id.header_collaspingtoolbarlayout)
-        Glide.with(requireActivity())
-            .load(requireArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR))
-            .into(binding.bannerImageview)
         setSupportActionBar(mToolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.title =
-            arguments?.getString(BangumiDetailsActivity.ARGS_TITLE_STR, "") ?: ""
     }
 
-    private fun initContent(view: View) {
+    private fun initContent(view: View, entity: BangumiEntity) {
         mRecyclerView = view.findViewById(R.id.recycler_view)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             binding.bangumidetailsAblumImageview.transitionName =
                 BangumiDetailsActivity.PAIR_IMAGE_STR
         }
-        Glide.with(requireContext())
-            .load(requireArguments().getString(BangumiDetailsActivity.ARGS_ABLUM_URL_STR))
-            .into(binding.bangumidetailsAblumImageview)
-        requireArguments().getString(BangumiDetailsActivity.ARGS_TITLE_STR)
-            ?.takeIf { !TextUtils.isEmpty(it) }?.run {
-                setName(this)
+        entity.run {
+            coverImage?.run {
+                Glide.with(requireContext())
+                    .load(url)
+                    .into(binding.bangumidetailsAblumImageview)
+                Glide.with(requireActivity())
+                    .load(this)
+                    .into(binding.bannerImageview)
             }
+            supportActionBar?.title = if (isJaFirst) name!! else nameCn!!
+            binding.bangumidetailsNameTextview.text = if (isJaFirst) nameCn!! else name!!
+        }
+
         binding.bangumidetailsFaviortestatusTextview.setOnClickListener {
             val popupMenu = PopupMenu(
                 requireContext(), binding.bangumidetailsFaviortestatusTextview
@@ -204,9 +216,11 @@ class BangumiDetailsFragment : Fragment() {
                             binding.bangumiModel?.state?.status = status
                             setFavouriteStatus(status)
                         }
+
                         Status.LOADING -> {
                             setFavouriteStatus(status)
                         }
+
                         Status.ERROR -> {
                             setFavouriteStatus(binding.bangumiModel?.state?.status ?: 0)
                         }
@@ -217,30 +231,12 @@ class BangumiDetailsFragment : Fragment() {
             popupMenu.show()
         }
         binding.recyclerView.isNestedScrollingEnabled = false
-        //add padding buttom
-        // TODO: 2021/12/3 ????底边距
-//        binding.bangumidetailsHeaderConstraint.setPadding(
-//            0,
-//            0,
-//            0,
-//            getNavigationBarHeight(resources.configuration.orientation)
-//        )
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-        binding.bangumidetailsHeaderConstraint.setPadding(
-            0,
-            0,
-            0,
-            getNavigationBarHeight(newConfig.orientation)
-        )
     }
 
     fun setOriginName(day: Int, etc: CharSequence) {
 //        mBangumiDetails.getAirWeekday(), mBangumiDetails.getAirDate()
         val dayInWeek = ArrarysResourceUtils.dayInWeek(activity, day)
-        val color = ContextCompat.getColor(requireActivity(), R.color.colorPrimary)
+//        val color = ContextCompat.getColor(requireActivity(), R.color.colorPrimary)
         val resultString =
             requireActivity().getString(R.string.formatter_day_airdate, etc, dayInWeek)
         //        SpannableStringBuilder spannableStringBuilder=new SpannableStringBuilder(resultString);
@@ -251,13 +247,6 @@ class BangumiDetailsFragment : Fragment() {
     fun setFavouriteStatus(status: Int) {
         FavoriteCompact.setFavorite(status, binding.bangumidetailsFaviortestatusTextview)
     }
-
-    fun setName(name: CharSequence) {
-        if (mCNTitleTextView == null) return
-        mCNTitleTextView!!.text = name
-    }
-
-
 
     private fun getNavigationBarHeight(orientation: Int): Int {
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) return 0

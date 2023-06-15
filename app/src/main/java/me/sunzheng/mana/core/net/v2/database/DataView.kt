@@ -3,7 +3,7 @@ package me.sunzheng.mana.core.net.v2.database
 import android.os.Parcelable
 import androidx.room.Embedded
 import androidx.room.Relation
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class BangumiAndFavorites(

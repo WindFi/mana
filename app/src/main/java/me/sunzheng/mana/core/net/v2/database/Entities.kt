@@ -1,11 +1,10 @@
 package me.sunzheng.mana.core.net.v2.database
 
 import android.os.Parcelable
-import androidx.annotation.Nullable
 import androidx.room.*
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import me.sunzheng.mana.core.CoverImage
 import java.util.*
 
@@ -125,7 +124,6 @@ data class BangumiEntity(
     @Expose
     var status: Int = 0,
 
-    @Nullable
     @SerializedName("cover_image")
     @Expose
     var coverImage: CoverImage? = null

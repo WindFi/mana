@@ -2,17 +2,15 @@ package me.sunzheng.mana.core.net.v2.database
 
 import android.os.Parcelable
 import androidx.annotation.Keep
-import androidx.annotation.NonNull
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import me.sunzheng.mana.core.CoverImage
 import java.util.*
 
 @Keep
 @Parcelize
 data class BangumiModel(
-    @NonNull
     @SerializedName("id")
     @Expose
     var id: UUID,
