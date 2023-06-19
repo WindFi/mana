@@ -8,3 +8,6 @@ gradlew.bat
 gradle/*
 .gradle/
 .idea/
+*.log
+*.bak
+app/release/output-metadata.json

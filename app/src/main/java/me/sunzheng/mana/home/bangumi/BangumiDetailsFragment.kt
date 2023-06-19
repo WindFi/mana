@@ -89,7 +89,6 @@ class BangumiDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         args.getParcelable<BangumiEntity>(ARGS_DATA_PARCELABLE)?.run {
-            Log.i("fuckyou", "11111:${this.name}")
             initToolbar(view)
             initContent(view, this)
             val name = sharedPreferences
@@ -108,7 +107,6 @@ class BangumiDetailsFragment : Fragment() {
             viewModel.fetchEpisodeList(id, name).observe(viewLifecycleOwner) { it ->
                 when (it.code) {
                     Status.SUCCESS -> {
-                        Log.i("fuckyou", "33333")
 //                        it.data?.forEach {
 //                            Log.i("bbk","${it.episodeEntity.id?.toString()?:"episodeId:null"}/${it.watchProgress?.id?.toString()?:"watchprogress:null"}")
 //                        }
