@@ -542,7 +542,11 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
             }
 
             override fun onLoadingChanged(isLoading: Boolean) {
-                binding.progressbar.isVisible = isLoading
+//                binding.progressbar.show()
+                if (isLoading)
+                    binding.progressbar.show()
+                else
+                    binding.progressbar.hide()
             }
 
             override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {
