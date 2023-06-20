@@ -5,11 +5,13 @@ import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
 
+import me.sunzheng.mana.R;
+
 public class LanguageSwitchUtils {
     public static String switchLanguageToJa(Context context, String jaString, String cnString) {
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        boolean isJaFirst = sharedPreferences.getBoolean(context.getString(me.sunzheng.mana.utils.PreferenceManager.Global.RES_JA_FIRST_BOOL), false);
+        boolean isJaFirst = sharedPreferences.getBoolean(context.getString(R.string.pref_key_ja_first_bool), false);
         return isJaFirst ? jaString : cnString;
     }
 }

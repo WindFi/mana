@@ -43,7 +43,6 @@ class VideoPlayerVideoModel @Inject constructor(private val state: SavedStateHan
         }
     }
 
-    // TODO: 需要处理一下savedinstance 的问题 要保存 position items
     val isPlaying = MutableLiveData(false)
     val position = MutableLiveData(0)
     var isJaFirst = false

@@ -16,6 +16,8 @@
         <item name="backgroundColor">@android:color/white</item>
         <item name="indicatorColor">@android:color/white</item>
         <item name="android:textColorSecondary">@color/default_color_secondary_text</item>
+        <item name="titleTextColor">@android:color/white</item>
+        <!--        <item name="appBarLayoutStyle">@style/AppTheme.AppBarOverlay</item>-->
     </style>
 
     <style name="AppTheme.NoActionBar">

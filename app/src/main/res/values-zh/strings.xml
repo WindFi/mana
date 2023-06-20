@@ -50,6 +50,9 @@
     <string name="pref_description_ja_first_display">在有日语内容的情况下,优先显示日语内容</string>
     <string name="toast_preference_changed">重启后生效</string>
     <string name="title_friday">星期五</string>
+    <string name="title_light_theme">关闭</string>
+    <string name="title_dark_theme">开启</string>
+    <string name="title_default_theme">跟随系统</string>
     <string name="title_monday">星期一</string>
     <string name="title_saturday">星期六</string>
     <string name="title_sunday">星期日</string>
@@ -58,4 +61,5 @@
     <string name="title_wednesday">星期三</string>
     <string name="title_empty_data">没有内容</string>
     <string name="text_seekto">跳转至 %1$s</string>
+    <string name="title_theme">主题</string>
 </resources>

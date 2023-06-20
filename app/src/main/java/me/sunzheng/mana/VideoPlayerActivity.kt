@@ -303,6 +303,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                     var label =
                         if (viewModel.isJaFirst || TextUtils.isEmpty(model.title)) model.subtitle else model.title
                     supportActionBar?.title = label
+                    binding.listviewEpisode
                     viewModel.mediaDescritionLiveData.postValue(model)
                 }
 
@@ -317,16 +318,6 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         binding.player.controllerAutoShow = true
         binding.player.controllerShowTimeoutMs = 3000
 //==================================== init?====================================
-        var position = bundle.getInt(KEY_POSITION_INT, 0)
-        var offset = binding.listviewEpisode.count - position - 1
-        viewModel.position.postValue(offset)
-        binding.listviewEpisode.performItemClick(
-            binding.listviewEpisode.adapter.getView(
-                offset,
-                null,
-                null
-            ), offset, binding.listviewEpisode.adapter.getItemId(offset)
-        )
         binding.listviewEpisode.onItemClickListener =
             OnItemClickListener { parent, view, position, id ->
                 parent?.run {
@@ -336,6 +327,9 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                     hideViewWithAnimation(this)
                 }
             }
+        var position = bundle.getInt(KEY_POSITION_INT, 0)
+        var offset = binding.listviewEpisode.count - position - 1
+        playItem(offset)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowInsetsController =
                 WindowCompat.getInsetsController(window, window.decorView)
@@ -372,6 +366,16 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         }
 
 //=======================================================================
+    }
+
+    fun playItem(position: Int) {
+        binding.listviewEpisode.performItemClick(
+            binding.listviewEpisode.adapter.getView(
+                position,
+                null,
+                null
+            ), position, binding.listviewEpisode.adapter.getItemId(position)
+        )
     }
 
     override fun onStart() {
@@ -519,6 +523,24 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
             }
         }
         binding.player.player.addListener(object : Player.EventListener {
+            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                super.onPlayerStateChanged(playWhenReady, playbackState)
+                when (playbackState) {
+                    Player.STATE_ENDED -> {
+                        if (isAutoPlay) {
+                            var currentPosition = viewModel.position.value!!
+                            if (currentPosition > 0) {
+                                playItem(currentPosition--)
+                            } else {
+                                finish()
+                            }
+                        } else {
+                            finish()
+                        }
+                    }
+                }
+            }
+
             override fun onLoadingChanged(isLoading: Boolean) {
                 binding.progressbar.isVisible = isLoading
             }
@@ -538,7 +560,6 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
 
                 super.onPlayerError(error)
             }
-
         })
         binding.player.player.playWhenReady = true
         binding.player.setOnTouchListener { v, event -> genstureDetector.onTouchEvent(event) }
