@@ -20,10 +20,6 @@
             android:exported="false"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SettingsActivity"
-            android:label="@string/title_activity_settings"
-            android:theme="@style/AppTheme.SettingsActivity" />
-        <activity
             android:name=".LoginActivity"
             android:configChanges="keyboardHidden|orientation|screenSize|locale"
             android:exported="true"

@@ -30,6 +30,12 @@ class GeneralSettingsFragment : PreferenceFragmentCompat() {
             }?.setOnPreferenceChangeListener { preference, newValue ->
                 if (preference is ListPreference)
                     preference.summary = preference.entries[newValue.toString().toInt()]
+                var model = when (newValue.toString()) {
+                    "0" -> ThemeMode.LIGHT
+                    "1" -> ThemeMode.DARK
+                    else -> ThemeMode.SYSTEM
+                }
+                setAppCompatDelegateTheme(model)
                 true
             }
     }

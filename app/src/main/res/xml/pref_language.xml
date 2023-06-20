@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <SwitchPreference
-        android:key="@string/pref_key_ja_first_bool"
-        android:summary="@string/pref_description_ja_first_display"
-        android:title="@string/pref_title_ja_first" />
-</PreferenceScreen>

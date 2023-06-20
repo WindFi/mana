@@ -10,15 +10,15 @@ import androidx.multidex.MultiDexApplication
 import com.bumptech.glide.Glide
 import com.bumptech.glide.MemoryCategory
 import dagger.hilt.android.HiltAndroidApp
+import me.sunzheng.mana.R
+import me.sunzheng.mana.ThemeMode
+import me.sunzheng.mana.setAppCompatDelegateTheme
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import retrofit2.converter.gson.GsonConverterFactory
 import java.net.CookieManager
 import java.net.CookiePolicy
-import java.util.*
+import java.util.Locale
 import java.util.concurrent.TimeUnit
 
 /**
@@ -26,9 +26,7 @@ import java.util.concurrent.TimeUnit
  */
 @HiltAndroidApp
 class App : MultiDexApplication() {
-    var mRetrofit: Retrofit? = null
-    var TAG = javaClass.simpleName
-    val sharedPreferences: SharedPreferences by lazy{
+    val sharedPreferences: SharedPreferences by lazy {
         getSharedPreferences(PreferenceManager.Global.STR_SP_NAME, MODE_PRIVATE).apply {
             registerOnSharedPreferenceChangeListener(configListener)
         }
@@ -44,29 +42,21 @@ class App : MultiDexApplication() {
         super.onCreate()
         Glide.get(this).setMemoryCategory(MemoryCategory.NORMAL)
         initGlobalPreferences()
+
+        var m = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this@App)
+            .getString(getString(R.string.pref_key_dark_theme), "0")
+        var model = when (m) {
+            "0" -> ThemeMode.LIGHT
+            "1" -> ThemeMode.DARK
+            else -> ThemeMode.SYSTEM
+        }
+        setAppCompatDelegateTheme(model)
     }
 
-    val retrofit: Retrofit
-        get() {
-            if (mRetrofit == null || isConfigChanged) try {
-                mRetrofit = defaultRetrofit()
-                isConfigChanged = false
-            } catch (e: IllegalArgumentException) {
-            }
-            return mRetrofit!!
-        }
     private val host: String?
         private get() = sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "")
 
-    @Throws(IllegalArgumentException::class)
-    private fun defaultRetrofit(): Retrofit {
-        return Retrofit.Builder()
-            .baseUrl(host)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(defaultOkHttpClient())
-            .build()
-    }
+
     private fun defaultOkHttpClient(): OkHttpClient {
         return OkHttpClient.Builder()
             .connectTimeout(10000, TimeUnit.MILLISECONDS)
