@@ -4,7 +4,7 @@ buildscript {
     apply from: 'versions.gradle'
 //    addRepos(repositories)
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.1'
+        classpath 'com.android.tools.build:gradle:8.0.2'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$versions.kotlin_version"
         classpath 'com.google.dagger:hilt-android-gradle-plugin:2.45'
         classpath("androidx.navigation:navigation-safe-args-gradle-plugin:2.6.0")
