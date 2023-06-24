@@ -78,11 +78,11 @@
 
     <activity
         android:id="@+id/activity_settings"
-        android:name="me.sunzheng.mana.SettingsActivity"
-        tools:layout="@layout/activity_setting" />
+        android:name="me.sunzheng.mana.MySettingsActivity"
+        tools:layout="@layout/activity_my_settings" />
     <activity
         android:id="@+id/activity_videoplayer"
         android:name="me.sunzheng.mana.VideoPlayerActivity"
-        tools:layout="@layout/activity_video_player" />
+        tools:layout="@layout/fragment_video_player" />
 
 </navigation>

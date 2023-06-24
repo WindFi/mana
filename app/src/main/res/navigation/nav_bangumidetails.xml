@@ -19,7 +19,7 @@
     <activity
         android:id="@+id/activity_videoplayer"
         android:name="me.sunzheng.mana.VideoPlayerActivity"
-        tools:layout="@layout/activity_video_player">
+        tools:layout="@layout/fragment_video_player">
         <argument
             android:name="items"
             app:argType="android.support.v4.media.MediaDescriptionCompat[]"
