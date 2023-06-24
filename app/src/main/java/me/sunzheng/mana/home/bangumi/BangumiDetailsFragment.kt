@@ -11,8 +11,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.appcompat.app.ActionBar
-import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
@@ -106,9 +105,6 @@ class BangumiDetailsFragment : Fragment() {
             viewModel.fetchEpisodeList(id, name).observe(viewLifecycleOwner) { it ->
                 when (it.code) {
                     Status.SUCCESS -> {
-//                        it.data?.forEach {
-//                            Log.i("bbk","${it.episodeEntity.id?.toString()?:"episodeId:null"}/${it.watchProgress?.id?.toString()?:"watchprogress:null"}")
-//                        }
                         binding.episodeModels = it.data
                         val adapter = binding.recyclerView.adapter as EpisodeAdapter
                         adapter.submitList(it.data?.sortedBy { episode -> episode.episodeEntity.bgmEpsId }
@@ -149,19 +145,15 @@ class BangumiDetailsFragment : Fragment() {
         }
     }
 
-    private val supportActionBar: ActionBar?
-        private get() = (requireActivity() as AppCompatActivity?)!!.supportActionBar
-
-    private fun setSupportActionBar(toolbar: Toolbar?) {
-        (activity as AppCompatActivity?)!!.setSupportActionBar(toolbar)
-    }
-
     private fun initToolbar(view: View) {
         mToolbar = view.findViewById(R.id.toolbar)
         mBannerImageView = view.findViewById(R.id.banner_imageview)
         mHeaderCollapsingToolbarLayout = view.findViewById(R.id.header_collaspingtoolbarlayout)
-        setSupportActionBar(mToolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar.navigationIcon =
+            DrawerArrowDrawable(requireContext()).apply { progress = 1f }
+        binding.toolbar.setNavigationOnClickListener {
+            requireActivity().onBackPressedDispatcher.onBackPressed()
+        }
     }
 
     private fun initContent(view: View, entity: BangumiEntity) {
@@ -179,7 +171,7 @@ class BangumiDetailsFragment : Fragment() {
                     .load(this)
                     .into(binding.bannerImageview)
             }
-            supportActionBar?.title = if (isJaFirst) name!! else nameCn!!
+            binding.toolbar.title = if (isJaFirst) name!! else nameCn!!
             binding.bangumidetailsNameTextview.text = if (isJaFirst) nameCn!! else name!!
         }
 
