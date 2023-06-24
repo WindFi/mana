@@ -59,6 +59,9 @@ class VideoPlayerVideoModel @Inject constructor(private val state: SavedStateHan
     val soundLiveData by lazy {
         MutableLiveData<Float>()
     }
+    val isListShowing: MutableLiveData<Boolean> by lazy {
+        MutableLiveData(false)
+    }
 
     //    进度条
     val seekPositionLiveData by lazy {

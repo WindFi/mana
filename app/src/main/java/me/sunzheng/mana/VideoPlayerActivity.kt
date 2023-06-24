@@ -1,5 +1,6 @@
 package me.sunzheng.mana
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -23,24 +24,26 @@ import android.support.v4.media.MediaDescriptionCompat
 import android.text.TextUtils
 import android.util.Log
 import android.view.GestureDetector.SimpleOnGestureListener
-import android.view.Menu
-import android.view.MenuItem
+import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AnimationUtils
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import androidx.activity.viewModels
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.core.view.GestureDetectorCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
-import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.DefaultRenderersFactory
@@ -68,7 +71,7 @@ import me.sunzheng.mana.core.net.v2.database.WatchProgressEntity
 import me.sunzheng.mana.core.net.v2.parseExtractorMediaSource
 import me.sunzheng.mana.core.net.v2.showToast
 import me.sunzheng.mana.core.net.v2.toUUID
-import me.sunzheng.mana.databinding.ActivityVideoPlayerBinding
+import me.sunzheng.mana.databinding.FragmentVideoPlayerBinding
 import me.sunzheng.mana.utils.PreferenceManager.Global
 import me.sunzheng.mana.videoplayer.MediaDescriptionAdapter2
 import me.sunzheng.mana.videoplayer.VideoPlayerVideoModel
@@ -79,7 +82,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoControllerListener {
+class VideoPlayerActivity @Inject constructor() : AppCompatActivity() {
     companion object {
         @JvmStatic
         val KEY_ITEMS_PARCEL = "${VideoPlayerActivity::class.simpleName}_items"
@@ -89,9 +92,6 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
 
         @JvmStatic
         val KEY_BANGUMI_ID_STR = "${VideoPlayerActivity::class.simpleName}_bangumiId"
-
-        @JvmStatic
-        val AUTOSAVE_INTERVAL_MILLION = 1000 * 60L
         fun newInstance(
             context: Context,
             bangumiId: UUID,
@@ -110,13 +110,58 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                 }
     }
 
-    val binding: ActivityVideoPlayerBinding by lazy {
-        DataBindingUtil.setContentView(this, R.layout.activity_video_player)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_video_player)
+        supportFragmentManager.beginTransaction()
+            .replace(
+                R.id.fragment_container,
+                VideoPlayerFragment().apply { arguments = intent.extras })
+            .commit()
     }
+}
+
+@AndroidEntryPoint
+class VideoPlayerFragment : Fragment(), VideoControllerListener {
+    companion object {
+        @JvmStatic
+        val KEY_ITEMS_PARCEL = "${VideoPlayerActivity::class.simpleName}_items"
+
+        @JvmStatic
+        val KEY_POSITION_INT = "${VideoPlayerActivity::class.simpleName}_position"
+
+        @JvmStatic
+        val KEY_BANGUMI_ID_STR = "${VideoPlayerActivity::class.simpleName}_bangumiId"
+
+        @JvmStatic
+        val AUTOSAVE_INTERVAL_MILLION = 1000 * 60L
+
+        @JvmStatic
+        val MESSAGE_DEFAULT_WHAT_INT = 1
+        fun newInstance(
+            context: Context,
+            bangumiId: UUID,
+            position: Int,
+            itemList: List<MediaDescriptionCompat>
+        ) =
+            Bundle()
+                .apply {
+                    putInt(KEY_POSITION_INT, position)
+                    putParcelableArrayList(KEY_ITEMS_PARCEL, ArrayList(itemList))
+                    putString(KEY_BANGUMI_ID_STR, bangumiId.toString())
+                }.let {
+                    Intent(context, VideoPlayerActivity::class.java).apply {
+                        putExtras(it)
+                    }
+                }
+    }
+
+    lateinit var binding: FragmentVideoPlayerBinding
+
     private val player: ExoPlayer by lazy {
         ExoPlayerFactory.newSimpleInstance(
-            this,
-            DefaultRenderersFactory(this),
+            requireContext(),
+            DefaultRenderersFactory(requireContext()),
             DefaultTrackSelector(AdaptiveTrackSelection.Factory()),
             loaderController
         )
@@ -128,12 +173,17 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
     private val dataSourceFactory: DataSource.Factory by lazy {
         CacheDataSourceFactory(
             cache,
-            DefaultHttpDataSourceFactory(Util.getUserAgent(this, packageName)),
+            DefaultHttpDataSourceFactory(
+                Util.getUserAgent(
+                    requireContext(),
+                    requireContext().packageName
+                )
+            ),
             CacheDataSource.FLAG_BLOCK_ON_CACHE
         )
     }
     private val cacheFile: File by lazy {
-        File(externalCacheDir, "mediaCache")
+        File(requireContext().externalCacheDir, "mediaCache")
     }
     private val loaderController: LoadControl by lazy {
         DefaultLoadControl.Builder().apply {
@@ -141,7 +191,8 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         }.createDefaultLoadControl()
     }
     val isAutoPlay: Boolean by lazy {
-        PreferenceManager.getDefaultSharedPreferences(this).getBoolean("isAutoplay", false)
+        PreferenceManager.getDefaultSharedPreferences(requireContext())
+            .getBoolean("isAutoplay", false)
     }
     val broadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent?) {
@@ -159,7 +210,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         }
     }
     val audioManager: AudioManager by lazy {
-        getSystemService(AUDIO_SERVICE) as AudioManager
+        requireContext().getSystemService(Context.AUDIO_SERVICE) as AudioManager
     }
     val audioRequest: AudioFocusRequest.Builder by lazy {
         AudioFocusRequest.Builder(AUDIOFOCUS_GAIN).apply {
@@ -185,23 +236,25 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         }
     }
 
-    val viewModel by viewModels<VideoPlayerVideoModel>()
+    val viewModel by activityViewModels<VideoPlayerVideoModel>()
     val genstureDetector: GestureDetectorCompat by lazy {
-        GestureDetectorCompat(this, NormalGenstureDetector(this, this))
+        GestureDetectorCompat(requireContext(), NormalGenstureDetector(requireActivity(), this))
     }
-    val logWatchProgressRunnable = Runnable {
-        var episodeEntity =
-            viewModel.mediaDescritionLiveData.value?.extras!!.getParcelable<EpisodeEntity>("raw")
-        var m = viewModel.watchProgressLiveData?.value
-        episodeEntity?.run {
-            Log.i(this@VideoPlayerActivity.javaClass.simpleName, "log watchprogress:${bangumiId}")
-            viewModel.updateWatchProgress(
-                bangumiId = viewModel.bangumiId,
-                episodeEntity = episodeEntity,
-                lastWatchPosition = (binding.player.player.currentPosition / 1000).toFloat(),
-                duration = (binding.player.player.duration / 1000).toFloat(),
-                watchprocessEntity = m
-            ).observe(this@VideoPlayerActivity) {
+    val logWatchProgressRunnable: Runnable by lazy {
+        Runnable {
+            var episodeEntity =
+                viewModel.mediaDescritionLiveData.value?.extras!!.getParcelable<EpisodeEntity>("raw")
+            var m = viewModel.watchProgressLiveData?.value
+            episodeEntity?.run {
+                viewModel.updateWatchProgress(
+                    bangumiId = viewModel.bangumiId,
+                    episodeEntity = episodeEntity,
+                    lastWatchPosition = (binding.player.player.currentPosition / 1000).toFloat(),
+                    duration = (binding.player.player.duration / 1000).toFloat(),
+                    watchprocessEntity = m
+                ).observe(viewLifecycleOwner) {
+
+                }
             }
         }
     }
@@ -210,7 +263,10 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
             when (it.what) {
                 1 -> {
                     logWatchProgressRunnable.run()
-                    mHandler.sendEmptyMessageDelayed(1, AUTOSAVE_INTERVAL_MILLION)
+                    mHandler.sendEmptyMessageDelayed(
+                        MESSAGE_DEFAULT_WHAT_INT,
+                        AUTOSAVE_INTERVAL_MILLION
+                    )
                     true
                 }
 
@@ -218,36 +274,49 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
             }
         }
     }
+    val onBackPressedCallback: OnBackPressedCallback by lazy {
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                onBackPressed()
+            }
+        }
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setSupportActionBar(binding.toolbar)
-        supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        supportActionBar?.setHomeButtonEnabled(true)
-        supportActionBar?.title = ""
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentVideoPlayerBinding.inflate(inflater)
+        return binding.root
+    }
+
+    @SuppressLint("ResourceType")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
         binding.player.player = player
         binding.player.keepScreenOn = true
         setup()
         loadConfig()
         binding.sourceList.adapter = ArrayAdapter<VideoFileEntity>(
-            this@VideoPlayerActivity,
+            requireContext(),
             R.layout.item_source_listview,
             R.id.title
         )
-        viewModel.videoFileLiveData.observe(this) {
+        viewModel.videoFileLiveData.observe(viewLifecycleOwner) {
             it.parseExtractorMediaSource(viewModel.host, dataSourceFactory).run {
                 player.prepare(this)
             }
         }
-        var bundle = savedInstanceState?.getBundle("args") ?: intent.extras!!
+        var bundle = savedInstanceState?.getBundle("args") ?: requireArguments()
 //   TODO:=================这里需要优化 前面的bangumiId 没有从episodeEntity 里面传过来=================================
         viewModel.bangumiId = bundle.getString(KEY_BANGUMI_ID_STR, "")
 //===============================================================================================================
-        viewModel.mediaDescritionLiveData.observe(this) { mediaDescriptionCompat ->
+        viewModel.mediaDescritionLiveData.observe(viewLifecycleOwner) { mediaDescriptionCompat ->
             (binding.sourceList.adapter as ArrayAdapter<VideoFileEntity>).clear()
             viewModel.fetchVideoFiles(mediaDescriptionCompat.mediaId!!.toUUID())
-                .observe(this@VideoPlayerActivity) {
+                .observe(viewLifecycleOwner) {
                     when (it.code) {
                         Status.SUCCESS -> {
                             it.data?.firstOrNull()?.run {
@@ -266,8 +335,12 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                                     viewModel.videoFileLiveData.postValue(this)
                                 }
                             }
-                            mHandler.removeCallbacksAndMessages(logWatchProgressRunnable)
-                            mHandler.sendEmptyMessageDelayed(1, AUTOSAVE_INTERVAL_MILLION)
+                            mHandler.removeMessages(MESSAGE_DEFAULT_WHAT_INT)
+                            mHandler.sendEmptyMessageDelayed(
+                                MESSAGE_DEFAULT_WHAT_INT,
+                                AUTOSAVE_INTERVAL_MILLION
+                            )
+
                         }
 
                         Status.ERROR -> it?.message?.run {
@@ -283,7 +356,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                                         dataSourceFactory
                                     )?.run {
                                         player.prepare(this)
-                                        supportActionBar?.title = mediaDescriptionCompat.title
+                                        binding.toolbar.title = mediaDescriptionCompat.title
                                         binding.player.hideController()
                                     }
                             }
@@ -295,14 +368,14 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
             ?.run {
                 binding.listviewEpisode.adapter =
                     MediaDescriptionAdapter2(
-                        this@VideoPlayerActivity,
+                        requireContext(),
                         this
                     )
-                viewModel.position.observe(this@VideoPlayerActivity) { position ->
+                viewModel.position.observe(viewLifecycleOwner) { position ->
                     var model = this[position]
                     var label =
                         if (viewModel.isJaFirst || TextUtils.isEmpty(model.title)) model.subtitle else model.title
-                    supportActionBar?.title = label
+                    binding.toolbar.title = label
                     binding.listviewEpisode
                     viewModel.mediaDescritionLiveData.postValue(model)
                 }
@@ -310,10 +383,11 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
             }
 
         binding.player.setControllerVisibilityListener {
-            when (it) {
-                View.VISIBLE -> supportActionBar?.show()
-                else -> supportActionBar?.hide()
-            }
+            binding.appbarlayout.isVisible = it == View.VISIBLE
+//            when (it) {
+//                View.VISIBLE -> binding.appbarlayout
+//                else -> supportActionBar?.hide()
+//            }
         }
         binding.player.controllerAutoShow = true
         binding.player.controllerShowTimeoutMs = 3000
@@ -324,6 +398,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                     if (viewModel.position.value != position) {
                         viewModel.position.postValue(position)
                     }
+                    viewModel.isListShowing.postValue(false)
                     hideViewWithAnimation(this)
                 }
             }
@@ -332,14 +407,17 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         playItem(offset)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowInsetsController =
-                WindowCompat.getInsetsController(window, window.decorView)
+                WindowCompat.getInsetsController(
+                    requireActivity().window,
+                    requireActivity().window.decorView
+                )
             // Configure the behavior of the hidden system bars.
             windowInsetsController.systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
 
             // Add a listener to update the behavior of the toggle fullscreen button when
             // the system bars are hidden or revealed.
-            ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { view, windowInsets ->
+            ViewCompat.setOnApplyWindowInsetsListener(requireActivity().window.decorView) { view, windowInsets ->
                 // You can hide the caption bar even when the other system bars are visible.
                 // To account for this, explicitly check the visibility of navigationBars()
                 // and statusBars() rather than checking the visibility of systemBars().
@@ -364,8 +442,65 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
             }
             binding.player.systemUiVisibility = flag
         }
+        binding.toolbar.setNavigationContentDescription(R.string.nav_app_bar_navigate_up_description)
+        binding.toolbar.navigationIcon = DrawerArrowDrawable(requireContext()).apply {
+            progress = 1f
+        }
 
+        binding.toolbar.setNavigationOnClickListener { requireActivity().onBackPressed() }
+        viewModel.isListShowing.observe(viewLifecycleOwner) {
+            onBackPressedCallback.isEnabled = it
+        }
+        binding.toolbar.inflateMenu(R.menu.video_menu)
+        val sourceMenu = binding.toolbar.menu.findItem(R.id.action_source)
+        sourceMenu.isVisible = false
+        binding.toolbar.setOnMenuItemClickListener { it ->
+            when (it.itemId) {
+                android.R.id.home -> {
+                    requireActivity().onBackPressedDispatcher.onBackPressed()
+                    true
+                }
+
+                R.id.action_list -> {
+                    showEpisodeListView()
+                    true
+                }
+
+                R.id.action_source -> {
+                    showSourceListView()
+                    true
+                }
+
+                R.id.action_feedback -> {
+                    var mediaId = viewModel.mediaDescritionLiveData.value!!.mediaId
+                    var videoFileId = viewModel.videoFileLiveData.value!!.id.toString()
+                    FeedbackActivity.newInstance(
+                        requireContext(),
+                        episodeId = mediaId!!,
+                        videoFileId = videoFileId
+                    ).run {
+                        startActivity(this)
+                    }
+                    true
+                }
+
+                else -> false
+            }
+        }
 //=======================================================================
+    }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        requireActivity().onBackPressedDispatcher.addCallback(
+            this,
+            onBackPressedCallback
+        )
+    }
+
+    override fun onDetach() {
+        super.onDetach()
+        onBackPressedCallback.isEnabled = false
     }
 
     fun playItem(position: Int) {
@@ -413,19 +548,21 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
     }
 
     fun loadConfig() {
-        var s = PreferenceManager.getDefaultSharedPreferences(this)
+        var s = PreferenceManager.getDefaultSharedPreferences(requireContext())
         viewModel.isJaFirst = s.getBoolean(getString(Global.RES_JA_FIRST_BOOL), false)
     }
 
-    override fun onDestroy() {
-        unregisterReceiver(broadcastReceiver)
-        super.onDestroy()
+    override fun onDestroyView() {
+
+        requireActivity().unregisterReceiver(broadcastReceiver)
         player.release()
         cache.release()
-        mHandler.removeCallbacksAndMessages(logWatchProgressRunnable)
+        mHandler.removeMessages(MESSAGE_DEFAULT_WHAT_INT)
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             audioManager.abandonAudioFocusRequest(audioRequest.build())
         }
+        super.onDestroyView()
     }
 
     fun showControllerUI() {
@@ -436,53 +573,16 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         binding.player.hideController()
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.video_menu, menu)
-        val sourceMenu = menu!!.findItem(R.id.action_source)
-        sourceMenu.isVisible = false
-        return super.onCreateOptionsMenu(menu)
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        android.R.id.home -> {
-            super.onBackPressed()
-            true
-        }
-
-        R.id.action_list -> {
-            showEpisodeListView()
-            true
-        }
-
-        R.id.action_source -> {
-            showSourceListView()
-            true
-        }
-
-        R.id.action_feedback -> {
-            var mediaId = viewModel.mediaDescritionLiveData.value!!.mediaId
-            var videoFileId = viewModel.videoFileLiveData.value!!.id.toString()
-            FeedbackActivity.newInstance(
-                this@VideoPlayerActivity,
-                episodeId = mediaId!!,
-                videoFileId = videoFileId
-            ).run {
-                startActivity(this)
-            }
-            true
-        }
-
-        else -> super.onOptionsItemSelected(item)
-    }
-
     fun showSourceListView() {
         hideControllerUI()
         showViewAnimation(binding.sourceListRoot)
+        viewModel.isListShowing.postValue(true)
     }
 
     fun showEpisodeListView() {
         hideControllerUI()
         showViewAnimation(binding.listviewEpisode)
+        viewModel.isListShowing.postValue(true)
     }
 
     fun showViewAnimation(view: View) {
@@ -490,7 +590,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
             return
         }
         view.visibility = View.VISIBLE
-        val animation = AnimationUtils.loadAnimation(this, R.anim.slide_in_right)
+        val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_in_right)
         view.animation = animation
         if (view is ListView) {
             val listView = view
@@ -498,20 +598,21 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         }
     }
 
-    override fun onBackPressed() {
-        if (!isListViewShowing()) {
-            super.onBackPressed()
-        }
-        binding.listviewEpisode.isVisible = false
-        binding.sourceListRoot.isVisible = false
+    fun onBackPressed(): Boolean {
+        return if (isListViewShowing()) {
+            hideViewWithAnimation(binding.listviewEpisode)
+            hideViewWithAnimation(binding.sourceListRoot)
+            viewModel.isListShowing.postValue(false)
+            true
+        } else false
     }
 
     private fun setup() {
-        volumeControlStream = STREAM_MUSIC
+        requireActivity().volumeControlStream = STREAM_MUSIC
         IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY).run {
-            registerReceiver(broadcastReceiver, this)
+            requireActivity().registerReceiver(broadcastReceiver, this)
         }
-        viewModel.isPlaying.observe(this) {
+        viewModel.isPlaying.observe(viewLifecycleOwner) {
             when (it) {
                 true -> {
                     startPlay()
@@ -530,19 +631,19 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                         if (isAutoPlay) {
                             var currentPosition = viewModel.position.value!!
                             if (currentPosition > 0) {
-                                playItem(currentPosition--)
+                                playItem(--currentPosition)
                             } else {
-                                finish()
+                                // TODO: 优化 finish
+                                requireActivity().finish()
                             }
                         } else {
-                            finish()
+                            requireActivity().finish()
                         }
                     }
                 }
             }
 
             override fun onLoadingChanged(isLoading: Boolean) {
-//                binding.progressbar.show()
                 if (isLoading)
                     binding.progressbar.show()
                 else
@@ -567,12 +668,16 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         })
         binding.player.player.playWhenReady = true
         binding.player.setOnTouchListener { v, event -> genstureDetector.onTouchEvent(event) }
-        viewModel.brighnessLiveData.observe(this) {
+        viewModel.brighnessLiveData.observe(viewLifecycleOwner) {
             val per: Float = it / 17 * 255.0f
-            var currentBrightness = window.attributes.screenBrightness * 255f
+            var currentBrightness = requireActivity().window.attributes.screenBrightness * 255f
             if (currentBrightness < 0) {
                 currentBrightness =
-                    Settings.System.getInt(contentResolver, Settings.System.SCREEN_BRIGHTNESS, 0)
+                    Settings.System.getInt(
+                        requireContext().contentResolver,
+                        Settings.System.SCREEN_BRIGHTNESS,
+                        0
+                    )
                         .toFloat()
             }
             currentBrightness += per
@@ -580,12 +685,12 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
                 .coerceAtMost(255f)
                 .coerceAtLeast(0f)
 
-            val layoutpars = window.attributes
+            val layoutpars = requireActivity().window.attributes
             layoutpars.screenBrightness = currentBrightness / 255.0f
-            window.attributes = layoutpars
+            requireActivity().window.attributes = layoutpars
             showBrightnessVal((currentBrightness / 2.55).toInt())
         }
-        viewModel.soundLiveData.observe(this) {
+        viewModel.soundLiveData.observe(viewLifecycleOwner) {
             var currentVol = audioManager.getStreamVolume(STREAM_MUSIC)
             val maxVol = audioManager.getStreamMaxVolume(STREAM_MUSIC)
             currentVol += it.toInt()
@@ -593,7 +698,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
             audioManager.setStreamVolume(STREAM_MUSIC, currentVol, 0)
             showVolumeVal(currentVol * 4)
         }
-        viewModel.seekPositionLiveData.observe(this) {
+        viewModel.seekPositionLiveData.observe(viewLifecycleOwner) {
             showControllerUI()
             var d = player.currentPosition + it * 5000
             binding.viewgroupProgress.isVisible = true
@@ -643,7 +748,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
     fun hideViewWithAnimation(view: View) {
         binding.root.postDelayed({
             view.isVisible = false
-            val animation = AnimationUtils.loadAnimation(this, R.anim.slide_out_right)
+            val animation = AnimationUtils.loadAnimation(requireContext(), R.anim.slide_out_right)
             view.animation = animation
         }, 50)
     }
@@ -652,6 +757,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity(), VideoCont
         if (binding.listviewEpisode.isVisible || binding.sourceListRoot.isVisible) {
             hideViewWithAnimation(binding.listviewEpisode)
             hideViewWithAnimation(binding.sourceListRoot)
+            viewModel.isListShowing.postValue(false)
             return
         }
         if (binding.player.isControllerVisible) {

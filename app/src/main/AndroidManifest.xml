@@ -79,6 +79,7 @@
             android:exported="false"
             android:launchMode="singleTask"
             android:screenOrientation="sensorLandscape"
+            android:parentActivityName=".BangumiDetailsActivity"
             android:theme="@style/AppTheme.VideoPlayActivity">
             <meta-data
                 android:name="android.app.lib_name"
