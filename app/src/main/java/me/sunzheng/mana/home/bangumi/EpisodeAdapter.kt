@@ -1,8 +1,6 @@
 package me.sunzheng.mana.home.bangumi
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
@@ -13,13 +11,11 @@ import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestBuilder
-import com.bumptech.glide.request.RequestOptions
 import kotlinx.coroutines.runBlocking
 import me.sunzheng.mana.R
 import me.sunzheng.mana.core.net.v2.database.EpisodeAndWatchprogress
 import me.sunzheng.mana.core.net.v2.database.EpisodeEntity
+import me.sunzheng.mana.core.net.v2.loadUrl
 import me.sunzheng.mana.utils.HostUtil.makeUp
 import me.sunzheng.mana.utils.LanguageSwitchUtils
 import me.sunzheng.mana.utils.PreferenceManager
@@ -76,19 +72,21 @@ class EpisodeAdapter(var onItemClickListener: ((View, Int, Long, EpisodeEntity) 
         if (coverImage != null) {
             coverImage.url = makeUp(host, coverImage.url)
         }
+        var coverColor = item.thumbnailImage?.dominantColor ?: item.thumbnailColor
 //        item.thumbnail = makeUp(host, item.thumbnail)
-        val request: RequestBuilder<*> = Glide.with(holder.itemView.context)
-            .load(coverImage?.url ?: "")
-
-        val options = RequestOptions()
-        item.thumbnailImage?.dominantColor?.run {
-            try {
-                options.placeholder(ColorDrawable(Color.parseColor(item.thumbnailImage.dominantColor)))
-            } catch (e: Exception) {
-                options.placeholder(ColorDrawable(Color.parseColor(item.thumbnailColor)))
-            }
-        }
-        request.apply(options).into(holder.mImageView)
+//        val request: RequestBuilder<*> = Glide.with(holder.itemView.context)
+//            .load(coverImage?.url ?: "")
+//
+//        val options = RequestOptions()
+//        item.thumbnailImage?.dominantColor?.run {
+//            try {
+//                options.placeholder(ColorDrawable(Color.parseColor(item.thumbnailImage.dominantColor)))
+//            } catch (e: Exception) {
+//                options.placeholder(ColorDrawable(Color.parseColor(item.thumbnailColor)))
+//            }
+//        }
+//        request.apply(options).into(holder.mImageView)
+        holder.mImageView.loadUrl(coverImage!!.url, coverColor)
         holder.mEpisodeNoTextView.text = holder.itemView.context.getString(
             R.string.episode_template,
             item.episodeNo.toString() + ""

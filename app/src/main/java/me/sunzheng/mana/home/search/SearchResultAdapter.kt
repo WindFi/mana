@@ -1,7 +1,5 @@
 package me.sunzheng.mana.home.search
 
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,10 +9,9 @@ import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SortedList
 import androidx.recyclerview.widget.SortedListAdapterCallback
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import me.sunzheng.mana.R
 import me.sunzheng.mana.core.net.v2.database.BangumiEntity
+import me.sunzheng.mana.core.net.v2.loadUrl
 import me.sunzheng.mana.utils.ArrarysResourceUtils
 import me.sunzheng.mana.utils.LanguageSwitchUtils
 
@@ -67,13 +64,17 @@ class SearchResultAdapter(
 //                )
 //            }
         }
-        Glide.with(holder.itemView.context)
-            .load(mValues[position].image)
-            .apply(
-                RequestOptions()
-                    .placeholder(ColorDrawable(Color.parseColor(mValues[position].cover_color)))
-            )
-            .into(holder.mImageView)
+//        Glide.with(holder.itemView.context)
+//            .load(mValues[position].image)
+//            .apply(
+//                RequestOptions()
+//                    .placeholder(ColorDrawable(Color.parseColor(mValues[position].cover_color)))
+//            )
+//            .into(holder.mImageView)
+        mValues[position].image?.run {
+            holder.mImageView.loadUrl(this, mValues[position].cover_color)
+        }
+
         holder.mTitleTextView.text = LanguageSwitchUtils.switchLanguageToJa(
             holder.itemView.context,
             mValues[position].name,

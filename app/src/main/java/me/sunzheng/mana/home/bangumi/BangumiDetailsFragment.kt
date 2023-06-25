@@ -19,7 +19,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.google.android.material.appbar.CollapsingToolbarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import me.sunzheng.mana.BangumiDetailsActivity
@@ -28,6 +27,7 @@ import me.sunzheng.mana.R
 import me.sunzheng.mana.VideoPlayerActivity
 import me.sunzheng.mana.core.net.Status
 import me.sunzheng.mana.core.net.v2.database.BangumiEntity
+import me.sunzheng.mana.core.net.v2.loadUrl
 import me.sunzheng.mana.core.net.v2.parseMediaDescription
 import me.sunzheng.mana.core.net.v2.showToast
 import me.sunzheng.mana.databinding.FragmentBangumidetailsBinding
@@ -164,12 +164,14 @@ class BangumiDetailsFragment : Fragment() {
         }
         entity.run {
             coverImage?.run {
-                Glide.with(requireContext())
-                    .load(url)
-                    .into(binding.bangumidetailsAblumImageview)
-                Glide.with(requireActivity())
-                    .load(this)
-                    .into(binding.bannerImageview)
+                binding.bangumidetailsAblumImageview.loadUrl(url)
+                binding.bannerImageview.loadUrl(url)
+//                Glide.with(requireContext())
+//                    .load(url)
+//                    .into(binding.bangumidetailsAblumImageview)
+//                Glide.with(requireActivity())
+//                    .load(this)
+//                    .into(binding.bannerImageview)
             }
             binding.toolbar.title = if (isJaFirst) name!! else nameCn!!
             binding.bangumidetailsNameTextview.text = if (isJaFirst) nameCn!! else name!!

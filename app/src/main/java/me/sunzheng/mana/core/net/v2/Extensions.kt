@@ -1,12 +1,19 @@
 package me.sunzheng.mana.core.net.v2
 
 import android.app.Activity
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.support.v4.media.MediaDescriptionCompat
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.gson.Gson
@@ -57,3 +64,16 @@ fun String.toUUID() = UUID.fromString(this)
 fun WatchProgressEntity.parseRecord() = Gson().fromJson(Gson().toJson(this), Record::class.java)
 fun Record.parseWatchProgressEntity() =
     Gson().fromJson(Gson().toJson(this), WatchProgressEntity::class.java)
+
+fun ImageView.loadUrl(url: String, domainColor: String? = null) {
+    var m = domainColor?.let { RequestOptions().placeholder(ColorDrawable(Color.parseColor(it))) }
+
+    var r = Glide.with(this)
+        .load(url)
+        .downsample(DownsampleStrategy.CENTER_INSIDE)
+        .transition(DrawableTransitionOptions.withCrossFade())
+    m?.run {
+        r.apply(this)
+    }
+    r.into(this)
+}

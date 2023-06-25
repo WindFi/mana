@@ -1,18 +1,15 @@
 package me.sunzheng.mana.home.onair
 
 import android.content.Context
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SortedList
 import androidx.recyclerview.widget.SortedListAdapterCallback
-import com.bumptech.glide.Glide
-import com.bumptech.glide.request.RequestOptions
 import me.sunzheng.mana.R
 import me.sunzheng.mana.core.net.v2.database.BangumiEntity
+import me.sunzheng.mana.core.net.v2.loadUrl
 import me.sunzheng.mana.databinding.ItemOnairfragmentBinding
 import me.sunzheng.mana.utils.ArrarysResourceUtils
 import me.sunzheng.mana.utils.HostUtil
@@ -60,10 +57,9 @@ class OnAirItemRecyclerViewAdapter(
             if (coverImage == null) mValues[position].cover_color else coverImage.dominantColor
         var coverImageUrl = if (coverImage == null) mValues[position].image else coverImage.url
         coverImageUrl = HostUtil.makeUp(host, coverImageUrl)
-        Glide.with(holder.itemView.context)
-            .load(coverImageUrl)
-            .apply(RequestOptions().placeholder(ColorDrawable(Color.parseColor(domainColor))))
-            .into(holder.binding.itemAlbum)
+
+        holder.binding.itemAlbum.loadUrl(coverImageUrl, domainColor)
+
         holder.binding.itemTitleTextview.text = LanguageSwitchUtils.switchLanguageToJa(
             holder.binding.root.context,
             mValues.get(position).name,
