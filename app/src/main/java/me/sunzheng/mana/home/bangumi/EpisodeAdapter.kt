@@ -51,59 +51,50 @@ class EpisodeAdapter(var onItemClickListener: ((View, Int, Long, EpisodeEntity) 
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position).episodeEntity
-        if (TextUtils.isEmpty(host)) {
-            host = holder.itemView.context.getSharedPreferences(
-                PreferenceManager.Global.STR_SP_NAME,
-                Context.MODE_PRIVATE
-            )
-                .getString(PreferenceManager.Global.STR_KEY_HOST, "")
-        }
-        holder.mTitleTextView.text = item.nameCn
-        if (item.status == 2L) {
-            holder.itemView.setOnClickListener { v ->
-                onItemClickListener?.invoke(v, position, getItemId(position), item)
+        getItem(position).run {
+            episodeEntity.run {
+                if (TextUtils.isEmpty(host)) {
+                    host = holder.itemView.context.getSharedPreferences(
+                        PreferenceManager.Global.STR_SP_NAME,
+                        Context.MODE_PRIVATE
+                    )
+                        .getString(PreferenceManager.Global.STR_KEY_HOST, "")
+                }
+                holder.mTitleTextView.text = nameCn
+                if (status == 2L) {
+                    holder.itemView.setOnClickListener { v ->
+                        onItemClickListener?.invoke(v, position, getItemId(position), this)
+                    }
+                    holder.itemView.isClickable = true
+                } else {
+                    holder.itemView.isClickable = false
+                }
+                val coverImage = thumbnailImage
+                if (coverImage != null) {
+                    coverImage.url = makeUp(host, coverImage.url)
+                }
+                var coverColor = thumbnailImage?.dominantColor ?: thumbnailColor
+                holder.mImageView.loadUrl(coverImage!!.url, coverColor)
+                holder.mEpisodeNoTextView.text = holder.itemView.context.getString(
+                    R.string.episode_template,
+                    episodeNo.toString() + ""
+                )
+                holder.mTitleTextView.text =
+                    LanguageSwitchUtils.switchLanguageToJa(holder.itemView.context, name, nameCn)
+                holder.mUpdateDateTextView.text = airdate
             }
-            holder.itemView.isClickable = true
-        } else {
-            holder.itemView.isClickable = false
+
+            // watchProgress
+            watchProgress?.run {
+                holder.mProgressBar.visibility = View.VISIBLE
+                holder.mProgressBar.max = 100
+                holder.mProgressBar.progress =
+                    if (percentage * 100 < 1) 1 else (percentage * 100.0).toInt()
+            } ?: runBlocking {
+                holder.mProgressBar.visibility = View.GONE
+            }
         }
-        val coverImage = item.thumbnailImage
-        if (coverImage != null) {
-            coverImage.url = makeUp(host, coverImage.url)
-        }
-        var coverColor = item.thumbnailImage?.dominantColor ?: item.thumbnailColor
-//        item.thumbnail = makeUp(host, item.thumbnail)
-//        val request: RequestBuilder<*> = Glide.with(holder.itemView.context)
-//            .load(coverImage?.url ?: "")
-//
-//        val options = RequestOptions()
-//        item.thumbnailImage?.dominantColor?.run {
-//            try {
-//                options.placeholder(ColorDrawable(Color.parseColor(item.thumbnailImage.dominantColor)))
-//            } catch (e: Exception) {
-//                options.placeholder(ColorDrawable(Color.parseColor(item.thumbnailColor)))
-//            }
-//        }
-//        request.apply(options).into(holder.mImageView)
-        holder.mImageView.loadUrl(coverImage!!.url, coverColor)
-        holder.mEpisodeNoTextView.text = holder.itemView.context.getString(
-            R.string.episode_template,
-            item.episodeNo.toString() + ""
-        )
-        holder.mTitleTextView.text =
-            LanguageSwitchUtils.switchLanguageToJa(holder.itemView.context, item.name, item.nameCn)
-        //        holder.mTitleTextView.setText(TextUtils.isEmpty(item.getNameCn()) ? item.getName() : item.getNameCn());
-        holder.mUpdateDateTextView.text = item.airdate
-        // watchProgress
-        getItem(position).watchProgress?.run {
-            holder.mProgressBar.visibility = View.VISIBLE
-            holder.mProgressBar.max = 100
-            holder.mProgressBar.progress =
-                if (percentage * 100 < 1) 1 else (percentage * 100.0).toInt()
-        } ?: runBlocking {
-            holder.mProgressBar.visibility = View.GONE
-        }
+
     }
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {

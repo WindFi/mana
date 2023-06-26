@@ -166,12 +166,6 @@ class BangumiDetailsFragment : Fragment() {
             coverImage?.run {
                 binding.bangumidetailsAblumImageview.loadUrl(url)
                 binding.bannerImageview.loadUrl(url)
-//                Glide.with(requireContext())
-//                    .load(url)
-//                    .into(binding.bangumidetailsAblumImageview)
-//                Glide.with(requireActivity())
-//                    .load(this)
-//                    .into(binding.bannerImageview)
             }
             binding.toolbar.title = if (isJaFirst) name!! else nameCn!!
             binding.bangumidetailsNameTextview.text = if (isJaFirst) nameCn!! else name!!
