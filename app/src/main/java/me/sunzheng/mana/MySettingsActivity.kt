@@ -1,6 +1,7 @@
 package me.sunzheng.mana
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.preference.ListPreference
@@ -18,6 +19,16 @@ class MySettingsActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction()
             .replace(binding.fragmentContainer.id, GeneralSettingsFragment())
             .commit()
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean = when (item.itemId) {
+        android.R.id.home -> {
+            onBackPressedDispatcher.onBackPressed()
+            true
+        }
+
+        else -> super.onOptionsItemSelected(item)
     }
 }
 

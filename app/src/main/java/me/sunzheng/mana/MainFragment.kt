@@ -3,7 +3,6 @@ package me.sunzheng.mana
 import android.app.SearchManager
 import android.content.Context
 import android.content.Context.SEARCH_SERVICE
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -192,10 +191,7 @@ class MainFragment : Fragment(),
         binding.drawerLayout.closeDrawer(GravityCompat.START)
         return when (item.itemId) {
             R.id.nav_settings -> {
-//                findNavController().navigate(MainFragmentDirections.mainToSettings())
-                Intent(requireActivity(), MySettingsActivity::class.java).run {
-                    startActivity(this)
-                }
+                findNavController().navigate(MainFragmentDirections.mainToSettings())
                 true
             }
 
