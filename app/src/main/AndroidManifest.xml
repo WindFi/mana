@@ -18,6 +18,7 @@
         <activity
             android:name=".MySettingsActivity"
             android:exported="false"
+            android:parentActivityName=".LoginActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".LoginActivity"
