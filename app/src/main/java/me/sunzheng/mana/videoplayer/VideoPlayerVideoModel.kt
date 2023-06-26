@@ -118,7 +118,6 @@ class VideoRepository {
                         Gson().fromJson(Gson().toJson(this), WatchProgressEntity::class.java)
                     m.id = local!!.id
                     m.userName = userName
-//                    这一段会产生重复内容
                     watchProgressDao.insert(m)
                 }
             }

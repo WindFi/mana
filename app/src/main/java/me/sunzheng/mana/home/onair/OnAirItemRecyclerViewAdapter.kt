@@ -44,38 +44,38 @@ class OnAirItemRecyclerViewAdapter(
         ViewHolder(ItemOnairfragmentBinding.inflate(LayoutInflater.from(parent.context)))
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.root.setOnClickListener {
-            onItemClickListener?.invoke(it, position, 0, mValues[position])
+        mValues[position].run {
+            holder.binding.root.setOnClickListener {
+                onItemClickListener?.invoke(it, position, 0, this)
+            }
+            val host = holder.itemView.context.getSharedPreferences(
+                PreferenceManager.Global.STR_SP_NAME,
+                Context.MODE_PRIVATE
+            ).getString(PreferenceManager.Global.STR_KEY_HOST, "")
+            val domainColor = coverImage?.dominantColor ?: cover_color!!
+            var coverImageUrl = coverImage?.url ?: image!!
+
+            coverImageUrl = HostUtil.makeUp(host, coverImageUrl)
+
+            holder.binding.itemAlbum.loadUrl(coverImageUrl, domainColor)
+
+            holder.binding.itemTitleTextview.text = LanguageSwitchUtils.switchLanguageToJa(
+                holder.binding.root.context,
+                name,
+                nameCn
+            ).trim()
+            holder.binding.itemSubtitleTextview.text = summary
+            val dayInWeek = ArrarysResourceUtils.dayInWeek(
+                holder.itemView.context, airWeekday
+                    .toInt()
+            )
+            val resultString = holder.itemView.context.getString(
+                R.string.formatter_day_airdate,
+                airDate,
+                dayInWeek
+            )
+            holder.binding.itemEtcTextview.text = resultString
         }
-        val host = holder.itemView.context.getSharedPreferences(
-            PreferenceManager.Global.STR_SP_NAME,
-            Context.MODE_PRIVATE
-        )
-            .getString(PreferenceManager.Global.STR_KEY_HOST, "")
-        val coverImage = mValues[position].coverImage
-        val domainColor =
-            if (coverImage == null) mValues[position].cover_color else coverImage.dominantColor
-        var coverImageUrl = if (coverImage == null) mValues[position].image else coverImage.url
-        coverImageUrl = HostUtil.makeUp(host, coverImageUrl)
-
-        holder.binding.itemAlbum.loadUrl(coverImageUrl, domainColor)
-
-        holder.binding.itemTitleTextview.text = LanguageSwitchUtils.switchLanguageToJa(
-            holder.binding.root.context,
-            mValues.get(position).name,
-            mValues.get(position).nameCn
-        ).trim()
-        holder.binding.itemSubtitleTextview.text = mValues.get(position).summary
-        val dayInWeek = ArrarysResourceUtils.dayInWeek(
-            holder.itemView.context, mValues[position].airWeekday
-                .toInt()
-        )
-        val resultString = holder.itemView.context.getString(
-            R.string.formatter_day_airdate,
-            mValues[position].airDate,
-            dayInWeek
-        )
-        holder.binding.itemEtcTextview.text = resultString
     }
 
     override fun getItemCount(): Int {

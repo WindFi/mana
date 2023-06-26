@@ -53,47 +53,31 @@ class SearchResultAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        mValues[position]?.run {
+            image?.run {
+                holder.mImageView.loadUrl(this, mValues[position].cover_color)
+            }
+            holder.itemView.setOnClickListener {
+                onItemClickListener?.invoke(it, position, 0, this)
+            }
+            holder.mTitleTextView.text = LanguageSwitchUtils.switchLanguageToJa(
+                holder.itemView.context,
+                name,
+                nameCn
+            )
+            holder.mSummaryTextView.text = summary
 
-        holder.itemView.setOnClickListener {
-            onItemClickListener?.invoke(it, position, 0, mValues[position])
-//            mValues.run {
-//                BangumiDetailsActivity.newInstance(
-//                    it.context as Activity,
-//                    mValues[position],
-//                    holder.mImageView
-//                )
-//            }
+            val dayInWeek = ArrarysResourceUtils.dayInWeek(
+                holder.itemView.context,
+                airWeekday.toInt()
+            )
+            val resultString = holder.itemView.context.getString(
+                R.string.formatter_day_airdate,
+                airDate,
+                dayInWeek
+            )
+            holder.mEtcTextView.text = resultString
         }
-//        Glide.with(holder.itemView.context)
-//            .load(mValues[position].image)
-//            .apply(
-//                RequestOptions()
-//                    .placeholder(ColorDrawable(Color.parseColor(mValues[position].cover_color)))
-//            )
-//            .into(holder.mImageView)
-        mValues[position].image?.run {
-            holder.mImageView.loadUrl(this, mValues[position].cover_color)
-        }
-
-        holder.mTitleTextView.text = LanguageSwitchUtils.switchLanguageToJa(
-            holder.itemView.context,
-            mValues[position].name,
-            mValues[position].nameCn
-        )
-        holder.mSummaryTextView.text = mValues[position].summary
-        val dayInWeek = ArrarysResourceUtils.dayInWeek(
-            holder.itemView.context,
-            mValues[position].airWeekday.toInt()
-        )
-        val resultString = holder.itemView.context.getString(
-            R.string.formatter_day_airdate,
-            mValues[position].airDate,
-            dayInWeek
-        )
-        //        int color= ContextCompat.getColor(holder.itemView.getContext(),R.color.colorPrimary);
-//        SpannableStringBuilder spannableStringBuilder=new SpannableStringBuilder(resultString);
-//        spannableStringBuilder.setSpan(new ForegroundColorSpan(color),resultString.indexOf(dayInWeek),resultString.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        holder.mEtcTextView.text = resultString
     }
 }
 

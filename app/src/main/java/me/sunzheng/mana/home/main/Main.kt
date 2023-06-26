@@ -193,20 +193,4 @@ class BangumiRepository {
                     FavoriteStatusRequest().apply { this.status = status }
                 )
         }.asLiveData()
-    // TODO: 2021/12/4 updateWatchProgress
-//    fun updateWatchProgress(vararg watchProgressEntity: WatchProgressEntity,userName:String,sync:Boolean=false)=object:NetworkBoundResource<WatchProgressEntity,Response>(){
-//        override fun saveCallResult(item: Response) {
-//            TODO("Not yet implemented")
-//        }
-//
-//        override fun shouldFetch(data: WatchProgressEntity?)=sync
-//
-//        override fun loadFromDb(): LiveData<WatchProgressEntity> {
-//            TODO("Not yet implemented")
-//        }
-//
-//        override fun createCall(): LiveData<ApiResponse<Response>> {
-//            TODO("Not yet implemented")
-//        }
-//    }
 }
