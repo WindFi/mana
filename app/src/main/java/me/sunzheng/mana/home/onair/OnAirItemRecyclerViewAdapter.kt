@@ -32,7 +32,7 @@ class OnAirItemRecyclerViewAdapter(
             ): Boolean = oldItem?.id == newItem?.id
 
             override fun areItemsTheSame(item1: BangumiEntity?, item2: BangumiEntity?): Boolean =
-                item1?.hashCode() == item2?.hashCode()
+                item1?.id == item2?.id
         }
     )
 
