@@ -107,7 +107,7 @@ class BangumiDetailsFragment : Fragment() {
                     Status.SUCCESS -> {
                         binding.episodeModels = it.data
                         val adapter = binding.recyclerView.adapter as EpisodeAdapter
-                        adapter.submitList(it.data?.sortedBy { episode -> episode.episodeEntity.bgmEpsId }
+                        adapter.submitList(it.data?.sortedBy { episode -> episode.episodeEntity.episodeNo }
                             ?.reversed())
                     }
 
