@@ -61,5 +61,5 @@
     <string name="title_wednesday">星期三</string>
     <string name="title_empty_data">没有内容</string>
     <string name="text_seekto">跳转至 %1$s</string>
-    <string name="title_theme">主题</string>
+    <string name="title_theme">深色主题</string>
 </resources>
