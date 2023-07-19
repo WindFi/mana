@@ -29,11 +29,14 @@ class AccountViewModel @Inject constructor() : ViewModel() {
     }
 
     fun checkIsLogin(context: Context) {
-        var bool = context.getSharedPreferences(
+        var sp = context.getSharedPreferences(
             PreferenceManager.Global.STR_SP_NAME,
             Context.MODE_PRIVATE
-        ).getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false)
-        isLoginLiveData.postValue(bool)
+        )
+        var bool = sp.getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false)
+        var userName = sp.getString(PreferenceManager.Global.STR_USERNAME, "")
+        var passWord = sp.getString(PreferenceManager.Global.STR_PASSWORD, "")
+        isLoginLiveData.postValue(!(userName.isNullOrEmpty() || passWord.isNullOrEmpty()))
     }
 
 
