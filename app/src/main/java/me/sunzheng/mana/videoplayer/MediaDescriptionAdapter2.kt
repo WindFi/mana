@@ -15,16 +15,69 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
 import me.sunzheng.mana.R
+import me.sunzheng.mana.core.net.v2.database.EpisodeEntity
+import java.util.Collections
+
+abstract class SortListAdapter<T>(val list: MutableList<T> = mutableListOf()) : BaseAdapter() {
+    override fun getCount(): Int = list.size
+    override fun getItem(position: Int): T? = list[position]
+
+    override fun getItemId(position: Int): Long = 0
+
+    fun addAll(items: Collection<T>) {
+        internalAddAll(items).run {
+            list.clear()
+            list.addAll(this)
+        }
+
+        internalSort()
+
+        notifyDataSetChanged()
+    }
+
+    private fun internalAddAll(items: Collection<T>): List<T> {
+        val copy = MutableList(size = list.size) { list[it] }
+        Collections.copy(copy, list)
+        items.forEach { source ->
+            if (list.filter { !sameTo(source, it) }.isEmpty()) {
+                copy.add(source)
+            }
+        }
+        return copy
+    }
+
+    private fun internalSort() {
+        for (i in 0 until list.size - 1) {
+            for (j in i + 1 until list.size) {
+                if (compareTo(list[i], list[j]) > 0) {
+                    val value = list[i]
+                    list[i] = list[j]
+                    list[j] = value
+                }
+            }
+        }
+    }
+
+    abstract fun sameTo(old: T, new: T): Boolean
+    abstract fun compareTo(old: T, new: T): Int
+}
 
 class MediaDescriptionAdapter2(
     val context: Context,
-    var list: List<MediaDescriptionCompat>? = null
-) : BaseAdapter() {
+    mList: List<MediaDescriptionCompat>
+) : SortListAdapter<MediaDescriptionCompat>(mList.toMutableList()) {
+    override fun sameTo(old: MediaDescriptionCompat, new: MediaDescriptionCompat): Boolean =
+        old.mediaId == new.mediaId
 
-    override fun getCount(): Int = list?.size ?: 0
-    override fun getItem(position: Int): MediaDescriptionCompat? = list?.get(position)
-
-    override fun getItemId(position: Int): Long = 0
+    override fun compareTo(old: MediaDescriptionCompat, new: MediaDescriptionCompat): Int {
+        var oldSort = old.extras?.getParcelable<EpisodeEntity>("raw")
+        var newSort = new.extras?.getParcelable<EpisodeEntity>("raw")
+        if (oldSort == null)
+            return -1
+        if (newSort == null)
+            return 1
+        return oldSort.episodeNo - newSort.episodeNo
+    }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         var v = convertView ?: LayoutInflater.from(context).inflate(
@@ -32,7 +85,7 @@ class MediaDescriptionAdapter2(
         )
         var viewHolder = v.tag ?: ViewHolder(v)
         v.tag = viewHolder
-        var item = list?.get(position) ?: null
+        var item = list.get(position)
         item?.run {
             if (viewHolder is ViewHolder) {
                 viewHolder.imageView.alpha = 0.3f

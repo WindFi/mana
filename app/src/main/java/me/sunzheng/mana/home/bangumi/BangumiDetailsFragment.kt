@@ -28,7 +28,6 @@ import me.sunzheng.mana.VideoPlayerActivity
 import me.sunzheng.mana.core.net.Status
 import me.sunzheng.mana.core.net.v2.database.BangumiEntity
 import me.sunzheng.mana.core.net.v2.loadUrl
-import me.sunzheng.mana.core.net.v2.parseMediaDescription
 import me.sunzheng.mana.core.net.v2.showToast
 import me.sunzheng.mana.databinding.FragmentBangumidetailsBinding
 import me.sunzheng.mana.utils.ArrarysResourceUtils
@@ -123,15 +122,11 @@ class BangumiDetailsFragment : Fragment() {
                             EpisodeAdapter { _, position, id, model ->
                                 Handler(Looper.getMainLooper())
                                     .postDelayed({
-                                        // TODO: ??? 
                                         VideoPlayerActivity.newInstance(
                                             requireContext(),
-                                            this.id,
-                                            binding.episodeModels!!.size - (position + 1),
-                                            binding.episodeModels!!.sortedBy { it.episodeEntity.episodeNo }
-                                                .reversed().map {
-                                                    it.episodeEntity.parseMediaDescription("")
-                                                }
+                                            bangumiId = this.id,
+                                            episodeId = model.id,
+                                            position
                                         ).run {
                                             requireContext().startActivity(this)
                                         }

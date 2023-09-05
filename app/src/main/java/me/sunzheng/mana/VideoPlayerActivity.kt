@@ -92,16 +92,20 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity() {
 
         @JvmStatic
         val KEY_BANGUMI_ID_STR = "${VideoPlayerActivity::class.simpleName}_bangumiId"
+
+        @JvmStatic
+        val KEY_EPISODE_ID_STR = "${VideoPlayerActivity::class.simpleName}_episodeId"
+
         fun newInstance(
             context: Context,
             bangumiId: UUID,
-            position: Int,
-            itemList: List<MediaDescriptionCompat>
+            episodeId: UUID,
+            position: Int
         ) =
             Bundle()
                 .apply {
                     putInt(KEY_POSITION_INT, position)
-                    putParcelableArrayList(KEY_ITEMS_PARCEL, ArrayList(itemList))
+                    putString(KEY_EPISODE_ID_STR, episodeId.toString())
                     putString(KEY_BANGUMI_ID_STR, bangumiId.toString())
                 }.let {
                     Intent(context, VideoPlayerActivity::class.java).apply {
@@ -134,6 +138,9 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
         val KEY_BANGUMI_ID_STR = "${VideoPlayerActivity::class.simpleName}_bangumiId"
 
         @JvmStatic
+        val KEY_EPISODE_ID_STR = "${VideoPlayerActivity::class.simpleName}_episodeId"
+
+        @JvmStatic
         val AUTOSAVE_INTERVAL_MILLION = 1000 * 60L
 
         @JvmStatic
@@ -141,13 +148,13 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
         fun newInstance(
             context: Context,
             bangumiId: UUID,
-            position: Int,
-            itemList: List<MediaDescriptionCompat>
+            episodeId: UUID,
+            position: Int
         ) =
             Bundle()
                 .apply {
                     putInt(KEY_POSITION_INT, position)
-                    putParcelableArrayList(KEY_ITEMS_PARCEL, ArrayList(itemList))
+                    putString(KEY_EPISODE_ID_STR, episodeId.toString())
                     putString(KEY_BANGUMI_ID_STR, bangumiId.toString())
                 }.let {
                     Intent(context, VideoPlayerActivity::class.java).apply {
@@ -364,23 +371,17 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
                     }
                 }
         }
-        bundle.getParcelableArrayList<MediaDescriptionCompat>(KEY_ITEMS_PARCEL)
-            ?.run {
-                binding.listviewEpisode.adapter =
-                    MediaDescriptionAdapter2(
-                        requireContext(),
-                        this
-                    )
-                viewModel.position.observe(viewLifecycleOwner) { position ->
-                    var model = this[position]
-                    var label =
-                        if (viewModel.isJaFirst || TextUtils.isEmpty(model.title)) model.subtitle else model.title
-                    binding.toolbar.title = label
-                    binding.listviewEpisode
-                    viewModel.mediaDescritionLiveData.postValue(model)
-                }
-
+        viewModel.position.observe(viewLifecycleOwner) { position ->
+            binding.listviewEpisode.adapter?.run {
+                Log.i("aabb", "position: $position")
+                var model = this.getItem(position) as MediaDescriptionCompat
+                var label =
+                    if (viewModel.isJaFirst || TextUtils.isEmpty(model.title)) model.subtitle else model.title
+                binding.toolbar.title = label
+                binding.listviewEpisode
+                viewModel.mediaDescritionLiveData.postValue(model)
             }
+        }
 
         binding.player.setControllerVisibilityListener {
             binding.appbarlayout.isVisible = it == View.VISIBLE
@@ -402,9 +403,39 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
                     hideViewWithAnimation(this)
                 }
             }
-        var position = bundle.getInt(KEY_POSITION_INT, 0)
-        var offset = binding.listviewEpisode.count - position - 1
-        playItem(offset)
+        val initEpisodeId = bundle.getString(KEY_EPISODE_ID_STR, "").toUUID()
+        viewModel.fetchEpisodeList(viewModel.bangumiId.toUUID()).observe(viewLifecycleOwner) {
+            when (it.code) {
+                Status.SUCCESS -> {
+                    it.data?.run {
+                        appendEpisode(it.data)
+                        if (viewModel.isPlaying.value != true) {
+                            findPositionByEpisodeId(initEpisodeId).takeIf { position -> position > -1 }
+                                ?.run {
+                                    playItem(this)
+                                }
+                        }
+                    }
+                }
+
+                Status.LOADING -> {
+                    it.data?.run {
+                        appendEpisode(it.data)
+                        findPositionByEpisodeId(initEpisodeId).takeIf { position -> position > -1 }
+                            ?.run {
+                                playItem(this)
+                            }
+                    }
+                }
+
+                Status.ERROR -> {
+                    it.message?.run {
+                        requireActivity().showToast(this)
+                    }
+                }
+            }
+        }
+//        ===================================================================
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             val windowInsetsController =
                 WindowCompat.getInsetsController(
@@ -488,6 +519,27 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
             }
         }
 //=======================================================================
+    }
+
+    private fun appendEpisode(items: List<MediaDescriptionCompat>) {
+        var list = items.sortedBy { it.extras?.getParcelable<EpisodeEntity>("raw")?.episodeNo }
+        binding.listviewEpisode.adapter =
+            binding.listviewEpisode.adapter ?: MediaDescriptionAdapter2(requireContext(), list)
+        var adapter = binding.listviewEpisode.adapter as MediaDescriptionAdapter2
+        adapter.addAll(items)
+        adapter.list.reverse()
+        adapter.notifyDataSetChanged()
+    }
+
+    private fun findPositionByEpisodeId(episodeId: UUID): Int {
+        var adapter = binding.listviewEpisode.adapter as MediaDescriptionAdapter2
+        return adapter.list.firstOrNull { episodeId.toString() == it.mediaId!! }?.let {
+            var index = adapter.list.indexOf(it)
+            Log.i("aabb", "$index")
+            index
+        }?.let {
+            it
+        } ?: -1
     }
 
     override fun onAttach(context: Context) {

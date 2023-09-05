@@ -6,16 +6,19 @@ import com.google.gson.Gson
 import dagger.hilt.android.lifecycle.HiltViewModel
 import me.sunzheng.mana.core.net.ApiResponse
 import me.sunzheng.mana.core.net.ApiSuccessResponse
+import me.sunzheng.mana.core.net.Resource
 import me.sunzheng.mana.core.net.v2.*
 import me.sunzheng.mana.core.net.v2.database.*
 import me.sunzheng.mana.home.bangumi.WatchProgressResponse
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper
+import me.sunzheng.mana.home.main.BangumiRepository
+import me.sunzheng.mana.utils.HostUtil
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
 
 @HiltViewModel
-class VideoPlayerVideoModel @Inject constructor(private val state: SavedStateHandle) : ViewModel() {
+class VideoPlayerVideoModel @Inject constructor() : ViewModel() {
     @Inject
     lateinit var apiService: ApiService
 
@@ -33,8 +36,20 @@ class VideoPlayerVideoModel @Inject constructor(private val state: SavedStateHan
     @Inject
     lateinit var watchProgressDao: WatchProgressDao
 
+    @Inject
+    lateinit var bangumiDao: BangumiDao
+
+    @Inject
+    lateinit var favriouteDao: FavirouteDao
+
+    @Inject
+    lateinit var episodeDao: EpisodeDao
+
     lateinit var bangumiId: String
 
+    val episodeIdLiveData: MutableLiveData<UUID> by lazy {
+        MutableLiveData()
+    }
     val repository: VideoRepository by lazy {
         VideoRepository().also {
             it.apiService = apiService
@@ -42,7 +57,15 @@ class VideoPlayerVideoModel @Inject constructor(private val state: SavedStateHan
             it.watchProgressDao = watchProgressDao
         }
     }
-
+    val bangumiRepository: BangumiRepository by lazy {
+        BangumiRepository().also {
+            it.apiService = apiService
+            it.bangumiDao = bangumiDao
+            it.favriouteDao = favriouteDao
+            it.episodeDao = episodeDao
+            it.watchProgressDao = watchProgressDao
+        }
+    }
     val isPlaying = MutableLiveData(false)
     val position = MutableLiveData(0)
     var isJaFirst = false
@@ -70,6 +93,21 @@ class VideoPlayerVideoModel @Inject constructor(private val state: SavedStateHan
     val watchProgressLiveData: MutableLiveData<WatchProgressEntity>? by lazy {
         MutableLiveData()
     }
+
+    fun fetchEpisodeList(id: UUID, status: Int = 2) =
+        bangumiRepository.queryEpisodeList(id, status, userName).switchMap { source ->
+            liveData {
+                val result = Resource.switchMap(source) {
+                    it?.map { entity ->
+                        entity.episodeEntity.thumbnailImage?.url =
+                            HostUtil.makeUp(host, entity.episodeEntity.thumbnailImage?.url)
+                        entity.episodeEntity.parseMediaDescription("")
+                    } ?: emptyList<MediaDescriptionCompat>()
+                }
+                emit(result)
+            }
+        }
+
 
     fun fetchVideoFiles(episodeId: UUID) = repository.fetchVideoFiles(episodeId, userName)
     fun fetchWatchProgress(episodeId: UUID) =
@@ -155,7 +193,14 @@ class VideoRepository {
             override fun shouldFetch(data: WatchProgressEntity?) = true
 
             override fun loadFromDb() =
-                liveData { emit(watchProgressDao.queryByEpisodeId(record.episodeId!!, userName)) }
+                liveData {
+                    emit(
+                        watchProgressDao.queryByEpisodeId(
+                            record.episodeId!!,
+                            userName
+                        )
+                    )
+                }
 
             override fun createCall() = apiService.synchronizeEpisodeHistory(
                 SynchronizeEpisodeHistoryRequest(ArrayList<Record>().apply { this.add(record) })
