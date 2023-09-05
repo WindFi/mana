@@ -17,5 +17,9 @@ data class Resource<T>(val code: Status, val message: String?, val data: T?) {
 
         @JvmStatic
         fun <T> loading(data: T?) = Resource(Status.LOADING, data = data, message = null)
+
+        @JvmStatic
+        fun <T, M> switchMap(data: Resource<M>, block: (d: M?) -> T) =
+            Resource(data.code, data.message, block(data.data))
     }
 }
