@@ -66,7 +66,17 @@ fun Record.parseWatchProgressEntity() =
     Gson().fromJson(Gson().toJson(this), WatchProgressEntity::class.java)
 
 fun ImageView.loadUrl(url: String, domainColor: String? = null) {
-    var m = domainColor?.let { RequestOptions().placeholder(ColorDrawable(Color.parseColor(it))) }
+    var m = domainColor?.let {
+        RequestOptions().placeholder(
+            ColorDrawable(
+                try {
+                    Color.parseColor(it)
+                } catch (e: Exception) {
+                    Color.parseColor("#000000")
+                }
+            )
+        )
+    }
 
     var r = Glide.with(this)
         .load(url)
