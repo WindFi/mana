@@ -12,7 +12,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
 import androidx.databinding.DataBindingUtil
@@ -46,7 +45,6 @@ class BangumiDetailsFragment : Fragment() {
     var mBannerImageView: ImageView? = null
     var mHeaderCollapsingToolbarLayout: CollapsingToolbarLayout? = null
     var mToolbar: Toolbar? = null
-    var mCNTitleTextView: AppCompatTextView? = null
     var mRecyclerView: RecyclerView? = null
     var sharedPreferences: SharedPreferences? = null
 
@@ -215,9 +213,7 @@ class BangumiDetailsFragment : Fragment() {
     }
 
     fun setOriginName(day: Int, etc: CharSequence) {
-//        mBangumiDetails.getAirWeekday(), mBangumiDetails.getAirDate()
-        val dayInWeek = ArrarysResourceUtils.dayInWeek(activity, day)
-//        val color = ContextCompat.getColor(requireActivity(), R.color.colorPrimary)
+        val dayInWeek = ArrarysResourceUtils.dayInWeek(requireActivity(), day)
         val resultString =
             requireActivity().getString(R.string.formatter_day_airdate, etc, dayInWeek)
         //        SpannableStringBuilder spannableStringBuilder=new SpannableStringBuilder(resultString);

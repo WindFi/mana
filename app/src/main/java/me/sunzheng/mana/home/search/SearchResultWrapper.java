@@ -1,6 +1,8 @@
 
 package me.sunzheng.mana.home.search;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -13,6 +15,7 @@ public class SearchResultWrapper {
     @SerializedName("total")
     @Expose
     private int total;
+    @Nullable
     @SerializedName("data")
     @Expose
     private List<BangumiModel> data = null;

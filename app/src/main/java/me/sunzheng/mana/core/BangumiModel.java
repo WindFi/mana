@@ -3,6 +3,9 @@ package me.sunzheng.mana.core;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.j256.ormlite.field.DataType;
@@ -17,8 +20,9 @@ import java.util.UUID;
 public class BangumiModel implements Parcelable {
 
     public static final Creator<BangumiModel> CREATOR = new Creator<BangumiModel>() {
+        @NonNull
         @Override
-        public BangumiModel createFromParcel(Parcel in) {
+        public BangumiModel createFromParcel(@NonNull Parcel in) {
             return new BangumiModel(in);
         }
 
@@ -138,7 +142,7 @@ public class BangumiModel implements Parcelable {
     public BangumiModel() {
     }
 
-    public BangumiModel(Parcel in) {
+    public BangumiModel(@NonNull Parcel in) {
         _id = in.readLong();
         id = UUID.fromString(in.readString());
         name = in.readString();
@@ -164,7 +168,7 @@ public class BangumiModel implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeLong(_id);
         dest.writeString(id.toString());
         dest.writeString(name);
@@ -194,6 +198,7 @@ public class BangumiModel implements Parcelable {
         return 0;
     }
 
+    @NonNull
     public String getId() {
         return id.toString();
     }
@@ -387,6 +392,7 @@ public class BangumiModel implements Parcelable {
         this.unwatched_count = unwatched_count;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
@@ -417,7 +423,7 @@ public class BangumiModel implements Parcelable {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(@Nullable Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 

@@ -4,6 +4,8 @@ package me.sunzheng.mana.core;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -12,8 +14,9 @@ import java.util.UUID;
 public class WatchProgress implements Parcelable {
 
     public static final Creator<WatchProgress> CREATOR = new Creator<WatchProgress>() {
+        @NonNull
         @Override
-        public WatchProgress createFromParcel(Parcel in) {
+        public WatchProgress createFromParcel(@NonNull Parcel in) {
             return new WatchProgress(in);
         }
 
@@ -47,7 +50,7 @@ public class WatchProgress implements Parcelable {
     @Expose
     private UUID id;
 
-    protected WatchProgress(Parcel in) {
+    protected WatchProgress(@NonNull Parcel in) {
         userId = UUID.fromString(in.readString());
         lastWatchPosition = in.readDouble();
         bangumiId = UUID.fromString(in.readString());
@@ -59,7 +62,7 @@ public class WatchProgress implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(userId.toString());
         dest.writeDouble(lastWatchPosition);
         dest.writeString(bangumiId.toString());
@@ -75,6 +78,7 @@ public class WatchProgress implements Parcelable {
         return 0;
     }
 
+    @NonNull
     public String getUserId() {
         return userId.toString();
     }
@@ -91,6 +95,7 @@ public class WatchProgress implements Parcelable {
         this.lastWatchPosition = lastWatchPosition;
     }
 
+    @NonNull
     public String getBangumiId() {
         return bangumiId.toString();
     }
@@ -107,6 +112,7 @@ public class WatchProgress implements Parcelable {
         this.watchStatus = watchStatus;
     }
 
+    @NonNull
     public String getEpisodeId() {
         return episodeId.toString();
     }
@@ -131,6 +137,7 @@ public class WatchProgress implements Parcelable {
         this.lastWatchTime = lastWatchTime;
     }
 
+    @NonNull
     public String getId() {
         return id.toString();
     }

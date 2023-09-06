@@ -8,10 +8,11 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import com.google.android.exoplayer2.SimpleExoPlayer;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+
+import com.google.android.exoplayer2.SimpleExoPlayer;
+
 import me.sunzheng.mana.R;
 
 /**
@@ -19,9 +20,12 @@ import me.sunzheng.mana.R;
  */
 
 public class ExoPlayerView extends FrameLayout {
+    @Nullable
     SimpleExoPlayer player;
     MediaControllerCompat controllerCompat;
+    @NonNull
     Handler mHandler = new Handler();
+    @Nullable
     SurfaceView surfaceView;
     ExoPlaybackControlView controlView;
     ControllerVisibityListener controllerListener;
@@ -45,7 +49,7 @@ public class ExoPlayerView extends FrameLayout {
         controlView = findViewById(R.id.exo_controller);
     }
 
-    public void setPlayer(SimpleExoPlayer player) {
+    public void setPlayer(@NonNull SimpleExoPlayer player) {
         player.setVideoSurfaceView(surfaceView);
     }
 

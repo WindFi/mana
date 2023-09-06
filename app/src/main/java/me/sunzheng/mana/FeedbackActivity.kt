@@ -42,14 +42,13 @@ class FeedbackActivity @Inject constructor() : AppCompatActivity() {
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        var savedInstanceState = savedInstanceState
         super.onCreate(savedInstanceState)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
-        if (savedInstanceState == null) savedInstanceState = intent.extras!!
-        episodeId = savedInstanceState.getString(ARGS_EPISODE_ID_STR)
-        videoFileId = savedInstanceState.getString(ARGS_EPISODE_ID_STR)
+        var bundle = savedInstanceState ?: intent.extras!!
+        episodeId = bundle.getString(ARGS_EPISODE_ID_STR)
+        videoFileId = bundle.getString(ARGS_EPISODE_ID_STR)
 
-        binding.feedbackRadiogroup.setOnCheckedChangeListener { group, checkedId ->
+        binding.feedbackRadiogroup.setOnCheckedChangeListener { _, checkedId ->
             binding.feedbackEdittext.isFocusable = checkedId == R.id.feedback_etc_radiobutton
             binding.feedbackEdittext.isFocusableInTouchMode =
                 checkedId == R.id.feedback_etc_radiobutton
@@ -61,7 +60,7 @@ class FeedbackActivity @Inject constructor() : AppCompatActivity() {
                 binding.feedbackEdittext.requestFocus()
             }
         }
-        binding.feedbackEdittext.onFocusChangeListener = OnFocusChangeListener { v, hasFocus ->
+        binding.feedbackEdittext.onFocusChangeListener = OnFocusChangeListener { _, hasFocus ->
             if (hasFocus) {
                 binding.feedbackRadiogroup.check(R.id.feedback_etc_radiobutton)
                 showSoftInputKeyboard()
@@ -70,7 +69,7 @@ class FeedbackActivity @Inject constructor() : AppCompatActivity() {
             }
         }
         binding.feedbackEdittext.setOnClickListener { binding.feedbackRadiogroup.check(R.id.feedback_etc_radiobutton) }
-        binding.feedbackEdittext.setOnEditorActionListener(OnEditorActionListener { v, actionId, event ->
+        binding.feedbackEdittext.setOnEditorActionListener(OnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEND) {
                 binding.fab.performClick()
                 return@OnEditorActionListener true
@@ -131,7 +130,7 @@ class FeedbackActivity @Inject constructor() : AppCompatActivity() {
         when (item.itemId) {
             android.R.id.home -> {
                 hideSoftInputKeyboard()
-                onBackPressed()
+                onBackPressedDispatcher.onBackPressed()
                 return true
             }
 
@@ -171,7 +170,7 @@ class FeedbackActivity @Inject constructor() : AppCompatActivity() {
     }
 
     fun fabShow() {
-        if (binding.fab == null || binding.fab.visibility == View.VISIBLE) return
+        if (binding.fab.isVisible) return
         val anim = AnimationUtils.loadAnimation(binding.fab.context, R.anim.slide_in_up)
         anim.interpolator = LinearOutSlowInInterpolator()
         anim.setAnimationListener(object : Animation.AnimationListener {
@@ -186,7 +185,7 @@ class FeedbackActivity @Inject constructor() : AppCompatActivity() {
     }
 
     fun fabHide() {
-        if (binding.fab == null || binding.fab.visibility != View.VISIBLE) return
+        if (!binding.fab.isVisible) return
         val anim = AnimationUtils.loadAnimation(binding.fab.context, R.anim.slide_out_down)
         anim.interpolator = FastOutSlowInInterpolator()
         anim.setAnimationListener(object : Animation.AnimationListener {
@@ -204,6 +203,7 @@ class FeedbackActivity @Inject constructor() : AppCompatActivity() {
         val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
         imm.showSoftInput(binding.feedbackEdittext, InputMethodManager.SHOW_FORCED)
     }
+
 
     fun hideSoftInputKeyboard() {
         val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager

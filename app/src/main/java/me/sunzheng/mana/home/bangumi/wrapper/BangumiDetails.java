@@ -1,6 +1,8 @@
 
 package me.sunzheng.mana.home.bangumi.wrapper;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -11,6 +13,7 @@ import me.sunzheng.mana.core.Episode;
 
 public class BangumiDetails extends BangumiModel {
 
+    @Nullable
     @SerializedName("episodes")
     @Expose
     private List<Episode> episodes = null;

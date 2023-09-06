@@ -78,7 +78,7 @@ public class ExoPlaybackControlView extends FrameLayout {
         });
     }
 
-    public void setPlayer(SimpleExoPlayer player) {
+    public void setPlayer(@NonNull SimpleExoPlayer player) {
         this.player = player;
         player.addListener(componentListener);
     }

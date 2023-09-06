@@ -1,6 +1,8 @@
 
 package me.sunzheng.mana.core;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -72,6 +74,7 @@ public class Episode {
         this.watchProgress = watchProgress;
     }
 
+    @NonNull
     public Long getStatus() {
         return status;
     }
@@ -88,6 +91,7 @@ public class Episode {
         this.episodeNo = episodeNo;
     }
 
+    @NonNull
     public Float getUpdateTime() {
         return updateTime;
     }
@@ -104,6 +108,7 @@ public class Episode {
         this.name = name;
     }
 
+    @NonNull
     public Long getBgmEpsId() {
         return bgmEpsId;
     }
@@ -112,6 +117,7 @@ public class Episode {
         this.bgmEpsId = bgmEpsId;
     }
 
+    @NonNull
     public String getBangumiId() {
         return bangumiId.toString();
     }
@@ -152,6 +158,7 @@ public class Episode {
         this.deleteMark = deleteMark;
     }
 
+    @NonNull
     public Float getCreateTime() {
         return createTime;
     }
@@ -168,6 +175,7 @@ public class Episode {
         this.duration = duration;
     }
 
+    @NonNull
     public String getId() {
         return id.toString();
     }

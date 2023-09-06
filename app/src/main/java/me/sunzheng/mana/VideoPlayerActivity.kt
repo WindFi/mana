@@ -85,9 +85,6 @@ import javax.inject.Inject
 class VideoPlayerActivity @Inject constructor() : AppCompatActivity() {
     companion object {
         @JvmStatic
-        val KEY_ITEMS_PARCEL = "${VideoPlayerActivity::class.simpleName}_items"
-
-        @JvmStatic
         val KEY_POSITION_INT = "${VideoPlayerActivity::class.simpleName}_position"
 
         @JvmStatic
@@ -128,8 +125,6 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity() {
 @AndroidEntryPoint
 class VideoPlayerFragment : Fragment(), VideoControllerListener {
     companion object {
-        @JvmStatic
-        val KEY_ITEMS_PARCEL = "${VideoPlayerActivity::class.simpleName}_items"
 
         @JvmStatic
         val KEY_POSITION_INT = "${VideoPlayerActivity::class.simpleName}_position"

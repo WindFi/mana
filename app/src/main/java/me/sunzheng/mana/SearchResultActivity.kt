@@ -9,7 +9,6 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
-import androidx.core.view.MenuItemCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -112,7 +111,7 @@ class SearchResultActivity : AppCompatActivity() {
                     } else {
                         response.data?.takeIf { it.isNotEmpty() }?.run {
                             showEmptyView(false)
-                            var adapter = SearchResultAdapter(this) { v, p, id, m ->
+                            var adapter = SearchResultAdapter(this) { v, _, _, m ->
                                 if (m is BangumiEntity) {
                                     BangumiDetailsActivity.newInstance(
                                         this@SearchResultActivity,
@@ -137,7 +136,7 @@ class SearchResultActivity : AppCompatActivity() {
 
                 Status.LOADING -> {
                     response.data?.run {
-                        var adapter = SearchResultAdapter(this) { v, p, id, m ->
+                        var adapter = SearchResultAdapter(this) { v, _, _, m ->
                             if (m is BangumiEntity) {
                                 BangumiDetailsActivity.newInstance(
                                     this@SearchResultActivity,
@@ -165,7 +164,8 @@ class SearchResultActivity : AppCompatActivity() {
                 mSearchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
                 mSearchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
                     override fun onQueryTextSubmit(query: String): Boolean {
-                        MenuItemCompat.collapseActionView(searchItem)
+//                        MenuItemCompat.collapseActionView(searchItem)
+                        searchItem.collapseActionView()
                         mSearchView.setQuery(query, false)
                         return false
                     }
@@ -195,7 +195,7 @@ class SearchResultActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
         android.R.id.home -> {
-            onBackPressed()
+            onBackPressedDispatcher.onBackPressed()
             true
         }
 

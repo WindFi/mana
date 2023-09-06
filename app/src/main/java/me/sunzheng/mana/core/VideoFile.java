@@ -1,6 +1,8 @@
 
 package me.sunzheng.mana.core;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -150,6 +152,7 @@ public class VideoFile {
         this.label = label;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return label;

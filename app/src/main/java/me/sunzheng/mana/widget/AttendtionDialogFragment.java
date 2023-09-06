@@ -9,9 +9,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+
 import me.sunzheng.mana.R;
 
 public class AttendtionDialogFragment extends DialogFragment {
@@ -20,32 +22,29 @@ public class AttendtionDialogFragment extends DialogFragment {
     public final static String ARGS_TITLE_NEGATIVE_STR = "negative";
 
 
+    @Nullable
     private PositiveClickListener positiveClickListener;
+    @Nullable
     private NegativeClickListener negativeClickListener;
 
+    @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         if (savedInstanceState == null)
             savedInstanceState = getArguments();
         String positiveTitle, negativeTitle, message;
         positiveTitle = savedInstanceState == null || TextUtils.isEmpty(savedInstanceState.getString(ARGS_TITLE_POSITIVE_STR)) ? getString(android.R.string.ok) : savedInstanceState.getString(ARGS_TITLE_POSITIVE_STR);
         negativeTitle = savedInstanceState == null || TextUtils.isEmpty(savedInstanceState.getString(ARGS_TITLE_NEGATIVE_STR)) ? getString(android.R.string.cancel) : savedInstanceState.getString(ARGS_TITLE_NEGATIVE_STR);
         message = savedInstanceState == null || TextUtils.isEmpty(savedInstanceState.getString(ARGS_MESSAGE_STR)) ? getString(R.string.app_name) : savedInstanceState.getString(ARGS_MESSAGE_STR);
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity());
         builder.setMessage(message)
-                .setPositiveButton(positiveTitle, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (positiveClickListener != null)
-                            positiveClickListener.onPositiveClick(dialogInterface, i);
-                    }
+                .setPositiveButton(positiveTitle, (dialogInterface, i) -> {
+                    if (positiveClickListener != null)
+                        positiveClickListener.onPositiveClick(dialogInterface, i);
                 })
-                .setNegativeButton(negativeTitle, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        if (negativeClickListener != null)
-                            negativeClickListener.onNegativeClick(dialogInterface, i);
-                    }
+                .setNegativeButton(negativeTitle, (dialogInterface, i) -> {
+                    if (negativeClickListener != null)
+                        negativeClickListener.onNegativeClick(dialogInterface, i);
                 });
         builder.setCancelable(false);
         return builder.create();
@@ -53,13 +52,13 @@ public class AttendtionDialogFragment extends DialogFragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        getDialog().setCanceledOnTouchOutside(false);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        requireDialog().setCanceledOnTouchOutside(false);
         return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         if (context instanceof PositiveClickListener) {
             this.positiveClickListener = (PositiveClickListener) context;

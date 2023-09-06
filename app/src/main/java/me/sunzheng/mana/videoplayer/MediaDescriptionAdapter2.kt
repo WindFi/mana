@@ -70,8 +70,8 @@ class MediaDescriptionAdapter2(
         old.mediaId == new.mediaId
 
     override fun compareTo(old: MediaDescriptionCompat, new: MediaDescriptionCompat): Int {
-        var oldSort = old.extras?.getParcelable<EpisodeEntity>("raw")
-        var newSort = new.extras?.getParcelable<EpisodeEntity>("raw")
+        val oldSort = old.extras?.getParcelable<EpisodeEntity>("raw")
+        val newSort = new.extras?.getParcelable<EpisodeEntity>("raw")
         if (oldSort == null)
             return -1
         if (newSort == null)
@@ -80,13 +80,13 @@ class MediaDescriptionAdapter2(
     }
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
-        var v = convertView ?: LayoutInflater.from(context).inflate(
+        val v = convertView ?: LayoutInflater.from(context).inflate(
             R.layout.item_video_list, null
         )
-        var viewHolder = v.tag ?: ViewHolder(v)
+        val viewHolder = v.tag ?: ViewHolder(v)
         v.tag = viewHolder
-        var item = list.get(position)
-        item?.run {
+        val item = list.get(position)
+        item.run {
             if (viewHolder is ViewHolder) {
                 viewHolder.imageView.alpha = 0.3f
                 Glide.with(v).load(iconUri)

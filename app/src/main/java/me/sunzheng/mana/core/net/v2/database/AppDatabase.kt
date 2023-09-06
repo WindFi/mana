@@ -7,7 +7,8 @@ import androidx.room.TypeConverters
 import com.google.gson.Gson
 import me.sunzheng.mana.core.CoverImage
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.UUID
 
 @Database(
     entities = [BangumiEntity::class, FavriouteEntity::class, WatchProgressEntity::class, EpisodeEntity::class, VideoFileEntity::class, RelationOnAir::class],
@@ -30,7 +31,7 @@ object UUIDTypeConvert {
     fun fromUUID(uuid: UUID?) = uuid?.toString()
 
     @TypeConverter
-    fun uuidFromString(uuid: String?) = uuid?.let { UUID.fromString(it) } ?: null
+    fun uuidFromString(uuid: String?) = uuid?.let { UUID.fromString(it) }
 }
 
 object CovertImageConvert {
@@ -39,7 +40,7 @@ object CovertImageConvert {
 
     @TypeConverter
     fun objFromString(json: String?) =
-        json?.let { Gson().fromJson(it, CoverImage::class.java) } ?: null
+        json?.let { Gson().fromJson(it, CoverImage::class.java) }
 }
 
 object DateConvert {

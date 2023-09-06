@@ -3,6 +3,8 @@ package me.sunzheng.mana.home.episode;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import androidx.annotation.NonNull;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -15,8 +17,9 @@ import java.util.UUID;
 public class Record implements Parcelable {
 
     public static final Creator<Record> CREATOR = new Creator<Record>() {
+        @NonNull
         @Override
-        public Record createFromParcel(Parcel in) {
+        public Record createFromParcel(@NonNull Parcel in) {
             return new Record(in);
         }
 
@@ -47,7 +50,7 @@ public class Record implements Parcelable {
     public Record() {
     }
 
-    protected Record(Parcel in) {
+    protected Record(@NonNull Parcel in) {
         bangumiId = UUID.fromString(in.readString());
         episodeId = UUID.fromString(in.readString());
         lastWatchPosition = in.readFloat();
@@ -57,7 +60,7 @@ public class Record implements Parcelable {
     }
 
     @Override
-    public void writeToParcel(Parcel dest, int flags) {
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
         dest.writeString(bangumiId.toString());
         dest.writeString(episodeId.toString());
         dest.writeFloat(lastWatchPosition);
@@ -71,6 +74,7 @@ public class Record implements Parcelable {
         return 0;
     }
 
+    @NonNull
     public String getBangumiId() {
         return bangumiId.toString();
     }
@@ -79,6 +83,7 @@ public class Record implements Parcelable {
         this.bangumiId = UUID.fromString(bangumiId);
     }
 
+    @NonNull
     public String getEpisodeId() {
         return episodeId.toString();
     }

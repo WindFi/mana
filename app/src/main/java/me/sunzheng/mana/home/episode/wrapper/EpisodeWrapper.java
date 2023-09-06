@@ -1,5 +1,7 @@
 package me.sunzheng.mana.home.episode.wrapper;
 
+import androidx.annotation.Nullable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -14,6 +16,7 @@ public class EpisodeWrapper extends Episode {
     @SerializedName("bangumi")
     @Expose
     private BangumiModel bangumi;
+    @Nullable
     @SerializedName("video_files")
     @Expose
     private List<VideoFile> videoFiles = null;

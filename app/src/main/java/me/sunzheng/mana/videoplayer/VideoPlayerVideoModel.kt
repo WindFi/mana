@@ -46,10 +46,6 @@ class VideoPlayerVideoModel @Inject constructor() : ViewModel() {
     lateinit var episodeDao: EpisodeDao
 
     lateinit var bangumiId: String
-
-    val episodeIdLiveData: MutableLiveData<UUID> by lazy {
-        MutableLiveData()
-    }
     val repository: VideoRepository by lazy {
         VideoRepository().also {
             it.apiService = apiService

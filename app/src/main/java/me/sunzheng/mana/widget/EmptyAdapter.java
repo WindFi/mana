@@ -2,6 +2,7 @@ package me.sunzheng.mana.widget;
 
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 /**
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 public class EmptyAdapter extends RecyclerView.Adapter {
 
+    @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return null;

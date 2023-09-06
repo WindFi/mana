@@ -6,6 +6,9 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Base64;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import java.net.CookieStore;
 import java.net.HttpCookie;
 import java.net.URI;
@@ -50,11 +53,12 @@ public class PersistentHttpCookieStore implements CookieStore {
     /**
      * This map may have null keys!
      */
+    @NonNull
     private final Map<URI, List<HttpCookie>> map;
 
     private final SharedPreferences cookieSP;
 
-    public PersistentHttpCookieStore(Context context) {
+    public PersistentHttpCookieStore(@NonNull Context context) {
         map = new HashMap<>();
         cookieSP = context.getSharedPreferences(PREFS_COOKIE, Context.MODE_PRIVATE);
 
@@ -78,7 +82,7 @@ public class PersistentHttpCookieStore implements CookieStore {
     }
 
     @Override
-    public synchronized void add(URI uri, HttpCookie httpCookie) {
+    public synchronized void add(URI uri, @Nullable HttpCookie httpCookie) {
         if (httpCookie == null) {
             throw new NullPointerException("cookie == null");
         }
@@ -120,7 +124,7 @@ public class PersistentHttpCookieStore implements CookieStore {
         editor.apply();
     }
 
-    private URI cookiesUri(URI uri) {
+    private URI cookiesUri(@Nullable URI uri) {
         if (uri == null) {
             return null;
         }
@@ -132,8 +136,9 @@ public class PersistentHttpCookieStore implements CookieStore {
         }
     }
 
+    @NonNull
     @Override
-    public synchronized List<HttpCookie> get(URI uri) {
+    public synchronized List<HttpCookie> get(@Nullable URI uri) {
         if (uri == null) {
             throw new NullPointerException("uri == null");
         }
@@ -174,6 +179,7 @@ public class PersistentHttpCookieStore implements CookieStore {
         return Collections.unmodifiableList(result);
     }
 
+    @NonNull
     @Override
     public synchronized List<HttpCookie> getCookies() {
         List<HttpCookie> result = new ArrayList<>();
@@ -190,6 +196,7 @@ public class PersistentHttpCookieStore implements CookieStore {
         return Collections.unmodifiableList(result);
     }
 
+    @NonNull
     @Override
     public synchronized List<URI> getURIs() {
         List<URI> result = new ArrayList<>(map.keySet());
@@ -198,7 +205,7 @@ public class PersistentHttpCookieStore implements CookieStore {
     }
 
     @Override
-    public synchronized boolean remove(URI uri, HttpCookie httpCookie) {
+    public synchronized boolean remove(URI uri, @Nullable HttpCookie httpCookie) {
         if (httpCookie == null) {
             throw new NullPointerException("cookie == null");
         }
@@ -241,7 +248,7 @@ public class PersistentHttpCookieStore implements CookieStore {
     /**
      * Parcels HttpCookie object into a String.
      */
-    private String encodeCookie(HttpCookie httpCookie) {
+    private String encodeCookie(@Nullable HttpCookie httpCookie) {
         if (httpCookie == null) {
             return null;
         }
@@ -257,7 +264,7 @@ public class PersistentHttpCookieStore implements CookieStore {
     /**
      * Returns HttpCookie from cookie string.
      */
-    private HttpCookie decodeCookie(String s) {
+    private HttpCookie decodeCookie(@Nullable String s) {
         if (s == null) {
             return null;
         }
@@ -275,8 +282,9 @@ public class PersistentHttpCookieStore implements CookieStore {
 
         private static final Creator<HttpCookieParcelable> CREATOR = new Creator<HttpCookieParcelable>() {
 
+            @NonNull
             @Override
-            public HttpCookieParcelable createFromParcel(Parcel source) {
+            public HttpCookieParcelable createFromParcel(@NonNull Parcel source) {
                 return new HttpCookieParcelable(source);
             }
 
@@ -292,7 +300,7 @@ public class PersistentHttpCookieStore implements CookieStore {
             this.httpCookie = httpCookie;
         }
 
-        private HttpCookieParcelable(Parcel source) {
+        private HttpCookieParcelable(@NonNull Parcel source) {
             String name = source.readString();
             String value = source.readString();
             httpCookie = new HttpCookie(name, value);
@@ -313,7 +321,7 @@ public class PersistentHttpCookieStore implements CookieStore {
         }
 
         @Override
-        public void writeToParcel(Parcel dest, int flags) {
+        public void writeToParcel(@NonNull Parcel dest, int flags) {
             dest.writeString(httpCookie.getName());
             dest.writeString(httpCookie.getValue());
             dest.writeString(httpCookie.getComment());
