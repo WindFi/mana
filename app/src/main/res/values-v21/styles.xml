@@ -7,6 +7,9 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowTranslucentNavigation">false</item>
         <item name="android:navigationBarColor">#44000000</item>
+        <item name="linearProgressIndicatorStyle">
+            @style/Widget.AppTheme.Progressbar.LinearProgressIndicator
+        </item>
     </style>
 
     <!--<style name="AppTheme.NoActionBar">-->

@@ -21,18 +21,24 @@
         <item name="circularProgressIndicatorStyle">
             @style/Widget.AppTheme.Progressbar.CircleProgressIndicator
         </item>
+        <item name="linearProgressIndicatorStyle">
+            @style/Widget.AppTheme.Progressbar.LinearProgressIndicator
+        </item>
     </style>
 
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="linearProgressIndicatorStyle">
+            @style/Widget.AppTheme.Progressbar.LinearProgressIndicator
+        </item>
     </style>
 
     <style name="AppTheme.NoActionBar.NoStatusBar" />
 
-    <style name="AppTheme.NoActionBar.FullScreen" parent="AppTheme.NoActionBar">
-        <!--<item name="android:windowActionBarOverlay">true</item>-->
-    </style>
+
+    <style name="AppTheme.NoActionBar.FullScreen" parent="AppTheme.NoActionBar" />
+    <!--<item name="android:windowActionBarOverlay">true</item>-->
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
@@ -124,6 +130,9 @@
     <style name="AppTheme.BangumiDetailsActivity" parent="AppTheme.NoActionBar.NoStatusBar">
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="cardViewStyle">@style/CardView</item>
+        <!--        <item name="linearProgressIndicatorStyle">-->
+        <!--            @style/Widget.AppTheme.Progressbar.LinearProgressIndicator-->
+        <!--        </item>-->
     </style>
 
     <style name="AppTheme.SearchResultActivity" parent="AppTheme.NoActionBar" />
@@ -138,7 +147,11 @@
 
     <style name="AppTheme.LaunchActivity" />
 
-    <style name="AppTheme.VideoPlayActivity" parent="AppTheme.NoActionBar.FullScreen" />
+    <style name="AppTheme.VideoPlayActivity" parent="AppTheme.NoActionBar.FullScreen">
+        <!--        <item name="linearProgressIndicatorStyle">-->
+        <!--            @style/Widget.AppTheme.Progressbar.LinearProgressIndicator-->
+        <!--        </item>-->
+    </style>
 
     <style name="AppTheme.FeedbackActivity">
         <item name="colorAccent">@color/colorPrimary</item>
@@ -165,5 +178,11 @@
 
     <style name="Widget.AppTheme.Progressbar.CircleProgressIndicator" parent="Widget.Material3.CircularProgressIndicator">
         <item name="indicatorColor">@color/colorPrimary</item>
+    </style>
+
+    <style name="Widget.AppTheme.Progressbar.LinearProgressIndicator" parent="Widget.MaterialComponents.LinearProgressIndicator">
+        <item name="indicatorColor">@array/indicatorcolors</item>
+        <item name="android:indeterminate">true</item>
+        <item name="indeterminateAnimationType">contiguous</item>
     </style>
 </resources>

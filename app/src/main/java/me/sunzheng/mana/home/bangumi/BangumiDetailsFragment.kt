@@ -14,6 +14,7 @@ import android.widget.ImageView
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.appcompat.widget.PopupMenu
 import androidx.appcompat.widget.Toolbar
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -100,6 +101,7 @@ class BangumiDetailsFragment : Fragment() {
                     }
                 }
             viewModel.fetchEpisodeList(id, name).observe(viewLifecycleOwner) { it ->
+                binding.progressbar.isVisible = it.code == Status.LOADING
                 when (it.code) {
                     Status.SUCCESS -> {
                         binding.episodeModels = it.data
@@ -190,6 +192,7 @@ class BangumiDetailsFragment : Fragment() {
                     binding.bangumiModel!!.entity.id,
                     status
                 ).observe(viewLifecycleOwner) {
+                    binding.progressbar.isVisible = it.code == Status.LOADING
                     when (it.code) {
                         Status.SUCCESS -> {
                             binding.bangumiModel?.state?.status = status

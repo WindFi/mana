@@ -7,6 +7,9 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:windowTranslucentNavigation">true</item>
         <item name="android:windowLightNavigationBar">true</item>
+        <item name="linearProgressIndicatorStyle">
+            @style/Widget.AppTheme.Progressbar.LinearProgressIndicator
+        </item>
     </style>
 
     <style name="AppTheme.NoActionBar.NoStatusBar">
