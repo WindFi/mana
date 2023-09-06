@@ -41,7 +41,13 @@ class OnAirItemRecyclerViewAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ViewHolder(ItemOnairfragmentBinding.inflate(LayoutInflater.from(parent.context)))
+        ViewHolder(
+            ItemOnairfragmentBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         mValues[position].run {
