@@ -19,29 +19,15 @@ import javax.inject.Named
 @HiltViewModel
 class SearchViewModel @Inject constructor() : ViewModel() {
 
-    @Inject
-    lateinit var apiService: ApiService
-
-    @Inject
-    lateinit var bangumiDao: BangumiDao
-
-    @Inject
-    lateinit var favirouteDao: FavirouteDao
-
     @Named("userName")
     @Inject
     lateinit var userName: String
     var count = -1
     var page = 1
     lateinit var key: String
-    val repository: SearchRepository by lazy {
-        SearchRepository().also {
-            it.apiService = apiService
-            it.bangumiDao = bangumiDao
-            it.userName = userName
-            it.favriouteDao = favirouteDao
-        }
-    }
+
+    @Inject
+    lateinit var repository: SearchRepository
 
     fun query(word: String) = liveData<Resource<List<BangumiEntity>>> {
         key = word

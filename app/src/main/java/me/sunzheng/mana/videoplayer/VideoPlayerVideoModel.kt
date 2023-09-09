@@ -19,8 +19,6 @@ import javax.inject.Named
 
 @HiltViewModel
 class VideoPlayerVideoModel @Inject constructor() : ViewModel() {
-    @Inject
-    lateinit var apiService: ApiService
 
     @Named("userName")
     @Inject
@@ -31,37 +29,13 @@ class VideoPlayerVideoModel @Inject constructor() : ViewModel() {
     lateinit var host: String
 
     @Inject
-    lateinit var videoFileDao: VideoFileDao
-
-    @Inject
-    lateinit var watchProgressDao: WatchProgressDao
-
-    @Inject
-    lateinit var bangumiDao: BangumiDao
-
-    @Inject
-    lateinit var favriouteDao: FavirouteDao
-
-    @Inject
-    lateinit var episodeDao: EpisodeDao
+    lateinit var bangumiRepository: BangumiRepository
 
     lateinit var bangumiId: String
-    val repository: VideoRepository by lazy {
-        VideoRepository().also {
-            it.apiService = apiService
-            it.videoFileDao = videoFileDao
-            it.watchProgressDao = watchProgressDao
-        }
-    }
-    val bangumiRepository: BangumiRepository by lazy {
-        BangumiRepository().also {
-            it.apiService = apiService
-            it.bangumiDao = bangumiDao
-            it.favriouteDao = favriouteDao
-            it.episodeDao = episodeDao
-            it.watchProgressDao = watchProgressDao
-        }
-    }
+
+    @Inject
+    lateinit var repository: VideoRepository
+
     val isPlaying = MutableLiveData(false)
     val position = MutableLiveData(-1)
     var isJaFirst = false
@@ -132,9 +106,13 @@ class VideoPlayerVideoModel @Inject constructor() : ViewModel() {
 }
 
 class VideoRepository {
+
     lateinit var apiService: ApiService
+
     lateinit var videoFileDao: VideoFileDao
+
     lateinit var watchProgressDao: WatchProgressDao
+
     fun fetchVideoFiles(episodeId: UUID, userName: String) =
         object : NetworkBoundResource<List<VideoFileEntity>?, EpisodeWrapper>() {
             override fun saveCallResult(item: EpisodeWrapper) {

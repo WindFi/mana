@@ -15,11 +15,16 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
+import me.sunzheng.mana.account.AccountRepository
 import me.sunzheng.mana.core.net.LiveDataCallAdapterFactory
 import me.sunzheng.mana.core.net.v2.ApiService
 import me.sunzheng.mana.core.net.v2.database.*
+import me.sunzheng.mana.home.main.BangumiRepository
+import me.sunzheng.mana.home.mybangumi.FavoritesRepository
+import me.sunzheng.mana.home.search.SearchRepository
 import me.sunzheng.mana.utils.PersistentHttpCookieStore
 import me.sunzheng.mana.utils.PreferenceManager
+import me.sunzheng.mana.videoplayer.VideoRepository
 import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -33,7 +38,7 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(ViewModelComponent::class)
-object ViewModelModule {
+object RepositoryModule {
     @Provides
     fun providerBanugmiModelDao(database: AppDatabase): BangumiDao {
         return database.bangumiDao()
@@ -67,6 +72,75 @@ object ViewModelModule {
     @Provides
     fun providerWatchProgressDao(database: AppDatabase): WatchProgressDao {
         return database.watchProgressDao()
+    }
+}
+
+@Module
+@InstallIn(ViewModelComponent::class)
+object ViewModelModule {
+    @Provides
+    fun providerAccountRepository(apiService: ApiService): AccountRepository {
+        return AccountRepository().apply {
+            this.apiService = apiService
+        }
+    }
+
+    @Provides
+    fun providerSearchRepository(
+        apiService: ApiService,
+        favriouteDao: FavirouteDao,
+        bangumiDao: BangumiDao
+    ): SearchRepository {
+        return SearchRepository().apply {
+            this.apiService = apiService
+            this.bangumiDao = bangumiDao
+            this.favriouteDao = favriouteDao
+        }
+    }
+
+    @Provides
+    fun providerFavoritesRepository(
+        apiService: ApiService,
+        favriouteDao: FavirouteDao,
+        bangumiDao: BangumiDao
+    ): FavoritesRepository {
+        return FavoritesRepository().apply {
+            this.apiService = apiService
+            this.bangumiDao = bangumiDao
+            this.favriouteDao = favriouteDao
+        }
+    }
+
+    @Provides
+    fun providerBangumiRepository(
+        apiService: ApiService,
+        bangumiDao: BangumiDao,
+        favriouteDao: FavirouteDao,
+        episodeDao: EpisodeDao,
+        onAirDao: OnAirDao,
+        watchProgressDao: WatchProgressDao
+    ): BangumiRepository {
+        return BangumiRepository().apply {
+            this.apiService = apiService
+            this.bangumiDao = bangumiDao
+            this.favriouteDao = favriouteDao
+            this.episodeDao = episodeDao
+            this.onAirDao = onAirDao
+            this.watchProgressDao = watchProgressDao
+        }
+    }
+
+    @Provides
+    fun providerVideoRepository(
+        apiService: ApiService,
+        videoFileDao: VideoFileDao,
+        watchProgressDao: WatchProgressDao
+    ): VideoRepository {
+        return VideoRepository().apply {
+            this.apiService = apiService
+            this.videoFileDao = videoFileDao
+            this.watchProgressDao = watchProgressDao
+        }
     }
 
     @Named("userName")

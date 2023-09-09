@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import dagger.Lazy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import me.sunzheng.mana.core.net.v2.ApiService
 import me.sunzheng.mana.core.net.v2.NetworkBoundResource
@@ -16,17 +15,11 @@ import javax.inject.Inject
 @HiltViewModel
 class AccountViewModel @Inject constructor() : ViewModel() {
 
-    @Inject
-    lateinit var apiService: Lazy<ApiService>
-
 
     val isLoginLiveData = MutableLiveData<Boolean>()
 
-    val repository: AccountRepository by lazy {
-        AccountRepository().apply {
-            this.apiService = this@AccountViewModel.apiService.get()
-        }
-    }
+    @Inject
+    lateinit var repository: AccountRepository
 
     fun checkIsLogin(context: Context) {
         var sp = context.getSharedPreferences(

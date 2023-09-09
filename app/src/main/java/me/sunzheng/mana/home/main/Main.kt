@@ -21,34 +21,13 @@ import javax.inject.Named
 
 @HiltViewModel
 class MainViewModel @Inject constructor() : ViewModel() {
-    @Inject
-    lateinit var apiService: ApiService
-
-    @Inject
-    lateinit var bangumiDao: BangumiDao
-
-    @Inject
-    lateinit var favriouteDao: FavirouteDao
-
-    @Inject
-    lateinit var onAirDao: OnAirDao
-
-    @Inject
-    lateinit var episodeDao: EpisodeDao
-
     @Named("userName")
     @Inject
     lateinit var userName: String
 
-    val repository: BangumiRepository by lazy {
-        BangumiRepository().also {
-            it.apiService = apiService
-            it.bangumiDao = bangumiDao
-            it.favriouteDao = favriouteDao
-            it.episodeDao = episodeDao
-            it.onAirDao = onAirDao
-        }
-    }
+    @Inject
+    lateinit var repository: BangumiRepository
+
     val announceLiveData: LiveData<AnnounceModel> by lazy {
         MutableLiveData<AnnounceModel>()
     }
@@ -58,12 +37,19 @@ class MainViewModel @Inject constructor() : ViewModel() {
 }
 
 class BangumiRepository {
+
     lateinit var apiService: ApiService
+
     lateinit var bangumiDao: BangumiDao
+
     lateinit var favriouteDao: FavirouteDao
+
     lateinit var episodeDao: EpisodeDao
+
     lateinit var onAirDao: OnAirDao
+
     lateinit var watchProgressDao: WatchProgressDao
+
     fun queryOnAir(type: Int, userName: String) =
         object : NetworkBoundResource<List<BangumiEntity>, AirWrapper>() {
             override fun saveCallResult(item: AirWrapper) {

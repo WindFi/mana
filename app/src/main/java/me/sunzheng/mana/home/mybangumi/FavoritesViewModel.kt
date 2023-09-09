@@ -17,14 +17,6 @@ import javax.inject.Named
 
 @HiltViewModel
 class MyFavoriteViewModel @Inject constructor() : ViewModel() {
-    @Inject
-    lateinit var favriouteDao: FavirouteDao
-
-    @Inject
-    lateinit var bangumiDao: BangumiDao
-
-    @Inject
-    lateinit var apiService: ApiService
 
     val positionLiveData: MutableLiveData<Int> by lazy {
         MutableLiveData()
@@ -33,24 +25,18 @@ class MyFavoriteViewModel @Inject constructor() : ViewModel() {
     @Named("userName")
     @Inject
     lateinit var userName: String
-    val repository: FavoritesRepository by lazy {
-        FavoritesRepository().also {
-            it.favriouteDao = favriouteDao
-            it.bangumiDao = bangumiDao
-            it.apiService = apiService
-            it.userName = userName
-        }
-    }
 
-    fun filter(status: Int = 0, page: Int = 0) = repository.query(status, page)
+    @Inject
+    lateinit var repository: FavoritesRepository
+
+    fun filter(status: Int = 0, page: Int = 0) = repository.query(status, page, userName)
 }
 
 class FavoritesRepository {
     lateinit var favriouteDao: FavirouteDao
     lateinit var bangumiDao: BangumiDao
     lateinit var apiService: ApiService
-    lateinit var userName: String
-    fun query(status: Int, page: Int) =
+    fun query(status: Int, page: Int, userName: String) =
         object : NetworkBoundResource<List<BangumiAndFavorites>, FavoriteWrapper>() {
             override fun saveCallResult(item: FavoriteWrapper) {
                 item.data?.forEach {
