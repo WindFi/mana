@@ -67,7 +67,7 @@ class VideoPlayerVideoModel @Inject constructor() : ViewModel() {
         }
     }
     val isPlaying = MutableLiveData(false)
-    val position = MutableLiveData(0)
+    val position = MutableLiveData(-1)
     var isJaFirst = false
 
     val mediaDescritionLiveData by lazy {
