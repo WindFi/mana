@@ -89,12 +89,14 @@ object ViewModelModule {
     fun providerSearchRepository(
         apiService: ApiService,
         favriouteDao: FavirouteDao,
-        bangumiDao: BangumiDao
+        bangumiDao: BangumiDao,
+        @Named("userName") userName: String
     ): SearchRepository {
         return SearchRepository().apply {
             this.apiService = apiService
             this.bangumiDao = bangumiDao
             this.favriouteDao = favriouteDao
+            this.userName = userName
         }
     }
 
