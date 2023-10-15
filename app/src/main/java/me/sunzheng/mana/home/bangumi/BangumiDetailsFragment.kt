@@ -32,6 +32,7 @@ import me.sunzheng.mana.core.net.v2.showToast
 import me.sunzheng.mana.databinding.FragmentBangumidetailsBinding
 import me.sunzheng.mana.utils.ArrarysResourceUtils
 import me.sunzheng.mana.utils.PreferenceManager
+import java.util.UUID
 
 @AndroidEntryPoint
 class BangumiDetailsFragment : Fragment() {
@@ -91,15 +92,6 @@ class BangumiDetailsFragment : Fragment() {
                 ?.getString(PreferenceManager.Global.STR_USERNAME, null)!!
 
             setOriginName(this.airWeekday.toInt(), this.airDate!!)
-            viewModel.queryBangumiAndFavorite(id, userName = name)
-                .observe(viewLifecycleOwner) { dataView ->
-                    binding.bangumiModel = dataView
-                    dataView?.run {
-                        binding.bangumiModel?.run {
-                            setFavouriteStatus(dataView.state.status)
-                        }
-                    }
-                }
             viewModel.fetchEpisodeList(id, name).observe(viewLifecycleOwner) { it ->
                 binding.progressbar.isVisible = it.code == Status.LOADING
                 when (it.code) {
@@ -108,6 +100,7 @@ class BangumiDetailsFragment : Fragment() {
                         val adapter = binding.recyclerView.adapter as EpisodeAdapter
                         adapter.submitList(it.data?.sortedBy { episode -> episode.episodeEntity.episodeNo }
                             ?.reversed())
+                        fetchFavriouteState(id)
                     }
 
                     Status.ERROR -> {
@@ -134,10 +127,23 @@ class BangumiDetailsFragment : Fragment() {
                             }
                         val adapter = binding.recyclerView.adapter as EpisodeAdapter
                         adapter.submitList(it.data)
+                        fetchFavriouteState(id)
                     }
                 }
             }
         }
+    }
+
+    private fun fetchFavriouteState(id: UUID) {
+        viewModel.queryBangumiAndFavorite(id)
+            .observe(viewLifecycleOwner) { dataView ->
+                binding.bangumiModel = dataView
+                dataView?.run {
+                    binding.bangumiModel?.run {
+                        setFavouriteStatus(dataView.state.status)
+                    }
+                }
+            }
     }
 
     private fun initToolbar(view: View) {
