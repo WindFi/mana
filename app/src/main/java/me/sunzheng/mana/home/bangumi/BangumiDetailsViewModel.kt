@@ -23,6 +23,6 @@ class BangumiDetailsViewModel @Inject constructor() : ViewModel() {
     fun updateBangumiFavoriteState(bangumiId: UUID, status: Int, userName: String = this.userName) =
         repository.updateBangumiFavrioteState(bangumiId, status, userName)
 
-    fun queryBangumiAndFavorite(bangumiId: UUID, userName: String) =
+    fun queryBangumiAndFavorite(bangumiId: UUID) =
         repository.queryBangumiAndFavriote(bangumiId, userName)
 }
