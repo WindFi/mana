@@ -468,7 +468,7 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
             }
             binding.player.systemUiVisibility = flag
         }
-        binding.toolbar.setNavigationContentDescription(R.string.nav_app_bar_navigate_up_description)
+//        binding.toolbar.setNavigationContentDescription(R.string.nav_app_bar_navigate_up_description)
         binding.toolbar.navigationIcon = DrawerArrowDrawable(requireContext()).apply {
             progress = 1f
         }

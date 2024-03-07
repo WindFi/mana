@@ -6,7 +6,7 @@ import java.util.*
 @Dao
 interface BangumiDao {
 
-    @Query("SELECT * FROM bangumi WHERE name LIKE :word OR nameCn LIKE '%'||:word||'%' ORDER BY airDate DESC LIMIT :maxLimit OFFSET :offset")
+    @Query("SELECT * FROM bangumi WHERE name LIKE :word OR nameCn LIKE '%'||:word||'%' OR summary LIKE '%'||:word||'%' ORDER BY airDate DESC LIMIT :maxLimit OFFSET :offset")
     fun query(word: String, maxLimit: Int = 30, offset: Int = 0): List<BangumiEntity>
 
     @Query("SELECT * FROM bangumi WHERE type = :type")
