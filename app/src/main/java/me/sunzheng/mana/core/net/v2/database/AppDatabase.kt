@@ -12,7 +12,7 @@ import java.util.UUID
 
 @Database(
     entities = [BangumiEntity::class, FavriouteEntity::class, WatchProgressEntity::class, EpisodeEntity::class, VideoFileEntity::class, RelationOnAir::class],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(UUIDTypeConvert::class, CovertImageConvert::class)

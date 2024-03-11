@@ -33,14 +33,14 @@ interface FavirouteDao {
     fun queryList(status: Int, userName: String): List<BangumiAndFavorites>
 
     @Transaction
-    @Query("SELECT * FROM favorite WHERE favorite.status = :status AND userName = :userName")
+    @Query("SELECT * FROM favorite WHERE favorite.status = :status AND userName = :userName ORDER BY favorite_update_time DESC")
     fun queryBangumiList(
         status: Int,
         userName: String
     ): List<BangumiAndFavorites>
 
     @Transaction
-    @Query("SELECT * FROm favorite WHERE favorite.status != :status AND userName = :userName")
+    @Query("SELECT * FROm favorite WHERE favorite.status != :status AND userName = :userName ORDER BY favorite_update_time DESC")
     fun queryBangumiListAll(
         status: Int,
         userName: String

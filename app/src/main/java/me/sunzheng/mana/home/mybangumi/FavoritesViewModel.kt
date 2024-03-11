@@ -48,12 +48,14 @@ class FavoritesRepository {
                             dataView.state.apply {
                                 this.status = it.favoriteStatus
                                 unwatched_count = it.unwatched_count
+                                favoriteUpdateTime = it.favoriteUpdateTime
                             }
                         } ?: FavriouteEntity(
                         UUID.fromString(it.id),
                         status = it.favoriteStatus,
                         userName = userName,
-                        it.unwatched_count
+                        favoriteUpdateTime =it.favoriteUpdateTime,
+                        unwatched_count = it.unwatched_count
                     )
                     favriouteDao.insert(source)
                 }

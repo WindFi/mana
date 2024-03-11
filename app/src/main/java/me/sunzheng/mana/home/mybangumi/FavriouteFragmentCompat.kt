@@ -59,7 +59,8 @@ class FavriouteFragmentCompat @Inject constructor() : Fragment() {
                         binding.textview.isVisible = it.data.isNullOrEmpty()
 
                         it.data?.map { it.entity }?.run {
-                            if (binding.adapter == null) binding.adapter =
+//                            if (binding.adapter == null)
+                                binding.adapter =
                                 OnAirItemRecyclerViewAdapter(this) { v, _, _, m ->
                                     if (m is BangumiEntity)
                                         BangumiDetailsActivity.newInstance(
@@ -67,10 +68,10 @@ class FavriouteFragmentCompat @Inject constructor() : Fragment() {
                                             m,
                                             v.findViewById(R.id.item_album)
                                         )
-                                } else {
-                                var adapter = binding.adapter
-                                adapter?.mValues?.addAll(this)
-                                adapter?.notifyDataSetChanged()
+//                                } else {
+//                                var adapter = binding.adapter
+//                                adapter?.mValues?.addAll(this)
+//                                adapter?.notifyDataSetChanged()
                             }
                         }
 

@@ -144,6 +144,16 @@ data class FavriouteEntity(
     @ColumnInfo var userName: String,
     @ColumnInfo
     var unwatched_count: Int = 0,
+
+    @ColumnInfo(
+        name = "favorite_update_time",
+        defaultValue = "0",
+        typeAffinity = ColumnInfo.INTEGER,
+        collate = ColumnInfo.BINARY
+    )
+    @SerializedName("favorite_update_time")
+    @Expose
+    var favoriteUpdateTime: Long = 0
 ) : Parcelable {
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo
