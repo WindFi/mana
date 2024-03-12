@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
+import androidx.core.util.PatternsCompat
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
@@ -40,8 +41,13 @@ fun Fragment.showToast(@StringRes res: Int) {
 
 fun VideoFileEntity.parseExtractorMediaSource(host: String, dataSourceFactory: DataSource.Factory) =
     url?.toUri()?.let {
+        var url = if (PatternsCompat.WEB_URL.matcher(it.toString()).find()) {
+            it.toString()
+        }else {
+           "$host${it}"
+        }
         ExtractorMediaSource.Factory(dataSourceFactory)
-            .createMediaSource("$host${it}".toUri())
+            .createMediaSource("$url".toUri())
     }
 
 fun EpisodeEntity.parseMediaDescription(mediaUrl: String) =

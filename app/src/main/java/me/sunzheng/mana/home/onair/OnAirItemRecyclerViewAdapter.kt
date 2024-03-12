@@ -59,7 +59,7 @@ class OnAirItemRecyclerViewAdapter(
                 Context.MODE_PRIVATE
             ).getString(PreferenceManager.Global.STR_KEY_HOST, "")
             val domainColor = coverImage?.dominantColor ?: cover_color!!
-            var coverImageUrl = coverImage?.url ?: image!!
+            var coverImageUrl =  image?:coverImage?.url
 
             coverImageUrl = HostUtil.makeUp(host, coverImageUrl)
 
