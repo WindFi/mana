@@ -9,6 +9,10 @@
         android:layout_height="wrap_content"
         tools:context="me.sunzheng.mana.home.onair.OnAirFragment"
         tools:listitem="@layout/item_onairfragment">
+        <FrameLayout
+            android:id="@+id/content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerview"
@@ -18,5 +22,7 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior"
             app:spanCount="1"
             tools:listitem="@layout/item_bangumidetails_fragment" />
+
+        </FrameLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </layout>

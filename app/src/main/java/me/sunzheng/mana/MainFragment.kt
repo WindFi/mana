@@ -209,6 +209,10 @@ class MainFragment : Fragment(),
                 sharedPreferences.edit()
                     .putBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false)
                     .commit()
+                sharedPreferences.edit()
+                    .putString(PreferenceManager.Global.STR_USERNAME,"")
+                    .putString(PreferenceManager.Global.STR_PASSWORD,"")
+                    .commit()
                 viewModel.checkIsLogin(requireContext())
                 true
             }

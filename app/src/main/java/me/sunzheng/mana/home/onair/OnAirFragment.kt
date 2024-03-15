@@ -16,6 +16,7 @@ import me.sunzheng.mana.core.net.Status
 import me.sunzheng.mana.core.net.v2.database.BangumiEntity
 import me.sunzheng.mana.core.net.v2.showToast
 import me.sunzheng.mana.databinding.FragmentItemListBinding
+import me.sunzheng.mana.home.EmptyFragment
 import me.sunzheng.mana.home.main.MainViewModel
 
 /**
@@ -66,7 +67,7 @@ class OnAirFragment : Fragment() {
     fun remove() {
         viewModel.queryAir(type).removeObserver(observable)
     }
-
+    var emptyFragment=EmptyFragment()
     var observable =
         Observer<Resource<List<BangumiEntity>>> { it ->
             binder.swiperefreshlayout.isRefreshing = it.code == Status.LOADING
@@ -75,6 +76,7 @@ class OnAirFragment : Fragment() {
             }
             when (it.code) {
                 Status.LOADING -> {
+                    childFragmentManager.beginTransaction().replace(binder.content.id,emptyFragment).commitNow()
                     it.data?.takeIf { that -> that.isNotEmpty() }?.run {
                         if (binder.recyclerview.adapter == null)
                             binder.recyclerview.adapter = OnAirItemRecyclerViewAdapter(
@@ -107,7 +109,8 @@ class OnAirFragment : Fragment() {
                 }
                 Status.SUCCESS -> {
 //                if(binder.recyclerview.adapter==null)
-                    it.data?.run {
+                    it.data?.takeIf { that -> that.isNotEmpty() }?.run {
+                        childFragmentManager.beginTransaction().remove(emptyFragment).commit()
                         binder.recyclerview.adapter = OnAirItemRecyclerViewAdapter(
                             this
                         ) { v, _, _, m ->
