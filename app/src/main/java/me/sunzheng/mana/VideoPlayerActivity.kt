@@ -283,7 +283,6 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
             }
         }
     }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -703,11 +702,17 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
 
             override fun onPlayerError(error: ExoPlaybackException?) {
                 error?.run {
-                    Log.i(
-                        "${VideoPlayerActivity::class.java.simpleName}",
-                        "${this.sourceException.message}"
-                    )
-                    showToast(this.sourceException.message ?: this.sourceException.toString())
+                    var exception = when(this.type){
+                        ExoPlaybackException.TYPE_RENDERER->this.rendererException
+                        ExoPlaybackException.TYPE_SOURCE->this.sourceException
+                        ExoPlaybackException.TYPE_UNEXPECTED->this.unexpectedException
+                        else->Exception("unknown error")
+                    }
+//                    Log.i(
+//                        "${VideoPlayerActivity::class.java.simpleName}",
+//                        "${exception.message}"
+//                    )
+                    showToast(exception.localizedMessage?:"unknown error")
                 }
 
                 super.onPlayerError(error)
