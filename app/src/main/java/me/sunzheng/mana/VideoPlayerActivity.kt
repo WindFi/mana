@@ -6,6 +6,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.ActivityInfo
 import android.graphics.Point
 import android.media.AudioFocusRequest
 import android.media.AudioManager
@@ -22,9 +23,9 @@ import android.os.Looper
 import android.provider.Settings
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaSessionCompat
-import android.support.v4.media.session.PlaybackStateCompat
 import android.text.TextUtils
 import android.util.Log
+import android.view.Display
 import android.view.GestureDetector.SimpleOnGestureListener
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -36,6 +37,7 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.OptIn
 import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
@@ -47,36 +49,32 @@ import androidx.core.view.WindowInsetsControllerCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.common.util.Util
+import androidx.media3.database.StandaloneDatabaseProvider
+import androidx.media3.datasource.DataSource
+import androidx.media3.datasource.DefaultHttpDataSource
+import androidx.media3.datasource.cache.Cache
+import androidx.media3.datasource.cache.CacheDataSink
+import androidx.media3.datasource.cache.CacheDataSource
+import androidx.media3.datasource.cache.LeastRecentlyUsedCacheEvictor
+import androidx.media3.datasource.cache.SimpleCache
+import androidx.media3.exoplayer.DefaultLoadControl
+import androidx.media3.exoplayer.DefaultRenderersFactory
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.LoadControl
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
+import androidx.media3.session.MediaSession
+import androidx.media3.ui.PlayerView
 import androidx.preference.PreferenceManager
-import com.google.android.exoplayer2.ControlDispatcher
-import com.google.android.exoplayer2.DefaultLoadControl
-import com.google.android.exoplayer2.DefaultRenderersFactory
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.LoadControl
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.Timeline
-import com.google.android.exoplayer2.database.DatabaseProvider
-import com.google.android.exoplayer2.database.ExoDatabaseProvider
-import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector.CustomActionProvider
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.Cache
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource
-import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
-import com.google.android.exoplayer2.upstream.cache.SimpleCache
-import com.google.android.exoplayer2.util.Util
 import dagger.hilt.android.AndroidEntryPoint
 import me.sunzheng.mana.core.net.Status
 import me.sunzheng.mana.core.net.v2.database.EpisodeEntity
 import me.sunzheng.mana.core.net.v2.database.VideoFileEntity
 import me.sunzheng.mana.core.net.v2.database.WatchProgressEntity
 import me.sunzheng.mana.core.net.v2.parseExtractorMediaSource
+import me.sunzheng.mana.core.net.v2.parseMediaItem
 import me.sunzheng.mana.core.net.v2.showToast
 import me.sunzheng.mana.core.net.v2.toUUID
 import me.sunzheng.mana.databinding.FragmentVideoPlayerBinding
@@ -122,6 +120,11 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_player)
+        if(Build.VERSION.SDK_INT >=26){
+            if(resources.configuration.isScreenWideColorGamut){
+                window.colorMode = ActivityInfo.COLOR_MODE_WIDE_COLOR_GAMUT
+            }
+        }
         supportFragmentManager.beginTransaction()
             .replace(
                 R.id.fragment_container,
@@ -130,6 +133,7 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity() {
     }
 }
 
+@UnstableApi
 @AndroidEntryPoint
 class VideoPlayerFragment : Fragment(), VideoControllerListener {
     companion object {
@@ -168,41 +172,59 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
 
     lateinit var binding: FragmentVideoPlayerBinding
 
-    private val player: ExoPlayer by lazy {
-        ExoPlayerFactory.newSimpleInstance(
-            requireContext(),
-            DefaultRenderersFactory(requireContext()),
-            DefaultTrackSelector(AdaptiveTrackSelection.Factory()),
-            loaderController
-        )
+    private val player: Player by lazy {
+        ExoPlayer.Builder(requireContext())
+            .setRenderersFactory(DefaultRenderersFactory(requireContext()))
+            .setTrackSelector(DefaultTrackSelector(requireContext()))
+            .setLoadControl(loaderController)
+            .build()
+//        ExoPlayerFactory.newSimpleInstance(
+//            requireContext(),
+//            DefaultRenderersFactory(requireContext()),
+//            DefaultTrackSelector(AdaptiveTrackSelection.Factory()),
+//            loaderController
+//        )
     }
 
     private val cache: Cache by lazy {
         SimpleCache(
             cacheFile,
-            LeastRecentlyUsedCacheEvictor(1024 * 1024 * 256),
-            ExoDatabaseProvider(requireContext())
+            LeastRecentlyUsedCacheEvictor(1024 * 1024 * 1024),
+            StandaloneDatabaseProvider(requireContext())
         )
     }
     private val dataSourceFactory: DataSource.Factory by lazy {
-        CacheDataSourceFactory(
-            cache,
-            DefaultHttpDataSourceFactory(
-                Util.getUserAgent(
-                    requireContext(),
-                    requireContext().packageName
-                )
-            ),
-            CacheDataSource.FLAG_BLOCK_ON_CACHE
-        )
+        CacheDataSource.Factory()
+            .setCache(cache)
+            .setCacheWriteDataSinkFactory {
+                CacheDataSink.Factory()
+                    .setBufferSize(1024 * 1024 * 1024)
+                    .createDataSink()
+            }
+            .setCacheReadDataSourceFactory(
+                DefaultHttpDataSource.Factory()
+                    .setUserAgent(Util.getUserAgent(requireContext(), requireContext().packageName))
+            )
+
+//            .setUserAgent(Util.getUserAgent(requireContext(),requireContext().packageName))
+//        CacheDataSourceFactory(
+//            cache,
+//            DefaultHttpDataSourceFactory(
+//                Util.getUserAgent(
+//                    requireContext(),
+//                    requireContext().packageName
+//                )
+//            ),
+//            CacheDataSource.FLAG_BLOCK_ON_CACHE
+//        )
     }
     private val cacheFile: File by lazy {
         File(requireContext().externalCacheDir, "mediaCache")
     }
     private val loaderController: LoadControl by lazy {
-        DefaultLoadControl.Builder().apply {
-            setBufferDurationsMs(1000 * 20, 1000 * 60 * 24, 1000 * 10, 1000 * 10)
-        }.createDefaultLoadControl()
+        DefaultLoadControl.Builder()
+            .setBufferDurationsMs(1000 * 20, 1000 * 60 * 24, 1000 * 10, 1000 * 10)
+            .build()
     }
     val isAutoPlay: Boolean by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
@@ -298,16 +320,20 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
     val mediaMession: MediaSessionCompat by lazy {
         MediaSessionCompat(requireContext(), "VideoPlayerActivity")
     }
-    val mediaSessionConnector: MediaSessionConnector by lazy {
-        MediaSessionConnector(mediaMession).apply {
-            setPlayer(player)
-            setEnabledPlaybackActions(
-                PlaybackStateCompat.ACTION_PAUSE
-                        or PlaybackStateCompat.ACTION_PLAY
-                        or PlaybackStateCompat.ACTION_PLAY_PAUSE
-                        or PlaybackStateCompat.ACTION_SEEK_TO
-            )
-        }
+    val mediaSessionConnector: MediaSession by lazy {
+        MediaSession
+            .Builder(requireContext(), player)
+            .setId(System.currentTimeMillis().toString())
+            .build()
+//        MediaSessionConnector(mediaMession).apply {
+//            setPlayer(player)
+//            setEnabledPlaybackActions(
+//                PlaybackStateCompat.ACTION_PAUSE
+//                        or PlaybackStateCompat.ACTION_PLAY
+//                        or PlaybackStateCompat.ACTION_PLAY_PAUSE
+//                        or PlaybackStateCompat.ACTION_SEEK_TO
+//            )
+//        }
     }
 
     override fun onCreateView(
@@ -333,8 +359,8 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
             R.id.title
         )
         viewModel.videoFileLiveData.observe(viewLifecycleOwner) {
-            it.parseExtractorMediaSource(viewModel.host, dataSourceFactory)?.run {
-                player.prepare(this)
+            it.parseMediaItem(viewModel.host, dataSourceFactory)?.run {
+                player.setMediaItem(this)
             }
         }
         var bundle = savedInstanceState?.getBundle("args") ?: requireArguments()
@@ -383,7 +409,7 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
                                         viewModel.host,
                                         dataSourceFactory
                                     )?.run {
-                                        player.prepare(this)
+                                        player.prepare()
                                         binding.toolbar.title = mediaDescriptionCompat.title
                                         binding.player.hideController()
                                     }
@@ -402,16 +428,13 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
                 viewModel.mediaDescritionLiveData.postValue(model)
             }
         }
-
-        binding.player.setControllerVisibilityListener {
+        binding.player.setControllerVisibilityListener(PlayerView.ControllerVisibilityListener{
             binding.appbarlayout.isVisible = it == View.VISIBLE
-//            when (it) {
-//                View.VISIBLE -> binding.appbarlayout
-//                else -> supportActionBar?.hide()
-//            }
-        }
+        })
+        binding.player.controllerHideOnTouch = true
         binding.player.controllerAutoShow = true
         binding.player.controllerShowTimeoutMs = 3000
+        binding.player.showController()
 //==================================== init?====================================
         binding.listviewEpisode.onItemClickListener =
             OnItemClickListener { parent, view, position, id ->
@@ -555,7 +578,6 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
         var adapter = binding.listviewEpisode.adapter as MediaDescriptionAdapter2
         return adapter.list.firstOrNull { episodeId.toString() == it.mediaId!! }?.let {
             var index = adapter.list.indexOf(it)
-            Log.i("aabb", "$index")
             index
         }?.let {
             it
@@ -586,14 +608,12 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
     }
 
     override fun onStart() {
-//        binding.player.player!!.playWhenReady = true
-        mediaSessionConnector.mediaSession.isActive = true
+        mediaSessionConnector.player.playWhenReady = true
         super.onStart()
     }
 
     override fun onStop() {
-//        binding.player.player!!.playWhenReady = false
-        mediaSessionConnector.mediaSession.isActive = false
+        mediaSessionConnector.player.playWhenReady = false
         super.onStop()
     }
 
@@ -637,7 +657,7 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             audioManager.abandonAudioFocusRequest(audioRequest.build())
         }
-        mediaSessionConnector.mediaSession.release()
+        mediaSessionConnector.player.release()
         super.onDestroyView()
     }
 
@@ -683,6 +703,7 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
         } else false
     }
 
+    @OptIn(UnstableApi::class)
     private fun setup() {
         requireActivity().volumeControlStream = STREAM_MUSIC
         IntentFilter(AudioManager.ACTION_AUDIO_BECOMING_NOISY).run {
@@ -699,18 +720,26 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
                 }
             }
         }
-        binding.player.player!!.addListener(object : Player.EventListener {
-            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                super.onPlayerStateChanged(playWhenReady, playbackState)
-                when (playbackState) {
+        binding.player.player?.addListener(object : Player.Listener{
+            var isInitialized = false
+            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
+                super.onPlayWhenReadyChanged(playWhenReady, reason)
+            }
+            override fun onPlaybackStateChanged(playbackState: Int) {
+                super.onPlaybackStateChanged(playbackState)
+                Log.d("VideoPlayerFragment","playState:${playbackState}")
+                when(playbackState){
+                    Player.STATE_READY ->{
+                        isInitialized=true
+                    }
                     Player.STATE_ENDED -> {
+                        if(!isInitialized){
+                            return
+                        }
                         if (isAutoPlay) {
-                            var currentPosition = viewModel.position.value!!
+                            var currentPosition = viewModel.position.value ?: 0
                             if (currentPosition > 0) {
                                 playItem(--currentPosition)
-                            } else {
-                                // TODO: 优化 finish
-                                requireActivity().finish()
                             }
                         } else {
                             requireActivity().finish()
@@ -718,32 +747,55 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
                     }
                 }
             }
-
-            override fun onLoadingChanged(isLoading: Boolean) {
-                if (isLoading)
-                    binding.progressbar.show()
-                else
-                    binding.progressbar.hide()
-            }
-
-            override fun onPlayerError(error: ExoPlaybackException) {
-                error?.run {
-                    var exception = when(this.type){
-                        ExoPlaybackException.TYPE_RENDERER->this.rendererException
-                        ExoPlaybackException.TYPE_SOURCE->this.sourceException
-                        ExoPlaybackException.TYPE_UNEXPECTED->this.unexpectedException
-                        else->Exception("unknown error")
-                    }
-//                    Log.i(
-//                        "${VideoPlayerActivity::class.java.simpleName}",
-//                        "${exception.message}"
-//                    )
-                    showToast(exception.localizedMessage?:"unknown error")
-                }
-
-                super.onPlayerError(error)
+            override fun onIsLoadingChanged(isLoading: Boolean) {
+                binding.progressbar.isVisible = isLoading
             }
         })
+//        binding.player.player!!.addListener(object : Player.EventListener {
+//            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+//                super.onPlayerStateChanged(playWhenReady, playbackState)
+//                when (playbackState) {
+//                    Player.STATE_ENDED -> {
+//                        if (isAutoPlay) {
+//                            var currentPosition = viewModel.position.value!!
+//                            if (currentPosition > 0) {
+//                                playItem(--currentPosition)
+//                            } else {
+//                                // TODO: 优化 finish
+//                                requireActivity().finish()
+//                            }
+//                        } else {
+//                            requireActivity().finish()
+//                        }
+//                    }
+//                }
+//            }
+//
+//            override fun onLoadingChanged(isLoading: Boolean) {
+//                if (isLoading)
+//                    binding.progressbar.show()
+//                else
+//                    binding.progressbar.hide()
+//            }
+//
+//            override fun onPlayerError(error: ExoPlaybackException) {
+//                error?.run {
+//                    var exception = when (this.type) {
+//                        ExoPlaybackException.TYPE_RENDERER -> this.rendererException
+//                        ExoPlaybackException.TYPE_SOURCE -> this.sourceException
+//                        ExoPlaybackException.TYPE_UNEXPECTED -> this.unexpectedException
+//                        else -> Exception("unknown error")
+//                    }
+////                    Log.i(
+////                        "${VideoPlayerActivity::class.java.simpleName}",
+////                        "${exception.message}"
+////                    )
+//                    showToast(exception.localizedMessage ?: "unknown error")
+//                }
+//
+//                super.onPlayerError(error)
+//            }
+//        })
         binding.player.player!!.playWhenReady = true
         binding.player.setOnTouchListener { v, event -> genstureDetector.onTouchEvent(event) }
         viewModel.brighnessLiveData.observe(viewLifecycleOwner) {
@@ -838,7 +890,7 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
             viewModel.isListShowing.postValue(false)
             return
         }
-        if (binding.player.isControllerVisible) {
+        if (binding.player.isControllerFullyVisible) {
             hideControllerUI()
         } else {
             showControllerUI()
@@ -863,7 +915,8 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
 
     private fun startPlay() {
         player.playWhenReady = true
-        player.retry()
+//        player.retry()
+        player.play()
     }
 
     private fun stopPlay() {
@@ -908,17 +961,16 @@ class NormalGenstureDetector(
         controller?.singleClick()
         return true
     }
-
     override fun onScroll(
-        e1: MotionEvent,
+        e1: MotionEvent?,
         e2: MotionEvent,
         distanceX: Float,
         distanceY: Float
     ): Boolean {
 //        var mu = areaDetector(e1,e2)
 //        return isScrolling && isInVaildArea(e1)&&controller.scroll(mu,e1!!,if(distanceX>distanceY)distanceX else distanceY)
-        var str = e1.let { "e1.x:${it.x} " }
-        str += e1.let { "e1.y:${e1.y} " }
+        var str = e1.let { "e1.x:${it?.x} " }
+        str += e1.let { "e1.y:${e1?.y} " }
         str += e2.let { "e2.x:${e2.x} " }
         str += e2.let { "e2.y:${e2.y} " }
         str += "distanceX:$distanceX distanceY:$distanceY"

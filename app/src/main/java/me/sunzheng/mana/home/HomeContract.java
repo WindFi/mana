@@ -2,7 +2,6 @@ package me.sunzheng.mana.home;
 
 import android.widget.BaseAdapter;
 
-import com.google.android.exoplayer2.SimpleExoPlayer;
 
 import java.util.List;
 
@@ -132,7 +131,7 @@ public interface HomeContract {
 
             void addPlayQueue(Episode episode);
 
-            SimpleExoPlayer getPlayer();
+//            ExoPlayer getPlayer();
 
             boolean isEndOfList();
 

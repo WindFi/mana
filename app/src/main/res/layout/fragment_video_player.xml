@@ -15,8 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@android:color/black">
-
-        <com.google.android.exoplayer2.ui.PlayerView
+        <androidx.media3.ui.PlayerView
             android:id="@+id/player"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -51,7 +50,8 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:visibility="visible">
+                    tools:visibility="visible"
+                    >
 
                     <androidx.appcompat.widget.AppCompatTextView
                         android:id="@+id/textview_exo_position"
@@ -62,7 +62,7 @@
                         tools:text="00:00" />
                 </androidx.appcompat.widget.LinearLayoutCompat>
             </androidx.constraintlayout.widget.ConstraintLayout>
-        </com.google.android.exoplayer2.ui.PlayerView>
+        </androidx.media3.ui.PlayerView>
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbarlayout"
@@ -108,12 +108,12 @@
                 android:layout_centerVertical="true"
                 android:choiceMode="singleChoice" />
         </RelativeLayout>
-
-        <com.google.android.material.progressindicator.LinearProgressIndicator
+        <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressbar"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-             />
+            android:layout_gravity="center"
+            android:indeterminate="true" />
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/viewgroup_value"
             android:layout_width="wrap_content"

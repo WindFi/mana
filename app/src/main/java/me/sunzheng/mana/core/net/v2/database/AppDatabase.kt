@@ -26,7 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
 }
 
 
-object UUIDTypeConvert {
+class UUIDTypeConvert() {
     @TypeConverter
     fun fromUUID(uuid: UUID?) = uuid?.toString()
 
@@ -34,7 +34,7 @@ object UUIDTypeConvert {
     fun uuidFromString(uuid: String?) = uuid?.let { UUID.fromString(it) }
 }
 
-object CovertImageConvert {
+class CovertImageConvert() {
     @TypeConverter
     fun fromObject(obj: CoverImage?) = Gson().toJson(obj)
 
