@@ -21,6 +21,8 @@ import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
 import android.support.v4.media.MediaDescriptionCompat
+import android.support.v4.media.session.MediaSessionCompat
+import android.support.v4.media.session.PlaybackStateCompat
 import android.text.TextUtils
 import android.util.Log
 import android.view.GestureDetector.SimpleOnGestureListener
@@ -34,6 +36,7 @@ import android.widget.AdapterView.OnItemClickListener
 import android.widget.ArrayAdapter
 import android.widget.ListView
 import androidx.activity.OnBackPressedCallback
+import androidx.annotation.WorkerThread
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
 import androidx.core.view.GestureDetectorCompat
@@ -45,6 +48,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.preference.PreferenceManager
+import com.google.android.exoplayer2.ControlDispatcher
 import com.google.android.exoplayer2.DefaultLoadControl
 import com.google.android.exoplayer2.DefaultRenderersFactory
 import com.google.android.exoplayer2.ExoPlaybackException
@@ -53,6 +57,10 @@ import com.google.android.exoplayer2.ExoPlayerFactory
 import com.google.android.exoplayer2.LoadControl
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.Timeline
+import com.google.android.exoplayer2.database.DatabaseProvider
+import com.google.android.exoplayer2.database.ExoDatabaseProvider
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector.CustomActionProvider
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DataSource
@@ -170,7 +178,11 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
     }
 
     private val cache: Cache by lazy {
-        SimpleCache(cacheFile, LeastRecentlyUsedCacheEvictor(1024 * 1024 * 256))
+        SimpleCache(
+            cacheFile,
+            LeastRecentlyUsedCacheEvictor(1024 * 1024 * 256),
+            ExoDatabaseProvider(requireContext())
+        )
     }
     private val dataSourceFactory: DataSource.Factory by lazy {
         CacheDataSourceFactory(
@@ -251,8 +263,8 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
                 viewModel.updateWatchProgress(
                     bangumiId = viewModel.bangumiId,
                     episodeEntity = episodeEntity,
-                    lastWatchPosition = (binding.player.player.currentPosition / 1000).toFloat(),
-                    duration = (binding.player.player.duration / 1000).toFloat(),
+                    lastWatchPosition = (binding.player.player!!.currentPosition / 1000).toFloat(),
+                    duration = (binding.player.player!!.duration / 1000).toFloat(),
                     watchprocessEntity = m
                 ).observe(viewLifecycleOwner) {
 
@@ -283,6 +295,21 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
             }
         }
     }
+    val mediaMession: MediaSessionCompat by lazy {
+        MediaSessionCompat(requireContext(), "VideoPlayerActivity")
+    }
+    val mediaSessionConnector: MediaSessionConnector by lazy {
+        MediaSessionConnector(mediaMession).apply {
+            setPlayer(player)
+            setEnabledPlaybackActions(
+                PlaybackStateCompat.ACTION_PAUSE
+                        or PlaybackStateCompat.ACTION_PLAY
+                        or PlaybackStateCompat.ACTION_PLAY_PAUSE
+                        or PlaybackStateCompat.ACTION_SEEK_TO
+            )
+        }
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -306,7 +333,7 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
             R.id.title
         )
         viewModel.videoFileLiveData.observe(viewLifecycleOwner) {
-            it.parseExtractorMediaSource(viewModel.host, dataSourceFactory).run {
+            it.parseExtractorMediaSource(viewModel.host, dataSourceFactory)?.run {
                 player.prepare(this)
             }
         }
@@ -367,7 +394,6 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
         }
         viewModel.position.observe(viewLifecycleOwner) { position ->
             binding.listviewEpisode.adapter?.run {
-                Log.i("aabb", "position: $position")
                 var model = this.getItem(position) as MediaDescriptionCompat
                 var label =
                     if (viewModel.isJaFirst || TextUtils.isEmpty(model.title)) model.subtitle else model.title
@@ -560,12 +586,14 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
     }
 
     override fun onStart() {
-        binding.player.player.playWhenReady = true
+//        binding.player.player!!.playWhenReady = true
+        mediaSessionConnector.mediaSession.isActive = true
         super.onStart()
     }
 
     override fun onStop() {
-        binding.player.player.playWhenReady = false
+//        binding.player.player!!.playWhenReady = false
+        mediaSessionConnector.mediaSession.isActive = false
         super.onStop()
     }
 
@@ -585,7 +613,7 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
         }
         binding.textviewWatchprogress.setOnClickListener { v ->
             binding.viewgroupWatchprogress.isVisible = false
-            binding.player.player.seekTo(convert.toLong())
+            binding.player.player!!.seekTo(convert.toLong())
         }
         binding.viewgroupWatchprogress.postDelayed({
             binding.viewgroupWatchprogress.isVisible = false
@@ -598,8 +626,9 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
         viewModel.isJaFirst = s.getBoolean(getString(Global.RES_JA_FIRST_BOOL), false)
     }
 
+    @SuppressLint("WrongThread")
+    @WorkerThread
     override fun onDestroyView() {
-
         requireActivity().unregisterReceiver(broadcastReceiver)
         player.release()
         cache.release()
@@ -608,6 +637,7 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             audioManager.abandonAudioFocusRequest(audioRequest.build())
         }
+        mediaSessionConnector.mediaSession.release()
         super.onDestroyView()
     }
 
@@ -669,7 +699,7 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
                 }
             }
         }
-        binding.player.player.addListener(object : Player.EventListener {
+        binding.player.player!!.addListener(object : Player.EventListener {
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 super.onPlayerStateChanged(playWhenReady, playbackState)
                 when (playbackState) {
@@ -696,11 +726,7 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
                     binding.progressbar.hide()
             }
 
-            override fun onTimelineChanged(timeline: Timeline?, manifest: Any?, reason: Int) {
-                super.onTimelineChanged(timeline, manifest, reason)
-            }
-
-            override fun onPlayerError(error: ExoPlaybackException?) {
+            override fun onPlayerError(error: ExoPlaybackException) {
                 error?.run {
                     var exception = when(this.type){
                         ExoPlaybackException.TYPE_RENDERER->this.rendererException
@@ -718,7 +744,7 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
                 super.onPlayerError(error)
             }
         })
-        binding.player.player.playWhenReady = true
+        binding.player.player!!.playWhenReady = true
         binding.player.setOnTouchListener { v, event -> genstureDetector.onTouchEvent(event) }
         viewModel.brighnessLiveData.observe(viewLifecycleOwner) {
             val per: Float = it / 17 * 255.0f
@@ -846,23 +872,6 @@ class VideoPlayerFragment : Fragment(), VideoControllerListener {
 
     private fun isListViewShowing() =
         binding.listviewEpisode.isVisible || binding.sourceListRoot.isVisible
-
-    /**
-     * unused
-     */
-    private fun viewWithAnimation(view: View) = view.run {
-        animation = AnimationUtils.loadAnimation(
-            context,
-            if (isVisible) R.anim.slide_out_right else R.anim.slide_in_right
-        )
-        if (this is ListView && !isVisible) {
-            post {
-                this.smoothScrollToPosition(this.checkedItemPosition)
-            }
-        }
-        isVisible = isVisible.not()
-        display
-    }
 }
 
 interface VideoControllerListener {

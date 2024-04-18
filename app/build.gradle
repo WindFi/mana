@@ -20,8 +20,8 @@ android {
         applicationId "me.sunzheng.mana"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
-        versionCode 126
-        versionName "2.2.6"
+        versionCode 127
+        versionName "2.2.7"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.release
@@ -94,6 +94,7 @@ dependencies {
     implementation deps.common3
     implementation deps.okhttp_urlconnection
     implementation deps.exoplayer
+    implementation 'com.google.android.exoplayer:extension-mediasession:2.11.1'
     implementation deps.ormlite.core
     implementation deps.ormlite.android
     implementation deps.multidex

@@ -16,6 +16,7 @@ import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.gson.Gson
 import me.sunzheng.mana.core.net.v2.database.EpisodeEntity
@@ -46,7 +47,7 @@ fun VideoFileEntity.parseExtractorMediaSource(host: String, dataSourceFactory: D
         }else {
            "$host${it}"
         }
-        ExtractorMediaSource.Factory(dataSourceFactory)
+        ProgressiveMediaSource.Factory(dataSourceFactory)
             .createMediaSource("$url".toUri())
     }
 
