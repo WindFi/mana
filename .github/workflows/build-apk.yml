@@ -37,7 +37,6 @@ jobs:
       
       # 4. 解码并配置签名密钥
       - name: Decode keystore
-        shell: /usr/bin/bash
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_FILE }}
         run: |
@@ -63,7 +62,6 @@ jobs:
       
       # 5. 创建 gradle.properties 配置 AndroidX 和签名信息
       - name: Create gradle.properties
-        shell: /usr/bin/bash
         run: |
           # 启用 AndroidX 支持（safeargs 插件必需）
           echo "android.useAndroidX=true" >> gradle.properties
@@ -76,13 +74,11 @@ jobs:
       
       # 6. 构建 Release APK
       - name: Build Release APK
-        shell: /usr/bin/bash
         run: gradle assembleRelease --stacktrace
       
       # 7. 获取版本信息
       - name: Get version info
         id: version
-        shell: /usr/bin/bash
         run: |
           VERSION_NAME=$(grep "versionName" app/build.gradle | awk '{print $2}' | tr -d '"')
           echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
@@ -102,7 +98,6 @@ jobs:
       
       # 9. 显示构建信息
       - name: Build Summary
-        shell: /usr/bin/bash
         run: |
           echo "✅ APK 构建成功！"
           if [[ "${{ github.ref }}" == refs/tags/* ]]; then
