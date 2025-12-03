@@ -1,0 +1,114 @@
+name: Build Android APK
+
+# 触发条件：master 分支的所有更新（推送、PR、标签等）
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+  create:
+    tags:
+      - '*'
+
+jobs:
+  build:
+    name: Build Release APK
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # 2. 设置 JDK 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      
+      # 3. 安装 Gradle
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: '8.13'
+      
+      # 4. 解码并配置签名密钥
+      - name: Decode keystore
+        shell: /usr/bin/bash
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_FILE }}
+        run: |
+          # 清理 base64 字符串（去除所有空白字符）
+          CLEAN_BASE64=$(echo "$KEYSTORE_BASE64" | tr -d '[:space:]')
+          # 解码并写入文件（兼容不同系统的 base64 命令）
+          if command -v base64 >/dev/null 2>&1; then
+            if base64 --help 2>&1 | grep -q "decode"; then
+              echo "$CLEAN_BASE64" | base64 --decode > "${{ github.workspace }}/Sun.jks"
+            else
+              echo "$CLEAN_BASE64" | base64 -d > "${{ github.workspace }}/Sun.jks"
+            fi
+          else
+            echo "❌ 错误：未找到 base64 命令"
+            exit 1
+          fi
+          # 验证文件是否成功创建
+          if [ ! -f "${{ github.workspace }}/Sun.jks" ]; then
+            echo "❌ 错误：密钥文件解码失败"
+            exit 1
+          fi
+          echo "✅ 密钥文件解码成功"
+      
+      # 5. 创建 gradle.properties 配置 AndroidX 和签名信息
+      - name: Create gradle.properties
+        shell: /usr/bin/bash
+        run: |
+          # 启用 AndroidX 支持（safeargs 插件必需）
+          echo "android.useAndroidX=true" >> gradle.properties
+          echo "android.enableJetifier=true" >> gradle.properties
+          # 配置签名信息
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> gradle.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> gradle.properties
+          echo "storeFile=${{ github.workspace }}/Sun.jks" >> gradle.properties
+          echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> gradle.properties
+      
+      # 6. 构建 Release APK
+      - name: Build Release APK
+        shell: /usr/bin/bash
+        run: gradle assembleRelease --stacktrace
+      
+      # 7. 获取版本信息
+      - name: Get version info
+        id: version
+        shell: /usr/bin/bash
+        run: |
+          VERSION_NAME=$(grep "versionName" app/build.gradle | awk '{print $2}' | tr -d '"')
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION_NAME"
+      
+      # 8. 创建 GitHub Release（仅在推送标签时）
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: app/build/outputs/apk/release/*.apk
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      # 9. 显示构建信息
+      - name: Build Summary
+        shell: /usr/bin/bash
+        run: |
+          echo "✅ APK 构建成功！"
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "🎉 GitHub Release 已创建并附加 APK"
+          else
+            echo "📝 提示：推送标签可自动创建 Release"
+          fi
+          ls -lh app/build/outputs/apk/release/
+
