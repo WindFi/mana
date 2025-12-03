@@ -1,26 +1,88 @@
-name: Android CI
+name: Build Android APK
 
+# 触发条件：master 分支的所有更新（推送、PR、标签等）
 on:
   push:
-    branches: [ "dev" ]
+    branches:
+      - master
+      - dev
   pull_request:
-    branches: [ "dev" ]
+    branches:
+      - master
+      - dev
+  create:
+    tags:
+      - '*'
 
 jobs:
   build:
-
+    name: Build Release APK
     runs-on: ubuntu-latest
-
+    
     steps:
-    - uses: actions/checkout@v4
-    - name: set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-        cache: gradle
+      # 1. 检出代码
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      # 2. 设置 JDK 17
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+      
+      # 3. 授予 gradlew 执行权限
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+      
+      # 4. 解码并配置签名密钥
+      - name: Decode keystore
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_FILE }}
+        run: |
+          echo "$KEYSTORE_BASE64" | base64 --decode > ${{ github.workspace }}/Sun.jks
+      
+      # 5. 创建 gradle.properties 配置签名信息
+      - name: Create gradle.properties
+        run: |
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> gradle.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> gradle.properties
+          echo "storeFile=${{ github.workspace }}/Sun.jks" >> gradle.properties
+          echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> gradle.properties
+      
+      # 6. 构建 Release APK
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --stacktrace
+      
+      # 7. 获取版本信息
+      - name: Get version info
+        id: version
+        run: |
+          VERSION_NAME=$(grep "versionName" app/build.gradle | awk '{print $2}' | tr -d '"')
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "Version: $VERSION_NAME"
+      
+      # 8. 创建 GitHub Release（仅在推送标签时）
+      - name: Create Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        with:
+          files: app/build/outputs/apk/release/*.apk
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      # 9. 显示构建信息
+      - name: Build Summary
+        run: |
+          echo "✅ APK 构建成功！"
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "🎉 GitHub Release 已创建并附加 APK"
+          else
+            echo "📝 提示：推送标签可自动创建 Release"
+          fi
+          ls -lh app/build/outputs/apk/release/
 
-    - name: Grant execute permission for gradlew
-      run: chmod +x gradlew
-    - name: Build with Gradle
-      run: ./gradlew assembleRelease
