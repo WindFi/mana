@@ -74,7 +74,7 @@ jobs:
       
       # 6. 构建 Release APK
       - name: Build Release APK
-        run: gradle assembleRelease --stacktrace
+        run: gradle assemble --stacktrace
       
       # 7. 获取版本信息
       - name: Get version info
