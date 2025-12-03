@@ -67,6 +67,10 @@ jobs:
       # 5. 创建 gradle.properties 配置签名信息
       - name: Create gradle.properties
         run: |
+          # 启用 AndroidX 支持（safeargs 插件必需）
+          echo "android.useAndroidX=true" >> gradle.properties
+          echo "android.enableJetifier=true" >> gradle.properties
+          # 配置签名信息
           echo "keyAlias=${{ secrets.KEY_ALIAS_MANA }}" >> gradle.properties
           echo "keyPassword=${{ secrets.KEY_PASSWORD_MANA }}" >> gradle.properties
           echo "storeFile=${{ github.workspace }}/Sun.jks" >> gradle.properties
