@@ -40,13 +40,23 @@ jobs:
       
       # 4. 解码并配置签名密钥
       - name: Decode keystore
+        # shell: /usr/bin/bash
         env:
-          KEYSTORE_BASE64: ${{ secrets.KEY_OF_MANA }}
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_FILE }}
         run: |
           # 清理 base64 字符串（去除所有空白字符）
           CLEAN_BASE64=$(echo "$KEYSTORE_BASE64" | tr -d '[:space:]')
-          # 解码并写入文件
-          echo "$CLEAN_BASE64" | base64 -d > ${{ github.workspace }}/Sun.jks
+          # 解码并写入文件（兼容不同系统的 base64 命令）
+          if command -v base64 >/dev/null 2>&1; then
+            if base64 --help 2>&1 | grep -q "decode"; then
+              echo "$CLEAN_BASE64" | base64 --decode > "${{ github.workspace }}/Sun.jks"
+            else
+              echo "$CLEAN_BASE64" | base64 -d > "${{ github.workspace }}/Sun.jks"
+            fi
+          else
+            echo "❌ 错误：未找到 base64 命令"
+            exit 1
+          fi
           # 验证文件是否成功创建
           if [ ! -f "${{ github.workspace }}/Sun.jks" ]; then
             echo "❌ 错误：密钥文件解码失败"
