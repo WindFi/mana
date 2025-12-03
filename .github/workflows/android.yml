@@ -43,7 +43,16 @@ jobs:
         env:
           KEYSTORE_BASE64: ${{ secrets.KEY_OF_MANA }}
         run: |
-          echo "$KEYSTORE_BASE64" | base64 --decode > ${{ github.workspace }}/Sun.jks
+          # 清理 base64 字符串（去除所有空白字符）
+          CLEAN_BASE64=$(echo "$KEYSTORE_BASE64" | tr -d '[:space:]')
+          # 解码并写入文件
+          echo "$CLEAN_BASE64" | base64 -d > ${{ github.workspace }}/Sun.jks
+          # 验证文件是否成功创建
+          if [ ! -f "${{ github.workspace }}/Sun.jks" ]; then
+            echo "❌ 错误：密钥文件解码失败"
+            exit 1
+          fi
+          echo "✅ 密钥文件解码成功"
       
       # 5. 创建 gradle.properties 配置签名信息
       - name: Create gradle.properties
