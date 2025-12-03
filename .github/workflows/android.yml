@@ -39,15 +39,15 @@ jobs:
       # 4. 解码并配置签名密钥
       - name: Decode keystore
         env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_BASE64: ${{ secrets.KEY_OF_MANA }}
         run: |
           echo "$KEYSTORE_BASE64" | base64 --decode > ${{ github.workspace }}/Sun.jks
       
       # 5. 创建 gradle.properties 配置签名信息
       - name: Create gradle.properties
         run: |
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> gradle.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> gradle.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS_MANA }}" >> gradle.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD_MANA }}" >> gradle.properties
           echo "storeFile=${{ github.workspace }}/Sun.jks" >> gradle.properties
           echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> gradle.properties
       
