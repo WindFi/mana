@@ -9,8 +9,8 @@ plugins {
 android {
     signingConfigs {
         release {
-            keyAlias String.valueOf(project.keyAlias)
-            keyPassword String.valueOf(project.keyPassword)
+            // keyAlias String.valueOf(project.keyAlias)
+            // keyPassword String.valueOf(project.keyPassword)
 //            storeFile file(String.valueOf(project.storeFile))
 //            storePassword String.valueOf(project.storePassword)
         }
