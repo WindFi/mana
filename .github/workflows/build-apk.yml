@@ -38,7 +38,7 @@ jobs:
       # 4. 解码并配置签名密钥
       - name: Decode keystore
         env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_BASE64: ${{ secrets.KEY_OF_MANA }}
         run: |
           # 检查 secret 是否存在
           if [ -z "$KEYSTORE_BASE64" ]; then
@@ -105,8 +105,8 @@ jobs:
           # 配置 DEX 相关设置
           echo "android.dx.maxWorkerCount=4" >> gradle.properties
           # 配置签名信息
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> gradle.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> gradle.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS_MANA }}" >> gradle.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD_MANA }}" >> gradle.properties
           echo "storeFile=${{ github.workspace }}/Sun.jks" >> gradle.properties
           echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> gradle.properties
       
