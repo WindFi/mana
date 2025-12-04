@@ -38,21 +38,30 @@ jobs:
       # 4. 解码并配置签名密钥
       - name: Decode keystore
         env:
-          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_FILE }}
+          KEYSTORE_BASE64: ${{ secrets.KEY_OF_MANA }}
         run: |
+          # 检查 secret 是否存在
+          if [ -z "$KEYSTORE_BASE64" ]; then
+            echo "❌ 错误：GitHub Secret 'KEYSTORE_FILE' 未设置或为空"
+            echo "💡 提示：请在仓库 Settings > Secrets and variables > Actions 中设置 KEYSTORE_FILE"
+            exit 1
+          fi
           # 清理 base64 字符串（去除所有空白字符）
           CLEAN_BASE64=$(echo "$KEYSTORE_BASE64" | tr -d '[:space:]')
-          # 验证 base64 字符串不为空
+          # 验证清理后的 base64 字符串不为空
           if [ -z "$CLEAN_BASE64" ]; then
-            echo "❌ 错误：base64 字符串为空"
+            echo "❌ 错误：base64 字符串为空（清理后）"
+            echo "💡 提示：请检查 KEYSTORE_FILE secret 的值是否正确"
             exit 1
           fi
           echo "📝 Base64 字符串长度: ${#CLEAN_BASE64}"
           # 解码并写入文件（使用 -d 参数，Ubuntu 标准）
           echo "$CLEAN_BASE64" | base64 -d > "${{ github.workspace }}/Sun.jks"
           # 检查解码是否成功
-          if [ $? -ne 0 ]; then
-            echo "❌ 错误：base64 解码失败"
+          DECODE_EXIT_CODE=$?
+          if [ $DECODE_EXIT_CODE -ne 0 ]; then
+            echo "❌ 错误：base64 解码失败，退出码: $DECODE_EXIT_CODE"
+            echo "💡 提示：请检查 base64 编码是否正确"
             exit 1
           fi
           # 验证文件是否成功创建且不为空
