@@ -41,7 +41,7 @@ jobs:
       # 4. 解码并配置签名密钥
       - name: Decode keystore
         env:
-          KEYSTORE_BASE64: ${{ secrets.KEY_OF_MANA }}
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_FILE }}
         run: |
           # 检查 secret 是否存在
           if [ -z "$KEYSTORE_BASE64" ]; then
