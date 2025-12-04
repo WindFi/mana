@@ -175,14 +175,8 @@ jobs:
           fi
           # 使用多行格式输出到 GITHUB_OUTPUT（避免特殊字符问题）
           {
-            echo "version_name<<EOF"
-            echo "$VERSION_NAME"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-          {
-            echo "apk_name<<EOF"
-            echo "$APK_NAME"
-            echo "EOF"
+            echo "version_name=${VERSION_NAME}"
+            echo "apk_name=${APK_NAME}"
           } >> $GITHUB_OUTPUT
           echo "Version: $VERSION_NAME"
           echo "APK Name: $APK_NAME"
