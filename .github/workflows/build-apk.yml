@@ -4,10 +4,10 @@ name: Build Android APK
 on:
   push:
     branches:
-      - master
-#  pull_request:
-#    branches:
-#      - master
+      - dev
+  pull_request:
+    branches:
+      - dev
   create:
     tags:
       - '*'
@@ -19,7 +19,7 @@ jobs:
     # 回写自增后的版本号 commit 需要写权限
     permissions:
       contents: write
-    
+
     steps:
       # 1. 检出代码
       - name: Checkout code
