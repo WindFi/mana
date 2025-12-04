@@ -118,16 +118,34 @@ jobs:
       - name: Get version info
         id: version
         run: |
-          VERSION_NAME=$(grep "versionName" app/build.gradle | awk '{print $2}' | tr -d '"')
+          # 提取版本号（去除引号和空格）
+          VERSION_NAME=$(grep "versionName" app/build.gradle | awk '{print $2}' | tr -d '"' | tr -d ' ')
+          # 验证版本号是否提取成功
+          if [ -z "$VERSION_NAME" ]; then
+            echo "❌ 错误：无法提取版本号"
+            exit 1
+          fi
+          # 生成完整的 APK 名称格式（Mana-版本号）
+          APK_NAME="Mana-$VERSION_NAME"
+          # 验证 APK 名称格式
+          if [ "$APK_NAME" = "Mana-" ]; then
+            echo "❌ 错误：APK 名称格式无效：$APK_NAME"
+            exit 1
+          fi
+          # 输出版本信息（确保格式正确）
           echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "apk_name=$APK_NAME" >> $GITHUB_OUTPUT
           echo "Version: $VERSION_NAME"
-      
+          echo "APK Name: $APK_NAME"
+
       # 8. 创建 GitHub Release（仅在推送标签时）
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v1
         with:
           files: app/build/outputs/apk/release/*.apk
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ steps.version.outputs.apk_name }}
           draft: false
           prerelease: false
           generate_release_notes: true
