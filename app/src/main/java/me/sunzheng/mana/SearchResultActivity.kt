@@ -73,9 +73,11 @@ class SearchResultActivity : AppCompatActivity() {
             var adapter =
                 binding.recyclerView.adapter as SearchResultAdapter
             var position = adapter.mValues.size()
-            var count = item.size
-            adapter.mValues.addAll(item)
-            adapter.notifyItemRangeInserted(position, count)
+            var count = item?.size?:0
+            item?.run {
+                adapter.mValues.addAll(this)
+                adapter.notifyItemRangeInserted(position, count)
+            }
         }
     }
 

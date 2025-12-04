@@ -129,7 +129,7 @@ class BangumiRepository {
                     } ?: it.second?.apply {
                         this.userName = userName
                     }
-                    em?.run {
+                    em?.runCatching {
                         watchProgressDao.insert(em)
                     }
 //                    =================================================到这里为止====================================

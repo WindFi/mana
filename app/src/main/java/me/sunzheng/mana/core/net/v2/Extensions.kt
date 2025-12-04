@@ -3,19 +3,26 @@ package me.sunzheng.mana.core.net.v2
 import android.app.Activity
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.support.v4.media.MediaDescriptionCompat
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
+import androidx.core.util.PatternsCompat
 import androidx.fragment.app.Fragment
+import androidx.media3.common.MediaItem
+import androidx.media3.common.util.UnstableApi
+import androidx.media3.datasource.DataSource
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.DownsampleStrategy
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.upstream.DataSource
+//import com.google.android.exoplayer2.source.ExtractorMediaSource
+//import com.google.android.exoplayer2.source.ProgressiveMediaSource
+//import com.google.android.exoplayer2.upstream.DataSource
 import com.google.gson.Gson
 import me.sunzheng.mana.core.net.v2.database.EpisodeEntity
 import me.sunzheng.mana.core.net.v2.database.VideoFileEntity
@@ -38,11 +45,27 @@ fun Fragment.showToast(@StringRes res: Int) {
     Toast.makeText(requireContext(), res, Toast.LENGTH_SHORT).show()
 }
 
+@UnstableApi
 fun VideoFileEntity.parseExtractorMediaSource(host: String, dataSourceFactory: DataSource.Factory) =
     url?.toUri()?.let {
-        ExtractorMediaSource.Factory(dataSourceFactory)
-            .createMediaSource("$host${it}".toUri())
+        var url = if (PatternsCompat.WEB_URL.matcher(it.toString()).find()) {
+            it.toString()
+        } else {
+            "$host${it}"
+        }
+        ProgressiveMediaSource.Factory(dataSourceFactory)
+            .createMediaSource("$url".toUri().parseMediaItem())
     }
+fun VideoFileEntity.parseMediaItem(host: String, dataSourceFactory: DataSource.Factory) =
+    url?.toUri()?.let {
+        var url = if (PatternsCompat.WEB_URL.matcher(it.toString()).find()) {
+            it.toString()
+        } else {
+            "$host${it}"
+        }
+        url.toUri().parseMediaItem()
+    }
+fun Uri.parseMediaItem() = MediaItem.fromUri(this)
 
 fun EpisodeEntity.parseMediaDescription(mediaUrl: String) =
     MediaDescriptionCompat.Builder()

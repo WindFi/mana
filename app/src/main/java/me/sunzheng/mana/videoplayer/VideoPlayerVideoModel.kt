@@ -124,7 +124,7 @@ class VideoRepository {
                 }?.forEach {
                     videoFileDao.insert(it)
                 }
-                item.watchProgress?.run {
+                item.watchProgress?.runCatching {
                     var local = watchProgressDao.queryByEpisodeId(episodeId, userName)
                     var m =
                         Gson().fromJson(Gson().toJson(this), WatchProgressEntity::class.java)

@@ -36,7 +36,8 @@ class SearchViewModel @Inject constructor() : ViewModel() {
         emitSource(repository.query(key, count, page))
     }
 
-    fun loadMore() = repository.query(key, count, page++)
+    fun loadMore() = repository.query(key, count,
+        1+page++)
 }
 
 class SearchRepository {

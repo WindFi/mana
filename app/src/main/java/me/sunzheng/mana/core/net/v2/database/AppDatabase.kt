@@ -12,7 +12,7 @@ import java.util.UUID
 
 @Database(
     entities = [BangumiEntity::class, FavriouteEntity::class, WatchProgressEntity::class, EpisodeEntity::class, VideoFileEntity::class, RelationOnAir::class],
-    version = 6,
+    version = 7,
     exportSchema = false
 )
 @TypeConverters(UUIDTypeConvert::class, CovertImageConvert::class)
@@ -26,7 +26,7 @@ abstract class AppDatabase : RoomDatabase() {
 }
 
 
-object UUIDTypeConvert {
+class UUIDTypeConvert() {
     @TypeConverter
     fun fromUUID(uuid: UUID?) = uuid?.toString()
 
@@ -34,7 +34,7 @@ object UUIDTypeConvert {
     fun uuidFromString(uuid: String?) = uuid?.let { UUID.fromString(it) }
 }
 
-object CovertImageConvert {
+class CovertImageConvert() {
     @TypeConverter
     fun fromObject(obj: CoverImage?) = Gson().toJson(obj)
 

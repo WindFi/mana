@@ -7,13 +7,15 @@
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fitsSystemWindows="true"
+        app:statusBarBackground="@color/colorPrimaryDark"
         tools:context="me.sunzheng.mana.MainActivity">
 
         <com.google.android.material.appbar.AppBarLayout
             android:id="@+id/appbarlayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:minHeight="?attr/actionBarSize"
+            android:fitsSystemWindows="true"
             android:theme="@style/AppTheme.AppBarOverlay"
             app:elevation="0dp">
 

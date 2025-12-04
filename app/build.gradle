@@ -11,8 +11,6 @@ android {
         release {
             keyAlias String.valueOf(project.keyAlias)
             keyPassword String.valueOf(project.keyPassword)
-//            storeFile file(String.valueOf(project.storeFile))
-//            storePassword String.valueOf(project.storePassword)
             storeFile file(String.valueOf(project.storeFile))
             storePassword String.valueOf(project.storePassword)
         }
@@ -22,8 +20,8 @@ android {
         applicationId "me.sunzheng.mana"
         minSdkVersion build_versions.min_sdk
         targetSdkVersion build_versions.target_sdk
-        versionCode 116
-        versionName "2.1.6"
+        versionCode 127
+        versionName "2.2.7"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
         vectorDrawables.useSupportLibrary = true
         signingConfig signingConfigs.release
@@ -56,33 +54,36 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.core:core-ktx:1.10.1'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.fragment:fragment-ktx:1.6.0'
-    implementation 'androidx.activity:activity-ktx:1.7.2'
+    implementation 'androidx.core:core-ktx:1.17.0'
+    implementation 'androidx.appcompat:appcompat:1.7.1'
+    implementation 'androidx.fragment:fragment-ktx:1.8.9'
+    implementation 'androidx.activity:activity-ktx:1.11.0'
 
-    implementation 'com.google.android.material:material:1.9.0'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata-core-ktx:2.6.1'
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
+    implementation 'com.google.android.material:material:1.13.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.9.4'
+    implementation 'androidx.lifecycle:lifecycle-livedata-core-ktx:2.9.4'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.9.4'
 
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.6.0'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.6.0'
+    implementation 'androidx.navigation:navigation-fragment-ktx:2.9.6'
+    implementation 'androidx.navigation:navigation-ui-ktx:2.9.6'
 
-    implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation 'androidx.preference:preference-ktx:1.2.1'
 
-    implementation "com.google.dagger:hilt-android:2.45"
-    kapt "com.google.dagger:hilt-android-compiler:2.45"
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation "com.google.dagger:hilt-android:2.57.2"
+    kapt "com.google.dagger:hilt-android-compiler:2.57.2"
+    implementation 'androidx.constraintlayout:constraintlayout:2.2.1'
 
-    implementation "androidx.recyclerview:recyclerview:1.3.0"
+    implementation "androidx.recyclerview:recyclerview:1.4.0"
     implementation "androidx.cardview:cardview:1.0.0"
-    implementation "androidx.browser:browser:1.5.0"
+    implementation "androidx.browser:browser:1.9.0"
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 
     implementation "androidx.media:media:1.6.0"
+    implementation 'androidx.media3:media3-exoplayer:1.4.0'
+    implementation "androidx.media3:media3-session:1.4.0"
+    implementation "androidx.media3:media3-ui:1.6.0"
 
     implementation deps.retrofit.runtime
     implementation deps.retrofit.gson
@@ -95,7 +96,8 @@ dependencies {
 
     implementation deps.common3
     implementation deps.okhttp_urlconnection
-    implementation deps.exoplayer
+//    implementation deps.exoplayer
+//    implementation 'com.google.android.exoplayer:extension-mediasession:2.19.1'
     implementation deps.ormlite.core
     implementation deps.ormlite.android
     implementation deps.multidex

@@ -5,6 +5,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.text.TextUtils
+import android.util.Log
 import androidx.multidex.MultiDexApplication
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -89,12 +90,14 @@ object ViewModelModule {
     fun providerSearchRepository(
         apiService: ApiService,
         favriouteDao: FavirouteDao,
-        bangumiDao: BangumiDao
+        bangumiDao: BangumiDao,
+        @Named("userName") userName: String
     ): SearchRepository {
         return SearchRepository().apply {
             this.apiService = apiService
             this.bangumiDao = bangumiDao
             this.favriouteDao = favriouteDao
+            this.userName = userName
         }
     }
 
@@ -168,11 +171,17 @@ object SingletionProvider {
     @Singleton
     @Provides
     fun providerDataBase(@ApplicationContext context: Context): AppDatabase {
+        Log.i("providerDataBase","11233")
         return Room.databaseBuilder(context, AppDatabase::class.java, "data-base")
             .allowMainThreadQueries()
-            .addMigrations(Migration(5, 6) {
-
-            })
+            .addMigrations(
+//                Migration(5, 6) {
+//
+//            },
+                Migration(6, 7) {
+                    it.execSQL("ALTER TABLE `favorite` ADD COLUMN `favorite_update_time` INTEGER NOT NULL DEFAULT 0")
+                }
+            )
             .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
             .build()
     }

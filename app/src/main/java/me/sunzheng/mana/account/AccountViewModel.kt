@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import dagger.Lazy
 import dagger.hilt.android.lifecycle.HiltViewModel
 import me.sunzheng.mana.core.net.v2.ApiService
 import me.sunzheng.mana.core.net.v2.NetworkBoundResource
@@ -19,7 +20,7 @@ class AccountViewModel @Inject constructor() : ViewModel() {
     val isLoginLiveData = MutableLiveData<Boolean>()
 
     @Inject
-    lateinit var repository: AccountRepository
+    lateinit var repository: Lazy<AccountRepository>
 
     fun checkIsLogin(context: Context) {
         var sp = context.getSharedPreferences(
@@ -34,7 +35,7 @@ class AccountViewModel @Inject constructor() : ViewModel() {
 
 
     fun siginIn(userName: String, password: String, isRembered: Boolean = false) =
-        repository.signIn(userName, password, isRembered)
+        repository.get().signIn(userName, password, isRembered)
 }
 
 class AccountRepository {

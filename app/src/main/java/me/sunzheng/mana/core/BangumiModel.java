@@ -139,6 +139,9 @@ public class BangumiModel implements Parcelable {
     @Expose
     protected CoverImage coverImage;
 
+    @SerializedName("favorite_update_time")
+    @Expose
+    protected long favoriteUpdateTime;
     public BangumiModel() {
     }
 
@@ -165,6 +168,7 @@ public class BangumiModel implements Parcelable {
         epsRegex = in.readString();
         unwatched_count = in.readInt();
         coverImage = in.readParcelable(ClassLoader.getSystemClassLoader());
+        favoriteUpdateTime = in.readLong();
     }
 
     @Override
@@ -191,6 +195,7 @@ public class BangumiModel implements Parcelable {
         dest.writeString(epsRegex);
         dest.writeInt(unwatched_count);
         dest.writeParcelable(coverImage, 0);
+        dest.writeLong(favoriteUpdateTime);
     }
 
     @Override
@@ -422,6 +427,13 @@ public class BangumiModel implements Parcelable {
         this.coverImage = coverImage;
     }
 
+    public long getFavoriteUpdateTime(){
+        return favoriteUpdateTime;
+    }
+
+    public void setFavoriteUpdateTime(long favoriteUpdateTime){
+        this.favoriteUpdateTime = favoriteUpdateTime;
+    }
     @Override
     public boolean equals(@Nullable Object o) {
         if (this == o) return true;

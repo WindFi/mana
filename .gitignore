@@ -11,3 +11,6 @@ gradle/*
 *.log
 *.bak
 app/release/output-metadata.json
+.DS_Store
+*.aab
+/*.png
