@@ -169,8 +169,8 @@ jobs:
           # 清理 APK 名称（去除所有空白字符和换行符）
           APK_NAME=$(echo "$APK_NAME" | tr -d '[:space:]' | tr -d '\n' | tr -d '\r')
           # 验证 APK 名称格式
-          if [ "$APK_NAME" = "Mana-" ] || [ -z "$APK_NAME" ]; then
-            echo "❌ 错误：APK 名称格式无效：'$APK_NAME' (版本号: '$VERSION_NAME')"
+          if [ "$APK_NAME" = "Mana-" ]; then
+            echo "❌ 错误：APK 名称格式无效：$APK_NAME"
             exit 1
           fi
           # 使用多行格式输出到 GITHUB_OUTPUT（避免特殊字符问题）
@@ -202,7 +202,7 @@ jobs:
         with:
           files: app/build/outputs/apk/release/*.apk
           tag_name: ${{ github.ref_name }}
-          name: ${{ steps.version.outputs.apk_name }}
+          name: Release ${{ steps.version.outputs.apk_name }}
           draft: false
           prerelease: false
           generate_release_notes: true
