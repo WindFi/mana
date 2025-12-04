@@ -125,18 +125,28 @@ jobs:
             echo "❌ 错误：无法提取版本号"
             exit 1
           fi
-          # 生成完整的 APK 名称格式（Mana-版本号）
-          APK_NAME="Mana-$VERSION_NAME"
+          # 生成完整的 APK 名称格式（Mana-版本号），确保没有多余空格
+          APK_NAME="Mana-${VERSION_NAME}"
+          # 清理可能的换行符和特殊字符
+          APK_NAME=$(echo "$APK_NAME" | tr -d '\n' | tr -d '\r')
           # 验证 APK 名称格式
-          if [ "$APK_NAME" = "Mana-" ]; then
-            echo "❌ 错误：APK 名称格式无效：$APK_NAME"
+          if [ "$APK_NAME" = "Mana-" ] || [ -z "$APK_NAME" ]; then
+            echo "❌ 错误：APK 名称格式无效：'$APK_NAME' (版本号: '$VERSION_NAME')"
             exit 1
           fi
-          # 输出版本信息（确保格式正确）
-          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
-          echo "apk_name=$APK_NAME" >> $GITHUB_OUTPUT
+          # 验证版本号不为空
+          if [ -z "$VERSION_NAME" ]; then
+            echo "❌ 错误：版本号为空"
+            exit 1
+          fi
+          # 输出到 GITHUB_OUTPUT（确保格式正确，无多余字符）
+          {
+            echo "version_name=${VERSION_NAME}"
+            echo "apk_name=${APK_NAME}"
+          } >> $GITHUB_OUTPUT
           echo "Version: $VERSION_NAME"
           echo "APK Name: $APK_NAME"
+          echo "✅ 版本信息已输出到 GITHUB_OUTPUT"
 
       # 8. 创建 GitHub Release（仅在推送标签时）
       - name: Create Release
@@ -145,7 +155,7 @@ jobs:
         with:
           files: app/build/outputs/apk/release/*.apk
           tag_name: ${{ github.ref_name }}
-          name: Release ${{ steps.version.outputs.apk_name }}
+          name: ${{ steps.version.outputs.apk_name }}
           draft: false
           prerelease: false
           generate_release_notes: true
