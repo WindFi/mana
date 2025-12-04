@@ -42,23 +42,30 @@ jobs:
         run: |
           # 清理 base64 字符串（去除所有空白字符）
           CLEAN_BASE64=$(echo "$KEYSTORE_BASE64" | tr -d '[:space:]')
-          # 解码并写入文件（兼容不同系统的 base64 命令）
-          if command -v base64 >/dev/null 2>&1; then
-            if base64 --help 2>&1 | grep -q "decode"; then
-              echo "$CLEAN_BASE64" | base64 --decode > "${{ github.workspace }}/Sun.jks"
-            else
-              echo "$CLEAN_BASE64" | base64 -d > "${{ github.workspace }}/Sun.jks"
-            fi
-          else
-            echo "❌ 错误：未找到 base64 命令"
+          # 验证 base64 字符串不为空
+          if [ -z "$CLEAN_BASE64" ]; then
+            echo "❌ 错误：base64 字符串为空"
             exit 1
           fi
-          # 验证文件是否成功创建
+          echo "📝 Base64 字符串长度: ${#CLEAN_BASE64}"
+          # 解码并写入文件（使用 -d 参数，Ubuntu 标准）
+          echo "$CLEAN_BASE64" | base64 -d > "${{ github.workspace }}/Sun.jks"
+          # 检查解码是否成功
+          if [ $? -ne 0 ]; then
+            echo "❌ 错误：base64 解码失败"
+            exit 1
+          fi
+          # 验证文件是否成功创建且不为空
           if [ ! -f "${{ github.workspace }}/Sun.jks" ]; then
-            echo "❌ 错误：密钥文件解码失败"
+            echo "❌ 错误：密钥文件未创建"
             exit 1
           fi
-          echo "✅ 密钥文件解码成功"
+          FILE_SIZE=$(stat -c%s "${{ github.workspace }}/Sun.jks" 2>/dev/null || echo "0")
+          if [ "$FILE_SIZE" -eq 0 ]; then
+            echo "❌ 错误：密钥文件为空"
+            exit 1
+          fi
+          echo "✅ 密钥文件解码成功，文件大小: $FILE_SIZE 字节"
       
       # 5. 创建 gradle.properties 配置 AndroidX 和签名信息
       - name: Create gradle.properties
