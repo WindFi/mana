@@ -113,7 +113,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:indeterminate="true" />
+            android:indeterminate="true"
+            app:trackColor="@android:color/transparent" />
         <androidx.appcompat.widget.LinearLayoutCompat
             android:id="@+id/viewgroup_value"
             android:layout_width="wrap_content"

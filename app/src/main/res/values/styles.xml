@@ -180,6 +180,7 @@
 
     <style name="Widget.AppTheme.Progressbar.CircleProgressIndicator" parent="Widget.Material3.CircularProgressIndicator">
         <item name="indicatorColor">@color/colorPrimary</item>
+        <item name="trackColor">@android:color/transparent</item>
     </style>
 
     <style name="Widget.AppTheme.Progressbar.LinearProgressIndicator" parent="Widget.MaterialComponents.LinearProgressIndicator">

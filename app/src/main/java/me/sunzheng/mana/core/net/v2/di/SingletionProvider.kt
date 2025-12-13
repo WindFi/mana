@@ -182,6 +182,7 @@ object SingletionProvider {
                     it.execSQL("ALTER TABLE `favorite` ADD COLUMN `favorite_update_time` INTEGER NOT NULL DEFAULT 0")
                 }
             )
+            .fallbackToDestructiveMigration()  // 如果缺少迁移路径，删除旧数据库并重建（仅用于开发/测试）
             .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
             .build()
     }
