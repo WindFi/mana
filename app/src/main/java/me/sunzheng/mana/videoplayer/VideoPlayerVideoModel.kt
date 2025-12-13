@@ -13,6 +13,7 @@ import me.sunzheng.mana.home.bangumi.WatchProgressResponse
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper
 import me.sunzheng.mana.home.main.BangumiRepository
 import me.sunzheng.mana.utils.HostUtil
+import me.sunzheng.mana.videoplayer.VideoPlayerConfig
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Named
@@ -99,7 +100,7 @@ class VideoPlayerVideoModel @Inject constructor() : ViewModel() {
             this.lastWatchPosition = lastWatchPosition
             this.lastWatchTime = System.currentTimeMillis()
             this.percentage = lastWatchPosition / duration
-            this.isFinised = lastWatchPosition >= duration * 0.95
+            this.isFinised = lastWatchPosition >= duration * VideoPlayerConfig.EPISODE_FINISHED_THRESHOLD
         }
         repository.updateWatchProgresss(userName, record)
     }

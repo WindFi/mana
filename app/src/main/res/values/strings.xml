@@ -92,6 +92,9 @@
     <string name="title_activity_login" translatable="false">Sign in</string>
     <string name="pref_key_ja_first_bool" translatable="false">ja_first</string>
     <string name="pref_key_dark_theme" translatable="false">dark_theme</string>
+    <string name="pref_key_background_playback" translatable="false">background_playback</string>
+    <string name="pref_title_background_playback">Allow background playback</string>
+    <string name="pref_description_background_playback">Continue playing video when app goes to background</string>
     <string name="title_account">Account</string>
     <string name="title_history">Favorites</string>
     <string name="title_logout">Sign Out</string>

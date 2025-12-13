@@ -48,6 +48,8 @@
     <string name="pref_header_language">语言</string>
     <string name="pref_title_ja_first">优先显示日语</string>
     <string name="pref_description_ja_first_display">在有日语内容的情况下,优先显示日语内容</string>
+    <string name="pref_title_background_playback">允许后台播放</string>
+    <string name="pref_description_background_playback">应用切换到后台时继续播放视频</string>
     <string name="toast_preference_changed">重启后生效</string>
     <string name="title_friday">星期五</string>
     <string name="title_light_theme">关闭</string>

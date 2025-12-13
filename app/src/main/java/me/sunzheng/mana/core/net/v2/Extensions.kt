@@ -67,6 +67,29 @@ fun VideoFileEntity.parseMediaItem(host: String, dataSourceFactory: DataSource.F
     }
 fun Uri.parseMediaItem() = MediaItem.fromUri(this)
 
+/**
+ * Creates a MediaItem with metadata including Bangumi cover artwork.
+ * This allows MediaSession to display the Bangumi cover in the notification.
+ */
+fun Uri.parseMediaItemWithMetadata(
+    title: String? = null,
+    artist: String? = null,
+    artworkUri: Uri? = null
+): MediaItem {
+    val builder = MediaItem.Builder()
+        .setUri(this)
+    
+    if (title != null || artist != null || artworkUri != null) {
+        val metadataBuilder = androidx.media3.common.MediaMetadata.Builder()
+        title?.let { metadataBuilder.setTitle(it) }
+        artist?.let { metadataBuilder.setArtist(it) }
+        artworkUri?.let { metadataBuilder.setArtworkUri(it) }
+        builder.setMediaMetadata(metadataBuilder.build())
+    }
+    
+    return builder.build()
+}
+
 fun EpisodeEntity.parseMediaDescription(mediaUrl: String) =
     MediaDescriptionCompat.Builder()
         .setMediaId(this.id.toString())

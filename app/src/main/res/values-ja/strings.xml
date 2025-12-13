@@ -49,6 +49,8 @@
     <string name="pref_header_language">表示言語</string>
     <string name="pref_title_ja_first">日本語タイトルの優先表示</string>
     <string name="pref_description_ja_first_display">日本語のタイトルが存在したら、タイトルを日本語で表示します</string>
+    <string name="pref_title_background_playback">バックグラウンド再生を許可</string>
+    <string name="pref_description_background_playback">アプリがバックグラウンドに切り替わったときに動画を再生し続ける</string>
     <string name="toast_preference_changed">これらの変更を適用するには，アプリを再起動する必要があります</string>
     <string name="title_friday">金曜日</string>
     <string name="title_light_theme">オフ</string>
