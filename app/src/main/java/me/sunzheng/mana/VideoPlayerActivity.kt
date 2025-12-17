@@ -38,6 +38,7 @@ import kotlinx.coroutines.launch
 import androidx.core.net.toUri
 import androidx.core.util.PatternsCompat
 import androidx.media3.common.Player
+import androidx.media3.common.PlaybackException
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.common.util.Util
 import androidx.media3.datasource.DataSource
@@ -61,6 +62,7 @@ import me.sunzheng.mana.core.net.v2.parseMediaItemWithMetadata
 import me.sunzheng.mana.core.net.v2.showToast
 import me.sunzheng.mana.core.net.v2.toUUID
 import me.sunzheng.mana.databinding.FragmentVideoPlayerBinding
+import me.sunzheng.mana.utils.HostUtil
 import me.sunzheng.mana.utils.PreferenceManager.Global
 import me.sunzheng.mana.videoplayer.GestureActionListener
 import me.sunzheng.mana.videoplayer.GestureHandler
@@ -68,6 +70,7 @@ import me.sunzheng.mana.videoplayer.MediaDescriptionAdapter2
 import me.sunzheng.mana.videoplayer.MediaSessionManager
 import me.sunzheng.mana.videoplayer.PlaybackStateManager
 import me.sunzheng.mana.videoplayer.PlayerController
+import me.sunzheng.mana.videoplayer.VideoPlaybackService
 import me.sunzheng.mana.videoplayer.VideoPlayerConfig
 import me.sunzheng.mana.videoplayer.VideoPlayerVideoModel
 import java.util.Formatter
@@ -108,8 +111,8 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_video_player)
-        if(Build.VERSION.SDK_INT >=26){
-            if(resources.configuration.isScreenWideColorGamut){
+        if (Build.VERSION.SDK_INT >= 26) {
+            if (resources.configuration.isScreenWideColorGamut) {
                 window.colorMode = ActivityInfo.COLOR_MODE_WIDE_COLOR_GAMUT
             }
         }
@@ -119,23 +122,29 @@ class VideoPlayerActivity @Inject constructor() : AppCompatActivity() {
                 VideoPlayerFragment().apply { arguments = intent.extras })
             .commit()
     }
-    
+
     override fun onDestroy() {
         super.onDestroy()
-        // Stop and release VideoPlaybackService when Activity is destroyed
-        // This ensures the service is properly cleaned up when the video player Activity is closed
-        val intent = Intent(this, me.sunzheng.mana.videoplayer.VideoPlaybackService::class.java)
-        intent.action = me.sunzheng.mana.videoplayer.VideoPlaybackService.ACTION_STOP
-        stopService(intent)
+        // Notify Service to release resources when Activity is destroyed
+        // This ensures MediaController, MediaSession, and PlayerController are properly cleaned up
+        val releaseIntent = Intent(this, me.sunzheng.mana.videoplayer.VideoPlaybackService::class.java)
+        releaseIntent.action = me.sunzheng.mana.videoplayer.VideoPlaybackService.ACTION_RELEASE
+        startService(releaseIntent)
+        
+        // Stop the service after releasing resources
+        val stopIntent = Intent(this, me.sunzheng.mana.videoplayer.VideoPlaybackService::class.java)
+        stopIntent.action = me.sunzheng.mana.videoplayer.VideoPlaybackService.ACTION_STOP
+        stopService(stopIntent)
     }
 }
 
 @UnstableApi
 @AndroidEntryPoint
 class VideoPlayerFragment : Fragment() {
-    
+
     @Inject
     lateinit var database: me.sunzheng.mana.core.net.v2.database.AppDatabase
+
     companion object {
 
         @JvmStatic
@@ -178,20 +187,20 @@ class VideoPlayerFragment : Fragment() {
     private val mediaSessionManager: MediaSessionManager by lazy {
         MediaSessionManager(requireContext())
     }
-    
+
     /**
      * MediaController from service. This is the only way to access the player.
      * Player is managed entirely by VideoPlaybackService.
      */
     private var mediaController: Player? = null
-    
-    
+
+
     /**
      * Temporary cache for dataSourceFactory.
      * Must be released in onDestroyView to avoid SimpleCache conflicts when Fragment is recreated.
      */
     private var tempCache: SimpleCache? = null
-    
+
     /**
      * Data source factory - needed for parsing media items before they're set on the player.
      * Note: Uses a different cache directory to avoid SimpleCache conflicts with the service's PlayerController.
@@ -199,19 +208,19 @@ class VideoPlayerFragment : Fragment() {
      * In the future, this could be provided by the service or a shared factory instance.
      */
     private var dataSourceFactory: DataSource.Factory? = null
-    
+
     /**
      * Playback state manager for tracking watch progress and auto-save.
      * Will be initialized after service connection.
      */
     private var playbackStateManager: PlaybackStateManager? = null
-    
+
     /**
      * Gesture handler for brightness, volume, and seek controls.
      * Will be initialized after service connection.
      */
     private var gestureHandler: GestureHandler? = null
-    
+
     val isAutoPlay: Boolean by lazy {
         PreferenceManager.getDefaultSharedPreferences(requireContext())
             .getBoolean(VideoPlayerConfig.PREF_KEY_AUTOPLAY, false)
@@ -266,16 +275,16 @@ class VideoPlayerFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.player.keepScreenOn = true
-        
+
         // Reset auto-play flag on view creation (allows auto-play after configuration changes)
         hasAutoPlayed = false
-        
+
         // Initialize dataSourceFactory early to avoid lazy initialization issues
         initializeDataSourceFactory()
-        
+
         // Connect to playback service
         connectToService()
-        
+
         setup()
         loadConfig()
         binding.sourceList.adapter = ArrayAdapter<VideoFileEntity>(
@@ -285,82 +294,125 @@ class VideoPlayerFragment : Fragment() {
         )
         // Store current mediaDescription for use when setting MediaItem
         var currentMediaDescription: MediaDescriptionCompat? = null
-        
+
         // Observe mediaDescription to prepare metadata before setting MediaItem
         viewModel.mediaDescritionLiveData.observe(viewLifecycleOwner) { mediaDescriptionCompat ->
             currentMediaDescription = mediaDescriptionCompat
         }
-        
+
         viewModel.videoFileLiveData.observe(viewLifecycleOwner) { videoFile ->
             mediaController?.let { p ->
                 dataSourceFactory?.let { factory ->
-                    // Get the video URI first
-                    val videoUri = videoFile.url?.toUri()?.let {
-                        val url = if (PatternsCompat.WEB_URL.matcher(it.toString()).find()) {
-                            it.toString()
-                        } else {
-                            "${viewModel.host}${it}"
+                    // Validate and complete video URL using HostUtil
+                    val videoUri = videoFile.url?.let { url ->
+                        try {
+                            // Use HostUtil.makeUp() to validate and complete the URL
+                            val validatedUrl = HostUtil.makeUp(
+                                viewModel.host,
+                                url
+                            )
+                            validatedUrl.toUri()
+                        } catch (e: Exception) {
+                            Log.e("VideoPlayer", "Failed to validate video URL: $url", e)
+                            null
                         }
-                        url.toUri()
                     }
-                    
+
                     videoUri?.let { uri ->
-                        // Get current mediaDescription for metadata
+                        // Get current mediaDescription for metadata (needed for both setting and cover loading)
                         val mediaDesc = currentMediaDescription
                         
-                        // Set MediaItem with title/artist first (cover will be added asynchronously)
-                        val initialItem = if (mediaDesc != null) {
-                            uri.parseMediaItemWithMetadata(
-                                title = mediaDesc.title?.toString(),
-                                artist = mediaDesc.subtitle?.toString()
+                        // Check if MediaItem is already set and URI matches
+                        val currentItem = p.currentMediaItem
+                        val currentUri = currentItem?.localConfiguration?.uri
+                        val uriMatches = currentUri?.toString() == uri.toString()
+                        
+                        // Only set MediaItem if it's not set or URI has changed
+                        // This prevents re-buffering when seeking (which doesn't change the videoFile)
+                        if (!uriMatches) {
+                            // Set MediaItem with title/artist first (cover will be added asynchronously)
+                            val initialItem = if (mediaDesc != null) {
+                                uri.parseMediaItemWithMetadata(
+                                    title = mediaDesc.title?.toString(),
+                                    artist = mediaDesc.subtitle?.toString()
+                                )
+                            } else {
+                                uri.parseMediaItem()
+                            }
+                            p.setMediaItem(initialItem)
+                            Log.d(
+                                "VideoPlayer",
+                                "Set MediaItem (URI changed), title: ${mediaDesc?.title}, artist: ${mediaDesc?.subtitle}, URI: $uri"
+                            )
+
+                            // Prepare player to load media and trigger auto-play
+                            p.prepare()
+                            Log.d(
+                                "VideoPlayer",
+                                "Player prepare() called, will trigger auto-play when ready"
                             )
                         } else {
-                            uri.parseMediaItem()
+                            Log.d(
+                                "VideoPlayer",
+                                "MediaItem URI unchanged, skipping setMediaItem to avoid re-buffering. Current URI: $currentUri"
+                            )
                         }
-                        p.setMediaItem(initialItem)
-                        Log.d("VideoPlayer", "Set initial MediaItem, title: ${mediaDesc?.title}, artist: ${mediaDesc?.subtitle}")
-                        
-                        // Prepare player to load media and trigger auto-play
-                        p.prepare()
-                        Log.d("VideoPlayer", "Player prepare() called, will trigger auto-play when ready")
-                        
+
                         // Load cover image asynchronously and update MediaItem
-                        if (mediaDesc != null) {
-                            val episodeEntity = mediaDesc.extras?.getParcelable<EpisodeEntity>("raw")
+                        // Only update cover if MediaItem was set (URI changed)
+                        if (!uriMatches && mediaDesc != null) {
+                            val episodeEntity =
+                                mediaDesc.extras?.getParcelable<EpisodeEntity>("raw")
                             episodeEntity?.bangumiId?.let { bangumiId ->
                                 lifecycleScope.launch {
                                     try {
-                                        val bangumiEntity = database.bangumiDao().queryById(bangumiId)
-                                        Log.d("VideoPlayer", "Queried BangumiEntity: ${bangumiEntity?.nameCn}, coverImage: ${bangumiEntity?.coverImage?.url}, cover: ${bangumiEntity?.cover}")
-                                        val coverUrl = bangumiEntity?.coverImage?.url ?: bangumiEntity?.cover
-                                        
+                                        val bangumiEntity =
+                                            database.bangumiDao().queryById(bangumiId)
+                                        Log.d(
+                                            "VideoPlayer",
+                                            "Queried BangumiEntity: ${bangumiEntity?.nameCn}, coverImage: ${bangumiEntity?.coverImage?.url}, cover: ${bangumiEntity?.cover}"
+                                        )
+                                        val coverUrl =
+                                            bangumiEntity?.coverImage?.url ?: bangumiEntity?.cover
+
                                         if (coverUrl != null) {
                                             Log.d("VideoPlayer", "Found cover URL: $coverUrl")
-                                            val fullCoverUrl = me.sunzheng.mana.utils.HostUtil.makeUp(
-                                                viewModel.host, 
-                                                coverUrl
-                                            )
-                                            
+                                            val fullCoverUrl =
+                                                me.sunzheng.mana.utils.HostUtil.makeUp(
+                                                    viewModel.host,
+                                                    coverUrl
+                                                )
+
                                             // Update MediaItem with cover metadata
                                             val updatedItem = uri.parseMediaItemWithMetadata(
                                                 title = mediaDesc.title?.toString(),
                                                 artist = mediaDesc.subtitle?.toString(),
                                                 artworkUri = fullCoverUrl.toUri()
                                             )
-                                            
+
                                             // Replace the current media item with updated metadata
                                             val currentIndex = p.currentMediaItemIndex
                                             if (currentIndex >= 0 && currentIndex < p.mediaItemCount) {
                                                 p.replaceMediaItem(currentIndex, updatedItem)
-                                                Log.d("VideoPlayer", "Updated MediaItem with cover: $fullCoverUrl")
+                                                Log.d(
+                                                    "VideoPlayer",
+                                                    "Updated MediaItem with cover: $fullCoverUrl"
+                                                )
                                             } else {
                                                 // If no current item, set it directly
                                                 p.setMediaItem(updatedItem)
-                                                Log.d("VideoPlayer", "Set MediaItem with cover: $fullCoverUrl")
+                                                Log.d(
+                                                    "VideoPlayer",
+                                                    "Set MediaItem with cover: $fullCoverUrl"
+                                                )
                                             }
                                         }
                                     } catch (e: Exception) {
-                                        Log.w("VideoPlayer", "Failed to load Bangumi cover for notification", e)
+                                        Log.w(
+                                            "VideoPlayer",
+                                            "Failed to load Bangumi cover for notification",
+                                            e
+                                        )
                                         e.printStackTrace()
                                     }
                                 }
@@ -397,9 +449,10 @@ class VideoPlayerFragment : Fragment() {
                                     viewModel.videoFileLiveData.postValue(this)
                                 }
                             }
-                            
+
                             // Start tracking watch progress for this episode
-                            val episodeEntity = mediaDescriptionCompat.extras?.getParcelable<EpisodeEntity>("raw")
+                            val episodeEntity =
+                                mediaDescriptionCompat.extras?.getParcelable<EpisodeEntity>("raw")
                             episodeEntity?.let {
                                 // Fix: Use bangumiId from episodeEntity if available
                                 val bangumiId = it.bangumiId?.toString() ?: viewModel.bangumiId
@@ -448,7 +501,7 @@ class VideoPlayerFragment : Fragment() {
                 binding.toolbar.title = label
                 binding.listviewEpisode
                 viewModel.mediaDescritionLiveData.postValue(model)
-                
+
                 // Update tracking when episode changes
                 val episodeEntity = model.extras?.getParcelable<EpisodeEntity>("raw")
                 episodeEntity?.let {
@@ -466,12 +519,13 @@ class VideoPlayerFragment : Fragment() {
                 }
             }
         }
-        binding.player.setControllerVisibilityListener(PlayerView.ControllerVisibilityListener{
+        binding.player.setControllerVisibilityListener(PlayerView.ControllerVisibilityListener {
             binding.appbarlayout.isVisible = it == View.VISIBLE
         })
         binding.player.controllerHideOnTouch = true
         binding.player.controllerAutoShow = true
-        binding.player.controllerShowTimeoutMs = VideoPlayerConfig.CONTROLLER_AUTO_SHOW_TIMEOUT_MS.toInt()
+        binding.player.controllerShowTimeoutMs =
+            VideoPlayerConfig.CONTROLLER_AUTO_SHOW_TIMEOUT_MS.toInt()
         binding.player.showController()
 //==================================== init?====================================
         binding.listviewEpisode.onItemClickListener =
@@ -713,14 +767,14 @@ class VideoPlayerFragment : Fragment() {
     override fun onDestroyView() {
         requireActivity().unregisterReceiver(broadcastReceiver)
         playbackStateManager?.release()
-        
+
         // Remove player listener to avoid memory leak
         playerListener?.let { mediaController?.removeListener(it) }
         playerListener = null
-        
+
         mediaSessionManager.disconnect()
         mediaController = null
-        
+
         // Release tempCache to avoid SimpleCache conflicts when Fragment is recreated
         tempCache?.let { cache ->
             try {
@@ -731,14 +785,14 @@ class VideoPlayerFragment : Fragment() {
             tempCache = null
         }
         dataSourceFactory = null
-        
+
         // Stop the playback service when Fragment is destroyed
         // This ensures the service is properly cleaned up when the video player is closed
         val allowBackground = isBackgroundPlaybackEnabled()
         if (!allowBackground) {
             // If background playback is disabled, stop the service
-            val intent = Intent(requireContext(), me.sunzheng.mana.videoplayer.VideoPlaybackService::class.java)
-            intent.action = me.sunzheng.mana.videoplayer.VideoPlaybackService.ACTION_STOP
+            val intent = Intent(requireContext(), VideoPlaybackService::class.java)
+            intent.action = VideoPlaybackService.ACTION_STOP
             requireContext().stopService(intent)
         } else {
             // If background playback is enabled, service will continue running
@@ -748,7 +802,7 @@ class VideoPlayerFragment : Fragment() {
         // Audio focus is managed by VideoPlaybackService
         super.onDestroyView()
     }
-    
+
     /**
      * Initializes dataSourceFactory with a temporary cache.
      * Must be called in onViewCreated to ensure proper lifecycle management.
@@ -773,11 +827,16 @@ class VideoPlayerFragment : Fragment() {
                 }
                 .setCacheReadDataSourceFactory(
                     DefaultHttpDataSource.Factory()
-                        .setUserAgent(Util.getUserAgent(requireContext(), requireContext().packageName))
+                        .setUserAgent(
+                            Util.getUserAgent(
+                                requireContext(),
+                                requireContext().packageName
+                            )
+                        )
                 )
         }
     }
-    
+
     /**
      * Connects to VideoPlaybackService and initializes components.
      */
@@ -786,92 +845,120 @@ class VideoPlayerFragment : Fragment() {
             onConnected = { controller ->
                 mediaController = controller
                 binding.player.player = controller
-                
+
                 // Initialize components that depend on player
-                playbackStateManager = PlaybackStateManager(controller, viewModel, viewLifecycleOwner)
+                playbackStateManager =
+                    PlaybackStateManager(controller, viewModel, viewLifecycleOwner)
                 gestureHandler = GestureHandler(requireActivity(), object : GestureActionListener {
                     override fun onSingleTap() {
                         singleClick()
                     }
-                    
+
                     override fun onDoubleTap() {
                         playState()
                     }
-                    
+
                     override fun onBrightnessChange(deltaValue: Float) {
                         adjustBrightness(deltaValue)
                     }
-                    
+
                     override fun onVolumeChange(deltaValue: Float) {
                         adjustVolume(deltaValue)
                     }
-                    
+
                     override fun onSeekChange(deltaValue: Float) {
                         seekTo(deltaValue)
                     }
                 })
-                
+
                 // Set up touch listener for gestures
-                binding.player.setOnTouchListener { _, event -> 
+                binding.player.setOnTouchListener { _, event ->
                     gestureHandler?.gestureDetector?.onTouchEvent(event) ?: false
                 }
-                
+
                 // Set up player listeners
                 setupPlayerListeners()
             },
             onError = { error ->
-                Log.e("VideoPlayerFragment", "Failed to connect to playback service: ${error.message}", error)
+                Log.e(
+                    "VideoPlayerFragment",
+                    "Failed to connect to playback service: ${error.message}",
+                    error
+                )
                 // Service connection is required - show error to user
                 // Player is managed entirely by VideoPlaybackService
             }
         )
     }
-    
-    
+
+
     /**
      * Flag to track if auto-play has been triggered for this page entry.
      * Reset in onViewCreated to allow auto-play after configuration changes.
      */
     private var hasAutoPlayed = false
-    
+
     /**
      * Player listener for UI updates.
      * Stored to allow removal to prevent memory leaks.
      */
     private var playerListener: Player.Listener? = null
-    
+
     /**
      * Sets up player listeners (moved from setup()).
      */
     private fun setupPlayerListeners() {
         // Remove existing listener to avoid memory leak
         playerListener?.let { mediaController?.removeListener(it) }
-        
+
         playerListener = object : Player.Listener {
             var isInitialized = false
+            private var isLoading = false
+            
+            /**
+             * Updates CircleProgressBar visibility based on current state.
+             * Shows when: playback is paused AND network is loading.
+             */
+            private fun updateProgressBarVisibility() {
+                val isPlaying = mediaController?.isPlaying ?: false
+                val shouldShow = !isPlaying && isLoading
+                binding.progressbar.isVisible = shouldShow
+                Log.d(
+                    "VideoPlayerFragment",
+                    "ProgressBar: isLoading=$isLoading, isPlaying=$isPlaying, show=$shouldShow"
+                )
+            }
+            
             override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
                 super.onPlayWhenReadyChanged(playWhenReady, reason)
+                // Update progress bar when play state changes
+                updateProgressBarVisibility()
             }
+
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
-                Log.d("VideoPlayerFragment","playState:${playbackState}")
-                when(playbackState){
-                    Player.STATE_READY ->{
-                        isInitialized=true
-                        
+                Log.d("VideoPlayerFragment", "playState:${playbackState}")
+                when (playbackState) {
+                    Player.STATE_READY -> {
+                        isInitialized = true
+
                         // Auto-play on first ready state (only once per page entry)
                         if (!hasAutoPlayed) {
                             mediaController?.let { p ->
                                 // Always set playWhenReady to true for auto-play
                                 // This ensures playback starts automatically when player is ready
                                 p.playWhenReady = true
-                                Log.d("VideoPlayerFragment", "Auto-play triggered: playWhenReady = true, isPlaying = ${p.isPlaying}")
+                                Log.d(
+                                    "VideoPlayerFragment",
+                                    "Auto-play triggered: playWhenReady = true, isPlaying = ${p.isPlaying}"
+                                )
                             }
                             hasAutoPlayed = true
                         }
                     }
+
                     Player.STATE_ENDED -> {
-                        if(!isInitialized){
+                        if (!isInitialized) {
                             return
                         }
                         if (isAutoPlay) {
@@ -885,23 +972,54 @@ class VideoPlayerFragment : Fragment() {
                     }
                 }
             }
+
             override fun onIsLoadingChanged(isLoading: Boolean) {
-                // Only show CircleProgressBar when:
-                // 1. Network is loading (isLoading == true)
-                // 2. AND current position >= buffered position (cache exhausted)
-                // This minimizes interruption to user viewing experience
-                if (isLoading) {
-                    val currentPosition = mediaController?.currentPosition ?: 0L
-                    val bufferedPosition = mediaController?.bufferedPosition ?: 0L
-                    // Show only when cache is exhausted (current position caught up with buffer)
-                    binding.progressbar.isVisible = currentPosition >= bufferedPosition
-                    Log.d("VideoPlayerFragment", "Loading: current=$currentPosition, buffered=$bufferedPosition, show=${currentPosition >= bufferedPosition}")
-                } else {
-                    binding.progressbar.isVisible = false
+                // Update loading state and refresh progress bar visibility
+                this.isLoading = isLoading
+                updateProgressBarVisibility()
+            }
+
+            override fun onPlayerError(error: PlaybackException) {
+                super.onPlayerError(error)
+                Log.e("VideoPlayerFragment", "Playback error occurred", error)
+                
+                // Get error information
+                val errorMessage = buildString {
+                    append("播放器错误: ")
+                    append(error.message ?: "Unknown error")
+                    append("\n错误代码: ${error.errorCode}")
+                    append("\n错误名称: ${error.errorCodeName}")
+                    if (error.cause != null) {
+                        append("\n原因: ${error.cause?.message}")
+                    }
                 }
+                
+                // Get stack trace separately
+                val stackTrace = try {
+                    error.stackTraceToString()
+                } catch (e: Exception) {
+                    Log.e("VideoPlayerFragment", "Failed to get stack trace", e)
+                    // Fallback: try to get stack trace from cause
+                    error.cause?.stackTraceToString() ?: "无法获取堆栈跟踪"
+                }
+                
+                // Get current episode ID and video file ID
+                val episodeId = viewModel.mediaDescritionLiveData.value?.mediaId
+                val videoFileId = viewModel.videoFileLiveData.value?.id?.toString()
+                
+                // Open FeedbackActivity with error information
+                val intent = FeedbackActivity.newInstance(
+                    requireContext(),
+                    episodeId,
+                    videoFileId
+                )
+                // Add error message and stack trace as separate extras
+                intent.putExtra("error_message", errorMessage)
+                intent.putExtra("error_stack_trace", stackTrace)
+                startActivity(intent)
             }
         }
-        
+
         playerListener?.let { mediaController?.addListener(it) }
     }
 
@@ -960,18 +1078,24 @@ class VideoPlayerFragment : Fragment() {
                 }
 
                 false -> {
-                    stopPlay()
+                    pausePlay()
                 }
             }
         }
         // Player listener will be set up in setupPlayerListeners() after service connection
         // Player is managed by Service, don't set playWhenReady here
-        binding.player.setOnTouchListener { _, event -> gestureHandler?.gestureDetector?.onTouchEvent(event) ?: false }
-        
+        binding.player.setOnTouchListener { _, event ->
+            gestureHandler?.gestureDetector?.onTouchEvent(
+                event
+            ) ?: false
+        }
+
         // Observe brightness changes and update UI
         viewModel.brighnessLiveData.observe(viewLifecycleOwner) {
-            val per: Float = it / VideoPlayerConfig.BRIGHTNESS_ADJUSTMENT_FACTOR * VideoPlayerConfig.MAX_BRIGHTNESS
-            var currentBrightness = requireActivity().window.attributes.screenBrightness * VideoPlayerConfig.MAX_BRIGHTNESS
+            val per: Float =
+                it / VideoPlayerConfig.BRIGHTNESS_ADJUSTMENT_FACTOR * VideoPlayerConfig.MAX_BRIGHTNESS
+            var currentBrightness =
+                requireActivity().window.attributes.screenBrightness * VideoPlayerConfig.MAX_BRIGHTNESS
             if (currentBrightness < 0) {
                 currentBrightness =
                     Settings.System.getInt(
@@ -1028,8 +1152,8 @@ class VideoPlayerFragment : Fragment() {
 
     fun showBrightnessVal(value: Int) {
         binding.imageviewValue.setImageResource(
-            if (value < VideoPlayerConfig.BRIGHTNESS_LOW_THRESHOLD) R.drawable.brightness_low 
-            else if (value < VideoPlayerConfig.BRIGHTNESS_HALF_THRESHOLD) R.drawable.brightness_half 
+            if (value < VideoPlayerConfig.BRIGHTNESS_LOW_THRESHOLD) R.drawable.brightness_low
+            else if (value < VideoPlayerConfig.BRIGHTNESS_HALF_THRESHOLD) R.drawable.brightness_half
             else R.drawable.brightness_high
         )
         internalShowUI(value)
@@ -1037,8 +1161,8 @@ class VideoPlayerFragment : Fragment() {
 
     fun showVolumeVal(value: Int) {
         binding.imageviewValue.setImageResource(
-            if (value < VideoPlayerConfig.BRIGHTNESS_LOW_THRESHOLD) R.drawable.volume_down 
-            else if (value < VideoPlayerConfig.BRIGHTNESS_HALF_THRESHOLD) R.drawable.volume_half 
+            if (value < VideoPlayerConfig.BRIGHTNESS_LOW_THRESHOLD) R.drawable.volume_down
+            else if (value < VideoPlayerConfig.BRIGHTNESS_HALF_THRESHOLD) R.drawable.volume_half
             else R.drawable.volume_up
         )
         internalShowUI(value)
@@ -1106,7 +1230,9 @@ class VideoPlayerFragment : Fragment() {
             p.play()
         }
     }
-
+    private fun pausePlay() {
+        mediaController?.pause()
+    }
     private fun stopPlay() {
         // Audio focus is managed by VideoPlaybackService
         mediaController?.stop()

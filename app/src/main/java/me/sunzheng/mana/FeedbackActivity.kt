@@ -46,7 +46,28 @@ class FeedbackActivity @Inject constructor() : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         var bundle = savedInstanceState ?: intent.extras!!
         episodeId = bundle.getString(ARGS_EPISODE_ID_STR)
-        videoFileId = bundle.getString(ARGS_EPISODE_ID_STR)
+        videoFileId = bundle.getString(ARGS_VIDEOFILE_ID_STR)
+        
+        // Check if error message is provided (from playback error)
+        val errorMessage = bundle.getString("error_message")
+        val stackTrace = bundle.getString("error_stack_trace")
+        
+        if (!TextUtils.isEmpty(errorMessage)) {
+            // Build complete error message with stack trace if available
+            val completeErrorMessage = buildString {
+                append(errorMessage)
+                if (!TextUtils.isEmpty(stackTrace)) {
+                    append("\n\n堆栈跟踪:\n")
+                    append(stackTrace)
+                }
+            }
+            
+            // Pre-fill the feedback edit text with complete error message
+            binding.feedbackRadiogroup.check(R.id.feedback_etc_radiobutton)
+            binding.feedbackEdittext.setText(completeErrorMessage)
+            // Show FAB since text is not empty
+            fabShow()
+        }
 
         binding.feedbackRadiogroup.setOnCheckedChangeListener { _, checkedId ->
             binding.feedbackEdittext.isFocusable = checkedId == R.id.feedback_etc_radiobutton
@@ -95,6 +116,7 @@ class FeedbackActivity @Inject constructor() : AppCompatActivity() {
                 return@OnClickListener
             }
             hideSoftInputKeyboard()
+            // Send feedback message (includes error message if from playback error)
             viewModel.sendFeedback(feedbackResult)
             binding.progressbar.isVisible = true
             viewModel.submit(episodeId = episodeId, videoFileId = videoFileId).observe(this) {

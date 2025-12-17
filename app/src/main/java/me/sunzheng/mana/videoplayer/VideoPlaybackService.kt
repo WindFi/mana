@@ -13,15 +13,23 @@ import android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT
 import android.media.AudioManager.AUDIOFOCUS_LOSS_TRANSIENT_CAN_DUCK
 import android.media.AudioManager.STREAM_MUSIC
 import android.os.Build
+import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.IBinder
+import android.os.ResultReceiver
+import android.util.Log
 import androidx.annotation.OptIn
 import androidx.core.app.NotificationCompat
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.MediaController
 import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
+import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
 import com.google.common.util.concurrent.SettableFuture
 import me.sunzheng.mana.R
 import me.sunzheng.mana.videoplayer.PlayerController
@@ -50,6 +58,40 @@ class VideoPlaybackService : MediaSessionService() {
          * Action to stop the service.
          */
         const val ACTION_STOP = "me.sunzheng.mana.videoplayer.STOP"
+        
+        /**
+         * Action to release resources (MediaController, MediaSession, PlayerController).
+         * Called when VideoPlayerActivity is destroyed to clean up resources.
+         */
+        const val ACTION_RELEASE = "me.sunzheng.mana.videoplayer.RELEASE"
+        
+        /**
+         * Action to get SessionToken from service.
+         * Client sends Intent with this action and ResultReceiver in extras.
+         * Service responds with SessionToken via ResultReceiver.
+         */
+        const val ACTION_GET_SESSION_TOKEN = "me.sunzheng.mana.videoplayer.GET_SESSION_TOKEN"
+        
+        /**
+         * Action broadcast when MediaController is ready.
+         * Service broadcasts this when MediaController is created.
+         */
+        const val ACTION_MEDIA_CONTROLLER_READY = "me.sunzheng.mana.videoplayer.MEDIA_CONTROLLER_READY"
+        
+        /**
+         * Extra key for ResultReceiver in Intent.
+         */
+        const val EXTRA_RESULT_RECEIVER = "me.sunzheng.mana.videoplayer.EXTRA_RESULT_RECEIVER"
+        
+        /**
+         * Result code for successful MediaSession ready notification.
+         */
+        const val RESULT_SESSION_TOKEN_SUCCESS = 1
+        
+        /**
+         * Result code for failed MediaSession ready notification.
+         */
+        const val RESULT_SESSION_TOKEN_FAILED = 0
     }
     
     /**
@@ -91,8 +133,20 @@ class VideoPlaybackService : MediaSessionService() {
      */
     private var audioFocusPlayerListener: Player.Listener? = null
     
+    /**
+     * MediaController instance managed by this service.
+     * Created when service starts and released when service is destroyed.
+     */
+    private var mediaController: MediaController? = null
+    
+    /**
+     * Future for MediaController creation.
+     */
+    private var controllerFuture: ListenableFuture<MediaController>? = null
+    
     override fun onCreate() {
         super.onCreate()
+        
         createNotificationChannel()
         
         // Start foreground service immediately to avoid ANR
@@ -122,6 +176,41 @@ class VideoPlaybackService : MediaSessionService() {
             }
         }
         playerController!!.player.addListener(audioFocusPlayerListener!!)
+        
+        // Create MediaController for this service
+        createMediaController()
+    }
+    
+    /**
+     * Creates MediaController for this service.
+     * MediaController is managed by the service and can be accessed by clients.
+     */
+    private fun createMediaController() {
+        val sessionToken = SessionToken(
+            this,
+            android.content.ComponentName(this, VideoPlaybackService::class.java)
+        )
+        
+        controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
+        
+        controllerFuture?.addListener(
+            {
+                try {
+                    val controller = controllerFuture?.get()
+                    if (controller != null) {
+                        mediaController = controller
+                        Log.d("VideoPlaybackService", "MediaController created successfully")
+                        // Broadcast that MediaController is ready
+                        sendMediaControllerReadyBroadcast()
+                    } else {
+                        Log.e("VideoPlaybackService", "MediaController is null")
+                    }
+                } catch (e: Exception) {
+                    Log.e("VideoPlaybackService", "Failed to create MediaController", e)
+                }
+            },
+            MoreExecutors.directExecutor()
+        )
     }
     
     override fun onGetSession(controllerInfo: MediaSession.ControllerInfo): MediaSession {
@@ -139,6 +228,13 @@ class VideoPlaybackService : MediaSessionService() {
         // Abandon audio focus
         abandonAudioFocus()
         
+        // Release MediaController
+        controllerFuture?.let { future ->
+            MediaController.releaseFuture(future as java.util.concurrent.Future<out MediaController>)
+        }
+        controllerFuture = null
+        mediaController = null
+        
         mediaSession?.run {
             player.release()
             release()
@@ -149,14 +245,90 @@ class VideoPlaybackService : MediaSessionService() {
     }
     
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         when (intent?.action) {
             ACTION_STOP -> {
                 stopSelf()
+            }
+            ACTION_GET_SESSION_TOKEN -> {
+                handleGetSessionToken(intent)
+            }
+            ACTION_RELEASE -> {
+                handleRelease()
             }
             // ACTION_START is no longer needed here since onCreate() handles startForeground()
             // This ensures startForeground() is always called within 5 seconds
         }
         return START_STICKY
+    }
+    
+    /**
+     * Handles ACTION_GET_SESSION_TOKEN request.
+     * Extracts ResultReceiver from Intent and sends MediaSession ready status back.
+     * Client should create SessionToken using ComponentName after receiving success.
+     */
+    private fun handleGetSessionToken(intent: Intent) {
+        val resultReceiver = intent.getParcelableExtra<ResultReceiver>(EXTRA_RESULT_RECEIVER)
+        if (resultReceiver == null) {
+            Log.e("VideoPlaybackService", "ACTION_GET_SESSION_TOKEN: ResultReceiver is null")
+            return
+        }
+        
+        val session = mediaSession
+        if (session == null) {
+            Log.e("VideoPlaybackService", "ACTION_GET_SESSION_TOKEN: MediaSession is not initialized")
+            val bundle = Bundle().apply {
+                putString("error", "MediaSession is not initialized")
+            }
+            resultReceiver.send(RESULT_SESSION_TOKEN_FAILED, bundle)
+            return
+        }
+        
+        // MediaSession is ready, client can create SessionToken using ComponentName
+        // Return success status
+        val bundle = Bundle().apply {
+            putBoolean("ready", true)
+        }
+        resultReceiver.send(RESULT_SESSION_TOKEN_SUCCESS, bundle)
+        Log.d("VideoPlaybackService", "ACTION_GET_SESSION_TOKEN: MediaSession is ready")
+    }
+    
+    /**
+     * Handles ACTION_RELEASE request.
+     * Releases MediaController, MediaSession, and PlayerController resources.
+     * Called when VideoPlayerActivity is destroyed.
+     */
+    private fun handleRelease() {
+        Log.d("VideoPlaybackService", "ACTION_RELEASE: Releasing resources")
+        
+        // Remove player listener to prevent memory leak
+        audioFocusPlayerListener?.let { listener ->
+            playerController?.player?.removeListener(listener)
+        }
+        audioFocusPlayerListener = null
+        
+        // Abandon audio focus
+        abandonAudioFocus()
+        
+        // Release MediaController
+        controllerFuture?.let { future ->
+            MediaController.releaseFuture(future as java.util.concurrent.Future<out MediaController>)
+        }
+        controllerFuture = null
+        mediaController = null
+        
+        // Release MediaSession
+        mediaSession?.run {
+            player.release()
+            release()
+            mediaSession = null
+        }
+        
+        // Release PlayerController
+        playerController?.release()
+        playerController = null
+        
+        Log.d("VideoPlaybackService", "ACTION_RELEASE: Resources released successfully")
     }
     
     override fun onBind(intent: Intent?): IBinder? {
@@ -173,6 +345,39 @@ class VideoPlaybackService : MediaSessionService() {
      * Gets the MediaSession instance.
      */
     fun getMediaSession(): MediaSession? = mediaSession
+    
+    /**
+     * Gets the MediaController instance managed by this service.
+     * Returns null if MediaController is not yet created or service is destroyed.
+     * 
+     * Note: MediaController creation is asynchronous. Use getMediaControllerAsync() 
+     * to wait for MediaController to be ready.
+     */
+    fun getMediaController(): MediaController? = mediaController
+    
+    /**
+     * Gets the MediaController asynchronously.
+     * Returns a ListenableFuture that completes when MediaController is ready.
+     * 
+     * @return ListenableFuture<MediaController> that completes when controller is ready
+     * 
+     * @deprecated Use ACTION_GET_SESSION_TOKEN Intent action instead.
+     * This method is kept for backward compatibility but should not be used.
+     */
+    @Deprecated("Use ACTION_GET_SESSION_TOKEN Intent action instead")
+    fun getMediaControllerAsync(): ListenableFuture<MediaController>? = controllerFuture
+    
+    /**
+     * Sends broadcast when MediaController is ready.
+     * Clients can optionally register BroadcastReceiver to be notified.
+     */
+    private fun sendMediaControllerReadyBroadcast() {
+        val intent = Intent(ACTION_MEDIA_CONTROLLER_READY).apply {
+            setPackage(packageName)
+        }
+        sendBroadcast(intent)
+        Log.d("VideoPlaybackService", "Broadcast sent: ACTION_MEDIA_CONTROLLER_READY")
+    }
     
     /**
      * Creates the notification channel for Android O+.
