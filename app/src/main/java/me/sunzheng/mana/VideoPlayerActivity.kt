@@ -912,28 +912,6 @@ class VideoPlayerFragment : Fragment() {
 
         playerListener = object : Player.Listener {
             var isInitialized = false
-            private var isLoading = false
-            
-            /**
-             * Updates CircleProgressBar visibility based on current state.
-             * Shows when: playback is paused AND network is loading.
-             */
-            private fun updateProgressBarVisibility() {
-                val isPlaying = mediaController?.isPlaying ?: false
-                val shouldShow = !isPlaying && isLoading
-                binding.progressbar.isVisible = shouldShow
-                Log.d(
-                    "VideoPlayerFragment",
-                    "ProgressBar: isLoading=$isLoading, isPlaying=$isPlaying, show=$shouldShow"
-                )
-            }
-            
-            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-                super.onPlayWhenReadyChanged(playWhenReady, reason)
-                // Update progress bar when play state changes
-                updateProgressBarVisibility()
-            }
-
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
                 Log.d("VideoPlayerFragment", "playState:${playbackState}")
@@ -973,9 +951,7 @@ class VideoPlayerFragment : Fragment() {
             }
 
             override fun onIsPlayingChanged(isPlaying: Boolean) {
-                // Update loading state and refresh progress bar visibility
-                this.isLoading = isLoading
-                updateProgressBarVisibility()
+                binding.progressbar.isVisible = !isPlaying
             }
 
             override fun onPlayerError(error: PlaybackException) {
