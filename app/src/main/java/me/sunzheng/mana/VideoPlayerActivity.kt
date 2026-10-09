@@ -771,7 +771,6 @@ class VideoPlayerFragment : Fragment() {
         // Remove player listener to avoid memory leak
         playerListener?.let { mediaController?.removeListener(it) }
         playerListener = null
-
         mediaSessionManager.disconnect()
         mediaController = null
 
@@ -973,7 +972,7 @@ class VideoPlayerFragment : Fragment() {
                 }
             }
 
-            override fun onIsLoadingChanged(isLoading: Boolean) {
+            override fun onIsPlayingChanged(isPlaying: Boolean) {
                 // Update loading state and refresh progress bar visibility
                 this.isLoading = isLoading
                 updateProgressBarVisibility()

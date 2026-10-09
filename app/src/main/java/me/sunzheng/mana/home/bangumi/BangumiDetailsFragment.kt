@@ -165,8 +165,9 @@ class BangumiDetailsFragment : Fragment() {
         }
         entity.run {
             coverImage?.run {
-                binding.bangumidetailsAblumImageview.loadUrl(url)
-                binding.bannerImageview.loadUrl(url)
+                val coverUrl = url?:entity.cover?:""
+                binding.bangumidetailsAblumImageview.loadUrl(coverUrl)
+                binding.bannerImageview.loadUrl(coverUrl)
             }
             binding.toolbar.title = if (isJaFirst) name!! else nameCn!!
             binding.bangumidetailsNameTextview.text = if (isJaFirst) nameCn!! else name!!
