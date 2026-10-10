@@ -94,7 +94,7 @@
                     <androidx.appcompat.widget.AppCompatImageView
                         android:id="@+id/bangumidetails_ablum_imageview"
                         android:layout_width="96dp"
-                        android:layout_height="96dp"
+                        android:layout_height="128dp"
                         android:scaleType="fitCenter"
                         app:place_holder="@{bangumiModel.entity.coverImage.dominantColor}"
                         app:url="@{bangumiModel.entity.coverImage.url}"
