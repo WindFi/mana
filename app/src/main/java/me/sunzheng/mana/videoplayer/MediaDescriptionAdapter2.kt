@@ -39,7 +39,10 @@ abstract class SortListAdapter<T>(val list: MutableList<T> = mutableListOf()) : 
         val copy = MutableList(size = list.size) { list[it] }
         Collections.copy(copy, list)
         items.forEach { source ->
-            if (list.filter { !sameTo(source, it) }.isEmpty()) {
+            // 只有列表中不存在同一条目时才追加：
+            // 原条件 `list.filter { !sameTo(source, it) }.isEmpty()` 表示“列表中所有条目都与 source 相同”，
+            // 结果是重复项被反复追加（同一集显示多条），而真正的新条目永远不会被加入。
+            if (list.none { sameTo(source, it) }) {
                 copy.add(source)
             }
         }
