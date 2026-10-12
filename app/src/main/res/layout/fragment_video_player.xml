@@ -108,6 +108,24 @@
                 android:layout_centerVertical="true"
                 android:choiceMode="singleChoice" />
         </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/node_list_root"
+            android:layout_width="240dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:background="#77000000"
+            android:visibility="gone">
+
+            <ListView
+                android:id="@+id/node_list"
+                android:layout_width="240dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:choiceMode="singleChoice" />
+        </RelativeLayout>
         <com.google.android.material.progressindicator.CircularProgressIndicator
             android:id="@+id/progressbar"
             android:layout_width="wrap_content"
