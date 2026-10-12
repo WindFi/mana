@@ -16,6 +16,9 @@ jobs:
   build:
     name: Build Release APK
     runs-on: ubuntu-latest
+    # 回写自增后的版本号 commit 需要写权限
+    permissions:
+      contents: write
     
     steps:
       # 1. 检出代码
@@ -110,6 +113,34 @@ jobs:
           echo "storeFile=${{ github.workspace }}/Sun.jks" >> gradle.properties
           echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> gradle.properties
       
+      # 5.5. 版本号自增（仅推送标签时执行；就地修改已有的 app/build.gradle，不新增任何文件）
+      #      versionCode +1，versionName 末位 +1（例如 137/2.3.7 -> 138/2.3.8）
+      - name: Bump version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          set -eu
+          VERSION_CODE=$(sed -nE 's/^[[:space:]]*versionCode[[:space:]]+([0-9]+).*/\1/p' app/build.gradle | head -1)
+          VERSION_NAME=$(sed -nE 's/^[[:space:]]*versionName[[:space:]]+"([^"]+)".*/\1/p' app/build.gradle | head -1)
+          if [ -z "$VERSION_CODE" ] || [ -z "$VERSION_NAME" ]; then
+            echo "❌ 无法从 app/build.gradle 读取 versionCode/versionName"
+            exit 1
+          fi
+          if ! echo "$VERSION_NAME" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "❌ versionName '$VERSION_NAME' 不是 x.y.z 格式，无法末位 +1，请手动处理"
+            exit 1
+          fi
+          NEW_VERSION_CODE=$((VERSION_CODE + 1))
+          NEW_VERSION_NAME=$(echo "$VERSION_NAME" | awk -F. '{printf "%d.%d.%d", $1, $2, $3 + 1}')
+          sed -i -E "s/^[[:space:]]*versionCode[[:space:]]+[0-9]+/        versionCode ${NEW_VERSION_CODE}/" app/build.gradle
+          sed -i -E "s/^[[:space:]]*versionName[[:space:]]+\"[^\"]+\"/        versionName \"${NEW_VERSION_NAME}\"/" app/build.gradle
+          echo "versionCode: ${VERSION_CODE} -> ${NEW_VERSION_CODE}"
+          echo "versionName: ${VERSION_NAME} -> ${NEW_VERSION_NAME}"
+          grep -nE 'versionCode|versionName' app/build.gradle
+          {
+            echo "NEW_VERSION_CODE=${NEW_VERSION_CODE}"
+            echo "NEW_VERSION_NAME=${NEW_VERSION_NAME}"
+          } >> "$GITHUB_ENV"
+
       # 6. 构建 Release APK
       - name: Build Release APK
         run: gradle assembleRelease --stacktrace
@@ -119,7 +150,8 @@ jobs:
         id: version
         run: |
           # 提取版本号（去除引号和空格）
-          VERSION_NAME=$(grep "versionName" app/build.gradle | awk '{print $2}' | tr -d '"' | tr -d ' ')
+          # head -1 必需：app/build.gradle 第 28 行也含 "versionName"（archivesBaseName），不加会拼成 2.3.7Mana-
+          VERSION_NAME=$(grep "versionName" app/build.gradle | head -1 | awk '{print $2}' | tr -d '"' | tr -d ' ')
           # 验证版本号是否提取成功
           if [ -z "$VERSION_NAME" ]; then
             echo "❌ 错误：无法提取版本号"
@@ -177,6 +209,32 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
+      # 8.5. 把自增后的版本号提交回 master（仅推送标签时；放在构建+发布之后，构建失败不烧版本号）
+      - name: Commit bumped version
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          set -eu
+          # 提交前先记住标签所指向的提交，用于校验回写是否为快进推送
+          TAG_SHA=$(git rev-parse HEAD)
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # 只暂存 app/build.gradle：第 5 步往 gradle.properties 追加过内容，绝不能带进提交
+          git add app/build.gradle
+          if git diff --cached --quiet; then
+            echo "ℹ️ app/build.gradle 无变化，无需提交"
+            exit 0
+          fi
+          git commit -m "chore: bump version to ${NEW_VERSION_NAME} (versionCode ${NEW_VERSION_CODE}) [skip ci]"
+          git fetch origin master
+          MASTER_SHA=$(git rev-parse origin/master 2>/dev/null || git rev-parse FETCH_HEAD)
+          if [ "$MASTER_SHA" != "$TAG_SHA" ]; then
+            echo "❌ 标签指向的提交不是 master 最新提交（tag=${TAG_SHA} master=${MASTER_SHA}），回写会变成非快进推送，已中止。"
+            echo "💡 请把标签打在 master 最新提交上；本次 ${NEW_VERSION_NAME} (versionCode ${NEW_VERSION_CODE}) 未持久化，下次打标签前需手动 +1。"
+            exit 1
+          fi
+          git push origin HEAD:master
+          echo "✅ 已把 ${NEW_VERSION_NAME} (versionCode ${NEW_VERSION_CODE}) 提交回 master"
+
       # 9. 显示构建信息
       - name: Build Summary
         run: |
