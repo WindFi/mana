@@ -64,4 +64,22 @@
     <string name="title_empty_data">没有内容</string>
     <string name="text_seekto">跳转至 %1$s</string>
     <string name="title_theme">深色主题</string>
+
+    <!--播放节点路由（mira routing）-->
+    <string name="title_action_node">节点</string>
+    <string name="title_action_node_state">节点·%1$s</string>
+    <string name="node_auto">自动（由服务器选择）</string>
+    <string name="node_current">当前</string>
+    <string name="node_offline_hint">可能被服务器回退</string>
+    <string name="node_unsupported">当前服务器不支持节点选择</string>
+    <string name="node_list_empty">无法获取节点列表</string>
+    <string name="node_list_cached">（缓存）</string>
+    <string name="node_group_other">其他</string>
+    <string name="node_status_healthy">可用</string>
+    <string name="node_status_offline">离线</string>
+    <string name="node_status_unknown">未知</string>
+    <string name="node_switched_to">已切换到 %1$s</string>
+    <string name="node_fallback_to">你选择的 %1$s 当前不可用，已临时使用 %2$s</string>
+    <string name="node_item_content_description">%1$s，地区 %2$s，%3$s %4$s</string>
+    <string name="pref_title_current_node">当前节点</string>
 </resources>

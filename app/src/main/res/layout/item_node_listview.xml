@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  节点列表项（FR-2）：两行布局，主文案 = 节点名，副文案 = 地区 · 状态 · （当前/离线提示）。
+  与 item_source_listview 一样直接叠在 #77000000 浮层上，沿用 listview_text_selector 配色。
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="12dp"
+    android:paddingVertical="10dp">
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="@color/listview_text_selector"
+        android:textSize="14sp"
+        tools:text="Japan Example" />
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/subtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:textColor="#B3FFFFFF"
+        android:textSize="11sp"
+        tools:text="JP · healthy · 当前" />
+</LinearLayout>

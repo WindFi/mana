@@ -24,5 +24,11 @@
         app:key="@string/pref_key_dark_theme"
         app:singleLineTitle="true"
         app:title="@string/title_theme" />
+    <!-- 当前节点：只读展示（FR-7），编辑只在播放器内 -->
+    <Preference
+        android:key="pref_key_current_node"
+        android:persistent="false"
+        android:selectable="false"
+        android:title="@string/pref_title_current_node" />
 
 </PreferenceScreen>

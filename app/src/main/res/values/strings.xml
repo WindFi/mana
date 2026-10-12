@@ -198,4 +198,22 @@
     <string name="title_activity_bangumi_detail_mvvm" translatable="false">BangumiDetailMvvm</string>
     <string name="title_empty_data">No data</string>
     <string name="text_seekto">seek to %1$s</string>
+
+    <!--Playback node routing (mira routing)-->
+    <string name="title_action_node">Node</string>
+    <string name="title_action_node_state">Node·%1$s</string>
+    <string name="node_auto">Auto (server chooses)</string>
+    <string name="node_current">Current</string>
+    <string name="node_offline_hint">May be replaced by the server</string>
+    <string name="node_unsupported">This server does not support node selection</string>
+    <string name="node_list_empty">Unable to load the node list</string>
+    <string name="node_list_cached">(cached)</string>
+    <string name="node_group_other">Other</string>
+    <string name="node_status_healthy">healthy</string>
+    <string name="node_status_offline">offline</string>
+    <string name="node_status_unknown">unknown</string>
+    <string name="node_switched_to">Switched to %1$s</string>
+    <string name="node_fallback_to">%1$s is unavailable, temporarily using %2$s</string>
+    <string name="node_item_content_description">%1$s, region %2$s, %3$s %4$s</string>
+    <string name="pref_title_current_node">Current node</string>
 </resources>

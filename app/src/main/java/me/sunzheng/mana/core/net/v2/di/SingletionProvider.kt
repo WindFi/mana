@@ -1,12 +1,10 @@
 package me.sunzheng.mana.core.net.v2.di
 
 import android.content.Context
-import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Build
 import android.text.TextUtils
 import android.util.Log
-import androidx.multidex.MultiDexApplication
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
@@ -17,7 +15,6 @@ import dagger.hilt.android.components.ViewModelComponent
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import me.sunzheng.mana.account.AccountRepository
-import me.sunzheng.mana.core.net.LiveDataCallAdapterFactory
 import me.sunzheng.mana.core.net.v2.ApiService
 import me.sunzheng.mana.core.net.v2.database.*
 import me.sunzheng.mana.home.main.BangumiRepository
@@ -30,7 +27,6 @@ import okhttp3.JavaNetCookieJar
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 import java.net.CookieManager
 import java.net.CookiePolicy
 import java.util.concurrent.TimeUnit
@@ -187,30 +183,12 @@ object SingletionProvider {
             .build()
     }
 
-    @Singleton
+    /**
+     * FR-10（Host 热更新）：不再缓存 Retrofit 单例，改由 [RetrofitHolder] 按当前 host 提供。
+     * 原来这里的 `isConfigChanged` + `configListener` 是无效逻辑（标志被设置但从未被读取），已删除。
+     */
     @Provides
-    fun providerRetrofit(@ApplicationContext context: Context): Retrofit {
-        var isConfigChanged = false
-        val configListener =
-            SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
-                if (key == PreferenceManager.Global.STR_KEY_HOST) {
-                    isConfigChanged = true
-                }
-            }
-        var sharedPreferences = context.getSharedPreferences(
-            PreferenceManager.Global.STR_SP_NAME,
-            MultiDexApplication.MODE_PRIVATE
-        ).apply {
-            registerOnSharedPreferenceChangeListener(configListener)
-        }
-        var host = sharedPreferences!!.getString(PreferenceManager.Global.STR_KEY_HOST, "")
-        return Retrofit.Builder()
-            .baseUrl(host)
-            .addCallAdapterFactory(LiveDataCallAdapterFactory())
-            .addConverterFactory(GsonConverterFactory.create())
-            .client(defaultOkHttpClient(context))
-            .build()
-    }
+    fun providerRetrofit(holder: RetrofitHolder): Retrofit = holder.current()
 
     @Singleton
     @Provides

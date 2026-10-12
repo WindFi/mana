@@ -9,6 +9,7 @@ import me.sunzheng.mana.core.net.ApiSuccessResponse
 import me.sunzheng.mana.core.net.Resource
 import me.sunzheng.mana.core.net.v2.*
 import me.sunzheng.mana.core.net.v2.database.*
+import me.sunzheng.mana.core.net.v2.routing.BackendDto
 import me.sunzheng.mana.home.bangumi.WatchProgressResponse
 import me.sunzheng.mana.home.episode.wrapper.EpisodeWrapper
 import me.sunzheng.mana.home.main.BangumiRepository
@@ -55,6 +56,24 @@ class VideoPlayerVideoModel @Inject constructor() : ViewModel() {
     }
     val isListShowing: MutableLiveData<Boolean> by lazy {
         MutableLiveData(false)
+    }
+
+    /**
+     * 播放节点路由（FR-2/FR-3/FR-7）的 UI 状态。
+     * 由 [PlaybackRoutingManager] 写入，Fragment 只读观察；不额外走回调，避免同一状态两套通道。
+     */
+    val nodeListLiveData: MutableLiveData<List<NodeItem>> by lazy {
+        MutableLiveData(emptyList())
+    }
+
+    /** 服务端**实际**选中的节点（不是用户偏好）；null = 未知/自动。 */
+    val currentNodeLiveData: MutableLiveData<BackendDto?> by lazy {
+        MutableLiveData(null)
+    }
+
+    /** 能力探测结果（FR-1），决定"节点"入口是否可见；null = 尚未探测。 */
+    val routingSupportedLiveData: MutableLiveData<Boolean?> by lazy {
+        MutableLiveData(null)
     }
 
     //    进度条
