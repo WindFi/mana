@@ -20,7 +20,7 @@ import me.sunzheng.mana.core.net.v2.database.*
 import me.sunzheng.mana.home.main.BangumiRepository
 import me.sunzheng.mana.home.mybangumi.FavoritesRepository
 import me.sunzheng.mana.home.search.SearchRepository
-import me.sunzheng.mana.utils.PersistentHttpCookieStore
+import me.sunzheng.mana.account.auth.PersistentHttpCookieStore
 import me.sunzheng.mana.utils.PreferenceManager
 import me.sunzheng.mana.videoplayer.VideoRepository
 import okhttp3.JavaNetCookieJar
@@ -190,9 +190,17 @@ object SingletionProvider {
     @Provides
     fun providerRetrofit(holder: RetrofitHolder): Retrofit = holder.current()
 
+    /**
+     * cookie 的持久化后端由 [me.sunzheng.mana.account.auth.SessionModule] 装配（账号库 / 私有存储，
+     * 见 openspec change `accountmanager-session-store`）；这里仍用 `JavaNetCookieJar`，
+     * 请求链路的 cookie 匹配/过期/续期语义不变。
+     */
     @Singleton
     @Provides
-    fun defaultOkHttpClient(@ApplicationContext context: Context): OkHttpClient {
+    fun defaultOkHttpClient(
+        @ApplicationContext context: Context,
+        cookieStore: PersistentHttpCookieStore
+    ): OkHttpClient {
         var applicationInfo = context.applicationInfo
         var packageManager = context.packageManager
         var packageName = context.packageName
@@ -228,7 +236,7 @@ object SingletionProvider {
             .cookieJar(
                 JavaNetCookieJar(
                     CookieManager(
-                        PersistentHttpCookieStore(context),
+                        cookieStore,
                         CookiePolicy.ACCEPT_ALL
                     )
                 )

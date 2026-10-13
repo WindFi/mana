@@ -58,6 +58,8 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.7.1'
     implementation 'androidx.fragment:fragment-ktx:1.8.9'
     implementation 'androidx.activity:activity-ktx:1.11.0'
+    // 进程启动挂载点（account 用它在进程启动时注册账号变更监听，避免 utils 反向依赖 account）
+    implementation 'androidx.startup:startup-runtime:1.1.1'
 
     implementation 'com.google.android.material:material:1.13.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.4'

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  系统账号库的 authenticator 声明（openspec change accountmanager-session-store 任务 2.3）。
+
+  accountType 必须是 <applicationId>.session，且与运行时用的字符串完全一致：
+    · 声明值：本文件引用的 @string/session_account_type
+      —— main 源集 = me.sunzheng.mana.session；debug 源集覆盖 = me.sunzheng.mana.debug.session
+    · 运行时：SessionModule / SessionAccountsObserver / SessionAuthenticatorService 都读同一个字符串资源，
+      并在不一致时打 Log.e（TAG SessionStore），避免账号库写入静默失败 → 降级私有存储。
+
+  注意：这里**不能**写 ${applicationId}.session —— AGP 只在 AndroidManifest.xml 里替换占位符，
+  资源 XML 里的占位符会原样进 APK（实测）。
+
+  label/icon 决定「系统设置 → 账号」里显示什么。
+-->
+<account-authenticator xmlns:android="http://schemas.android.com/apk/res/android"
+    android:accountType="@string/session_account_type"
+    android:icon="@mipmap/ic_launcher"
+    android:label="@string/app_name"
+    android:smallIcon="@mipmap/ic_launcher" />

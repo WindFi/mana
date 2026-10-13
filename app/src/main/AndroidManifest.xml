@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -9,6 +10,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <!-- Foreground service media playback permission for Android 14+ -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS"/>
+    <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS"/>
 
 <!--    <uses-feature android:name="android.software.leanback"-->
 <!--        android:required="false" />-->
@@ -118,6 +121,37 @@
                 <action android:name="androidx.media3.session.MediaSessionService" />
             </intent-filter>
         </service>
+
+        <!--
+          会话凭据落到系统账号库所需的 authenticator（openspec change accountmanager-session-store 任务 2.3）。
+          Android 12+ 必须显式声明 exported；不新增任何权限（账号相关旧权限只有 API ≤22 需要，本变更不启用那条路径）。
+        -->
+        <service
+            android:name=".account.auth.SessionAuthenticatorService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
+
+        <!--
+          AndroidX App Startup 的挂载点：account 借它在进程启动时注册「账号变更监听」
+          （见 account/auth/SessionAccountsInitializer.kt），这样 utils/App 不需要 import account。
+          InitializationProvider 本身由 startup-runtime 的清单合并进来，这里只追加自己的 meta-data。
+        -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="me.sunzheng.mana.account.auth.SessionAccountsInitializer"
+                android:value="androidx.startup" />
+        </provider>
     </application>
 
 </manifest>
