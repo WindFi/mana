@@ -109,7 +109,7 @@ interface ApiService {
     @GET("${HOME_PATH}/announce")
     fun listallAvailable(): LiveData<ApiResponse<ResponseWrapper>>?
 
-    //    Request URL: https://suki.moe/api/home/bangumi?count=-1&order_by=air_date&page=1&sort=desc
+    //    Request URL: <host>/api/home/bangumi?count=-1&order_by=air_date&page=1&sort=desc
     @GET("${HOME_PATH}/bangumi")
     fun listAll(
         @Query("page") page: Int = 0,

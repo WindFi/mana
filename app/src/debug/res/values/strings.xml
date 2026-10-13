@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  debug 变体的 accountType 覆盖（openspec change accountmanager-session-store 任务 2.3）。
+
+  app/build.gradle 里 debug 有 applicationIdSuffix "debug" ⇒ applicationId = me.sunzheng.mana.debug，
+  账号类型必须同步带后缀，否则系统不认这个 authenticator（写入失败 → 静默降级到私有存储）。
+
+  为什么用变体资源而不是 build.gradle 的 resValue：
+  - AGP 只在 AndroidManifest.xml 里替换 ${applicationId}，资源 XML 里不替换（实测 APK 里是字面量）；
+  - `res/values-<variant>` 这类源集覆盖是 AGP 原生机制，不需要动 build.gradle。
+  代价：下面这行字面量必须与 applicationIdSuffix 保持一致（改了 applicationId 记得同步这里）。
+  运行时有兜底：SessionModule 会把本值与 <applicationId>.session 比对，不一致打 Log.e。
+-->
+<resources>
+    <string name="session_account_type" translatable="false">me.sunzheng.mana.debug.session</string>
+</resources>

@@ -32,6 +32,9 @@ import me.sunzheng.mana.core.AnnounceModel
 import me.sunzheng.mana.databinding.FragmentMainBinding
 import me.sunzheng.mana.home.onair.OnAirFragment
 import me.sunzheng.mana.utils.PreferenceManager
+import me.sunzheng.mana.account.auth.SessionLogout
+import me.sunzheng.mana.account.auth.SessionOrigin
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainFragment : Fragment(),
@@ -48,6 +51,9 @@ class MainFragment : Fragment(),
     lateinit var binding: FragmentMainBinding
 
     val viewModel by activityViewModels<AccountViewModel>()
+
+    @Inject
+    lateinit var sessionLogout: SessionLogout
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -201,18 +207,18 @@ class MainFragment : Fragment(),
             }
 
             R.id.nav_exit -> {
+                // 登出语义收敛为一条路径（openspec change accountmanager-session-store design D7）：
+                // 清凭据（账号库 + 内存 + SP 残留）与判据，不再只清 SP 里的用户名/密码。
                 val sharedPreferences =
                     requireActivity().getSharedPreferences(
                         PreferenceManager.Global.STR_SP_NAME,
                         Context.MODE_PRIVATE
                     )
-                sharedPreferences.edit()
-                    .putBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false)
-                    .commit()
-                sharedPreferences.edit()
-                    .putString(PreferenceManager.Global.STR_USERNAME,"")
-                    .putString(PreferenceManager.Global.STR_PASSWORD,"")
-                    .commit()
+                sessionLogout.clearSession(
+                    SessionOrigin.keyOfHost(
+                        sharedPreferences.getString(PreferenceManager.Global.STR_KEY_HOST, "") ?: ""
+                    )
+                )
                 viewModel.checkIsLogin(requireContext())
                 true
             }

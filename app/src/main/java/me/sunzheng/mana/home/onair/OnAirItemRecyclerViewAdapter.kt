@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SortedList
 import androidx.recyclerview.widget.SortedListAdapterCallback
+import com.bumptech.glide.Glide
 import me.sunzheng.mana.R
 import me.sunzheng.mana.core.net.v2.database.BangumiEntity
 import me.sunzheng.mana.core.net.v2.loadUrl
@@ -58,12 +59,20 @@ class OnAirItemRecyclerViewAdapter(
                 PreferenceManager.Global.STR_SP_NAME,
                 Context.MODE_PRIVATE
             ).getString(PreferenceManager.Global.STR_KEY_HOST, "")
-            val domainColor = coverImage?.dominantColor ?: cover_color!!
-            var coverImageUrl =  image?:coverImage?.url
+            val domainColor = coverImage?.dominantColor ?: cover_color ?: "#000000"
+            // The server may return a shell cover_image whose fields are all null and no cover_color
+            // (e.g. bgm_id 636512): there is no image url to load in that case.
+            val coverImageUrl = (image ?: coverImage?.url)
+                ?.takeIf { it.isNotBlank() }
+                ?.let { HostUtil.makeUp(host, it) }
 
-            coverImageUrl = HostUtil.makeUp(host, coverImageUrl)
-
-            holder.binding.itemAlbum.loadUrl(coverImageUrl, domainColor)
+            if (coverImageUrl == null) {
+                // Nothing to load: cancel any pending Glide request and clear the view, otherwise a
+                // recycled holder would keep showing the previous item's cover.
+                Glide.with(holder.binding.itemAlbum).clear(holder.binding.itemAlbum)
+            } else {
+                holder.binding.itemAlbum.loadUrl(coverImageUrl, domainColor)
+            }
 
             holder.binding.itemTitleTextview.text = LanguageSwitchUtils.switchLanguageToJa(
                 holder.binding.root.context,

@@ -216,4 +216,7 @@
     <string name="node_fallback_to">%1$s is unavailable, temporarily using %2$s</string>
     <string name="node_item_content_description">%1$s, region %2$s, %3$s %4$s</string>
     <string name="pref_title_current_node">Current node</string>
+    <!-- 系统账号库的 accountType，规则固定为 <applicationId>.session；
+         debug 变体（applicationIdSuffix "debug"）在 src/debug/res/values/strings.xml 里覆盖。 -->
+    <string name="session_account_type" translatable="false">me.sunzheng.mana.session</string>
 </resources>
