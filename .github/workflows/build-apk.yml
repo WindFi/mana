@@ -1,29 +1,35 @@
 name: Build Android APK
 
-# 触发条件：master 分支的所有更新（推送、PR、标签等）
+# 触发条件：
+#   1) 推送版本 tag（vX.Y.Z）→ 用 tag 改版本号 → 构建 → 发布 Release → 回写 master
+#   2) 推送 master 分支        → 只做编译校验（不改版本号、不发布、不回写）
+# 注意：裸号 tag（如 2.4.7）与 release-* 之类的 tag 不再触发任何构建。
 on:
   push:
     branches:
       - master
-#  pull_request:
-#    branches:
-#      - master
-  create:
     tags:
-      - '*'
+      - 'v[0-9]*.[0-9]*.[0-9]*'
+# 同一 ref 的旧 run 自动取消；tag 与分支是不同的 ref，互不影响
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
-    name: Build Release APK
+    name: Build APK
     runs-on: ubuntu-latest
-    # 回写自增后的版本号 commit 需要写权限
+    # 回写版本号 commit / 创建 Release 需要写权限
     permissions:
       contents: write
     
     steps:
-      # 1. 检出代码
+      # 1. 检出代码（fetch-depth: 0 + fetch-tags 让第 3.5 步的 tag 判定看得到 tag）
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
       
       # 2. 设置 JDK 17
       - name: Set up JDK 17
@@ -37,6 +43,23 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: '8.13'
+      
+      # 3.5. 分支推送去重（尽力而为）：HEAD 已被 tag 覆盖时跳过构建，
+      #      避免「同一次 push 既推 master 又推 tag」跑两遍构建。
+      #      已知局限：若 GitHub 先派发 branch 事件、tag 事件后到，这里看不到 tag，仍会构建一次。
+      - name: Skip when HEAD is already tagged
+        id: guard
+        if: github.ref_type == 'branch'
+        run: |
+          set -eu
+          git fetch --tags --force origin '+refs/tags/*:refs/tags/*' >/dev/null 2>&1 || true
+          TAGGED=$(git tag --points-at HEAD | tr '\n' ' ')
+          if [ -n "$TAGGED" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "ℹ️ HEAD 已被 tag 覆盖（$TAGGED），本次分支构建跳过，交由对应的 tag run 构建发布。"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
       
       # 4. 解码并配置签名密钥
       - name: Decode keystore
@@ -95,6 +118,8 @@ jobs:
           echo "✅ 密钥文件解码成功，文件大小: $FILE_SIZE 字节"
       
       # 5. 创建 gradle.properties 配置 AndroidX 和签名信息
+      #    注意：仓库里的 gradle.properties 被 .gitignore 忽略，CI 上不存在，
+      #    而 release signingConfig 对所有 buildType 都会求值，所以这些键必须声明。
       - name: Create gradle.properties
         run: |
           # 启用 AndroidX 支持（safeargs 插件必需）
@@ -113,91 +138,99 @@ jobs:
           echo "storeFile=${{ github.workspace }}/Sun.jks" >> gradle.properties
           echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> gradle.properties
       
-      # 5.5. 版本号自增（仅推送标签时执行；就地修改已有的 app/build.gradle，不新增任何文件）
-      #      versionCode +1，versionName 末位 +1（例如 137/2.3.7 -> 138/2.3.8）
-      - name: Bump version
-        if: startsWith(github.ref, 'refs/tags/')
+      # 5.5. 版本号以 tag 为唯一来源（仅推送 tag 时执行；就地修改 app/build.gradle，不新增文件）
+      #      tag vX.Y.Z -> versionName X.Y.Z，versionCode = major*10000 + minor*100 + patch
+      #      例：v2.4.8 -> versionName "2.4.8" / versionCode 20408
+      - name: Parse tag and bump version
+        id: version
+        if: github.ref_type == 'tag'
         run: |
           set -eu
-          VERSION_CODE=$(sed -nE 's/^[[:space:]]*versionCode[[:space:]]+([0-9]+).*/\1/p' app/build.gradle | head -1)
-          VERSION_NAME=$(sed -nE 's/^[[:space:]]*versionName[[:space:]]+"([^"]+)".*/\1/p' app/build.gradle | head -1)
-          if [ -z "$VERSION_CODE" ] || [ -z "$VERSION_NAME" ]; then
+          TAG="${GITHUB_REF_NAME}"
+          # 触发器只放行 v*.*.*，这里再做一次严格校验（拒绝 v2.4.8-rc1 这类）
+          if ! echo "$TAG" | grep -qE '^v[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "❌ tag '$TAG' 不符合 vX.Y.Z 规范（例：v2.4.8）"
+            exit 1
+          fi
+          VERSION_NAME="${TAG#v}"
+          MAJOR=$(echo "$VERSION_NAME" | cut -d. -f1)
+          MINOR=$(echo "$VERSION_NAME" | cut -d. -f2)
+          PATCH=$(echo "$VERSION_NAME" | cut -d. -f3)
+          # minor/patch 达到三位就会和其他版本号撞车（2.4.100 与 20.41.0 的 versionCode 相同）
+          if [ "$MINOR" -gt 99 ] || [ "$PATCH" -gt 99 ]; then
+            echo "❌ minor/patch 必须 ≤ 99（否则 versionCode 公式会与其他版本冲突）：$VERSION_NAME"
+            exit 1
+          fi
+          NEW_VERSION_CODE=$(( MAJOR * 10000 + MINOR * 100 + PATCH ))
+          CUR_VERSION_CODE=$(sed -nE 's/^[[:space:]]*versionCode[[:space:]]+([0-9]+).*/\1/p' app/build.gradle | head -1)
+          CUR_VERSION_NAME=$(sed -nE 's/^[[:space:]]*versionName[[:space:]]+"([^"]+)".*/\1/p' app/build.gradle | head -1)
+          if [ -z "$CUR_VERSION_CODE" ] || [ -z "$CUR_VERSION_NAME" ]; then
             echo "❌ 无法从 app/build.gradle 读取 versionCode/versionName"
             exit 1
           fi
-          if ! echo "$VERSION_NAME" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
-            echo "❌ versionName '$VERSION_NAME' 不是 x.y.z 格式，无法末位 +1，请手动处理"
+          # 读出来的必须是纯数字，否则下面的数值比较会「报错但被 if 吞掉」→ 守卫静默失效
+          case "$CUR_VERSION_CODE" in
+            ''|*[!0-9]*) echo "❌ 解析出的 versionCode 不是数字：'$CUR_VERSION_CODE'"; exit 1 ;;
+          esac
+          # 单调性守卫 1/2：tag 推导值必须大于 checkout 出来的文件值
+          HIGHEST=$CUR_VERSION_CODE
+          # 单调性守卫 2/2：也要大于 master 最新值。
+          # 原因：tag 可能打在旧提交上（那时文件里的号还是旧的），只比文件不足以拦住「重发更旧的版本」。
+          MASTER_REF="origin/master"
+          if ! git rev-parse --verify --quiet "$MASTER_REF" >/dev/null; then
+            git fetch origin master >/dev/null 2>&1 || MASTER_REF=""
+          fi
+          if [ -n "$MASTER_REF" ]; then
+            MASTER_CODE=$(git show "$MASTER_REF:app/build.gradle" 2>/dev/null | sed -nE 's/^[[:space:]]*versionCode[[:space:]]+([0-9]+).*/\1/p' | head -1 || true)
+            if [ -n "$MASTER_CODE" ] && [ "$MASTER_CODE" -gt "$HIGHEST" ]; then
+              HIGHEST=$MASTER_CODE
+            fi
+            echo "📌 master 最新 versionCode: ${MASTER_CODE:-未知}，比较基准: ${HIGHEST}"
+          else
+            echo "⚠️ 读不到 origin/master，仅以当前文件值 ${HIGHEST} 为基准"
+          fi
+          if [ "$NEW_VERSION_CODE" -le "$HIGHEST" ]; then
+            echo "❌ tag 推导的 versionCode ($NEW_VERSION_CODE) 不大于已知最大值 ($HIGHEST)：该版本已经发布过（或比已发布版本更旧）。"
+            echo "💡 同一个/更旧的版本不能重发，请换一个更高的 tag（例：v2.4.9）。"
             exit 1
           fi
-          NEW_VERSION_CODE=$((VERSION_CODE + 1))
-          NEW_VERSION_NAME=$(echo "$VERSION_NAME" | awk -F. '{printf "%d.%d.%d", $1, $2, $3 + 1}')
           sed -i -E "s/^[[:space:]]*versionCode[[:space:]]+[0-9]+/        versionCode ${NEW_VERSION_CODE}/" app/build.gradle
-          sed -i -E "s/^[[:space:]]*versionName[[:space:]]+\"[^\"]+\"/        versionName \"${NEW_VERSION_NAME}\"/" app/build.gradle
-          echo "versionCode: ${VERSION_CODE} -> ${NEW_VERSION_CODE}"
-          echo "versionName: ${VERSION_NAME} -> ${NEW_VERSION_NAME}"
+          sed -i -E "s/^[[:space:]]*versionName[[:space:]]+\"[^\"]+\"/        versionName \"${VERSION_NAME}\"/" app/build.gradle
+          echo "versionCode: ${CUR_VERSION_CODE} -> ${NEW_VERSION_CODE}"
+          echo "versionName: ${CUR_VERSION_NAME} -> ${VERSION_NAME}"
           grep -nE 'versionCode|versionName' app/build.gradle
           {
             echo "NEW_VERSION_CODE=${NEW_VERSION_CODE}"
-            echo "NEW_VERSION_NAME=${NEW_VERSION_NAME}"
+            echo "NEW_VERSION_NAME=${VERSION_NAME}"
           } >> "$GITHUB_ENV"
-
-      # 6. 构建 Release APK
-      - name: Build Release APK
-        run: gradle assembleRelease --stacktrace
+          {
+            echo "version_name=${VERSION_NAME}"
+            echo "apk_name=Mana-${VERSION_NAME}"
+          } >> "$GITHUB_OUTPUT"
       
-      # 7. 获取版本信息
-      - name: Get version info
-        id: version
+      # 6. 构建：tag 推送是发布构建，分支推送只是编译校验（不发布、不回写）
+      - name: Build Release APK
+        if: steps.guard.outputs.skip != 'true'
         run: |
-          # 提取版本号（去除引号和空格）
-          # head -1 必需：app/build.gradle 第 28 行也含 "versionName"（archivesBaseName），不加会拼成 2.3.7Mana-
-          VERSION_NAME=$(grep "versionName" app/build.gradle | head -1 | awk '{print $2}' | tr -d '"' | tr -d ' ')
-          # 验证版本号是否提取成功
-          if [ -z "$VERSION_NAME" ]; then
-            echo "❌ 错误：无法提取版本号"
-            exit 1
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "🧾 发布构建：${{ github.ref_name }}"
+          else
+            echo "🧪 分支编译校验（不发布、不回写版本号）"
           fi
-          # 清理版本号（去除所有空白字符和换行符）
-          VERSION_NAME=$(echo "$VERSION_NAME" | tr -d '[:space:]' | tr -d '\n' | tr -d '\r')
-          # 验证版本号不为空
-          if [ -z "$VERSION_NAME" ]; then
-            echo "❌ 错误：版本号为空"
-            exit 1
-          fi
-          # 生成完整的 APK 名称格式（Mana-版本号）
-          APK_NAME="Mana-${VERSION_NAME}"
-          # 清理 APK 名称（去除所有空白字符和换行符）
-          APK_NAME=$(echo "$APK_NAME" | tr -d '[:space:]' | tr -d '\n' | tr -d '\r')
-          # 验证 APK 名称格式
-          if [ "$APK_NAME" = "Mana-" ] || [ -z "$APK_NAME" ]; then
-            echo "❌ 错误：APK 名称格式无效：'$APK_NAME' (版本号: '$VERSION_NAME')"
-            exit 1
-          fi
-          # 使用多行格式输出到 GITHUB_OUTPUT（避免特殊字符问题）
-          {
-            echo "version_name<<EOF"
-            echo "$VERSION_NAME"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-          {
-            echo "apk_name<<EOF"
-            echo "$APK_NAME"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
-          echo "Version: $VERSION_NAME"
-          echo "APK Name: $APK_NAME"
-          echo "✅ 版本信息已输出到 GITHUB_OUTPUT"
-      # 7.5. 上传构建产物（APK）
+          gradle assembleRelease --stacktrace
+      
+      # 7. 上传构建产物（APK）
       - name: Upload APK artifact
+        if: steps.guard.outputs.skip != 'true'
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
           path: app/build/outputs/apk/release/*.apk
           retention-days: 30
 
-      # 8. 创建 GitHub Release（仅在推送标签时）
+      # 8. 创建 GitHub Release（仅在推送 tag 时；名称/版本号都来自 tag）
       - name: Create Release
-        if: startsWith(github.ref, 'refs/tags/')
+        if: github.ref_type == 'tag'
         uses: softprops/action-gh-release@v1
         with:
           files: app/build/outputs/apk/release/*.apk
@@ -209,9 +242,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      # 8.5. 把自增后的版本号提交回 master（仅推送标签时；放在构建+发布之后，构建失败不烧版本号）
+      # 8.5. 把 tag 推导出的版本号提交回 master（仅推送 tag 时；放在构建+发布之后）
+      #      回写失败只告警、不让 run 失败：版本号由 tag 推导，回写不成功也不会导致重号。
       - name: Commit bumped version
-        if: startsWith(github.ref, 'refs/tags/')
+        if: github.ref_type == 'tag'
         run: |
           set -eu
           # 提交前先记住标签所指向的提交，用于校验回写是否为快进推送
@@ -225,24 +259,36 @@ jobs:
             exit 0
           fi
           git commit -m "chore: bump version to ${NEW_VERSION_NAME} (versionCode ${NEW_VERSION_CODE}) [skip ci]"
-          git fetch origin master
+          if ! git fetch origin master; then
+            echo "::warning::无法 fetch origin/master，跳过回写（Release 已发布，版本号由 tag 推导，不影响下次打 tag）"
+            exit 0
+          fi
           MASTER_SHA=$(git rev-parse origin/master 2>/dev/null || git rev-parse FETCH_HEAD)
           if [ "$MASTER_SHA" != "$TAG_SHA" ]; then
-            echo "❌ 标签指向的提交不是 master 最新提交（tag=${TAG_SHA} master=${MASTER_SHA}），回写会变成非快进推送，已中止。"
-            echo "💡 请把标签打在 master 最新提交上；本次 ${NEW_VERSION_NAME} (versionCode ${NEW_VERSION_CODE}) 未持久化，下次打标签前需手动 +1。"
-            exit 1
+            echo "::warning::tag 指向的提交不是 master 最新提交（tag=${TAG_SHA} master=${MASTER_SHA}），回写会变成非快进推送，已跳过。"
+            {
+              echo "### ⚠️ 版本号未回写 master"
+              echo ""
+              echo "- tag 指向：\`${TAG_SHA}\`"
+              echo "- master 最新：\`${MASTER_SHA}\`"
+              echo "- 影响：仅仓库文件未跟上。本次 Release 已正常发布，版本号由 tag \`${GITHUB_REF_NAME}\` 推导，下次打 tag 不受影响。"
+            } >> "$GITHUB_STEP_SUMMARY"
+            exit 0
           fi
-          git push origin HEAD:master
-          echo "✅ 已把 ${NEW_VERSION_NAME} (versionCode ${NEW_VERSION_CODE}) 提交回 master"
+          if git push origin HEAD:master; then
+            echo "✅ 已把 ${NEW_VERSION_NAME} (versionCode ${NEW_VERSION_CODE}) 提交回 master"
+          else
+            echo "::warning::回写 master 失败（可能已被其他提交更新）。Release 已发布，版本号由 tag 推导，不影响下次打 tag。"
+          fi
 
       # 9. 显示构建信息
       - name: Build Summary
+        if: steps.guard.outputs.skip != 'true'
         run: |
           echo "✅ APK 构建成功！"
-          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            echo "🎉 GitHub Release 已创建并附加 APK"
+          if [ "${{ github.ref_type }}" = "tag" ]; then
+            echo "🎉 GitHub Release 已创建：${{ steps.version.outputs.apk_name }}（tag ${{ github.ref_name }}）"
           else
-            echo "📝 提示：推送标签可自动创建 Release"
+            echo "📝 提示：push 版本 tag（vX.Y.Z）才会改版本号并发布 Release"
           fi
           ls -lh app/build/outputs/apk/release/
-
