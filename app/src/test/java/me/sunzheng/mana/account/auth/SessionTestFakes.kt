@@ -12,14 +12,18 @@ class FakeSessionStore(
     private val cookies: MutableMap<String, List<HttpCookie>> = HashMap(),
     var failWrite: Boolean = false,
     var corruptOnWrite: Boolean = false,
-    var readFailure: Boolean = false
+    var readFailure: Boolean = false,
+    /** 模拟「原始数据还在、但一条 cookie 都解不出来」（design D13 结论 2）。 */
+    val undecodableOrigins: Set<String> = emptySet()
 ) : SessionStore {
 
     var writeCount = 0
         private set
 
     override fun read(origin: String): List<HttpCookie> =
-        if (readFailure) emptyList() else cookies[origin].orEmpty()
+        if (readFailure || origin in undecodableOrigins) emptyList() else cookies[origin].orEmpty()
+
+    override fun hasUndecodableData(origin: String): Boolean = origin in undecodableOrigins
 
     override fun write(origin: String, cookies: List<HttpCookie>): Boolean {
         writeCount++

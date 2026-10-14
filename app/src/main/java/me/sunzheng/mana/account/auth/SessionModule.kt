@@ -77,6 +77,7 @@ object SessionModule {
             Context.MODE_PRIVATE
         ),
         store = sessionStore,
-        cookieStore = cookieStore
+        cookieStore = cookieStore,
+        warn = { message -> Log.w(TAG, message) }
     )
 }

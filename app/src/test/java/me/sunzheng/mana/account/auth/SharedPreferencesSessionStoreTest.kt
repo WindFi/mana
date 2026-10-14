@@ -114,6 +114,35 @@ class SharedPreferencesSessionStoreTest {
     }
 
     @Test
+    fun `a raw value that cannot be decoded is reported as undecodable`() {
+        // design D13 结论 2：升级夹具/脏值会走到这里；此时不得被当作「没有凭据」而删掉。
+        val prefs = FakeSharedPreferences()
+        val store = SharedPreferencesSessionStore(prefs)
+        prefs.edit()
+            .putStringSet(origin, mutableSetOf("${origin}session"))
+            .putString("${origin}session", "not-a-decodable-cookie")
+            .apply()
+
+        assertTrue(store.read(origin).isEmpty())
+        assertTrue(store.hasUndecodableData(origin))
+    }
+
+    @Test
+    fun `an origin without any raw value is not reported as undecodable`() {
+        val store = SharedPreferencesSessionStore(FakeSharedPreferences())
+        assertFalse(store.hasUndecodableData(origin))
+    }
+
+    @Test
+    fun `a decodable value is not reported as undecodable`() {
+        val store = SharedPreferencesSessionStore(FakeSharedPreferences())
+        store.write(origin, listOf(cookie("session", "v1")))
+
+        assertTrue(store.read(origin).isNotEmpty())
+        assertFalse(store.hasUndecodableData(origin))
+    }
+
+    @Test
     fun `usable credential ignores expired cookies`() {
         val store = SharedPreferencesSessionStore(FakeSharedPreferences())
         store.write(origin, listOf(cookie("session", "v1", maxAge = 0L)))

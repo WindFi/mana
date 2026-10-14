@@ -24,7 +24,8 @@ import me.sunzheng.mana.utils.PreferenceManager
 class SessionLogout(
     private val globalPrefs: SharedPreferences,
     private val store: SessionStore,
-    private val cookieStore: PersistentHttpCookieStore
+    private val cookieStore: PersistentHttpCookieStore,
+    private val warn: (String) -> Unit = {}
 ) {
 
     /**
@@ -57,10 +58,38 @@ class SessionLogout(
     fun verifyOnStartup(origin: String): Boolean {
         val usable = store.hasUsableCredential(origin)
         if (!usable) {
-            clearSession(origin)
+            if (store.hasUndecodableData(origin)) {
+                // 「键在、值解不出」≠「没有凭据」：删掉就是销毁设备上唯一一份副本（design D13 结论 2）。
+                warn("启动核对：$origin 有原始数据但解不出可用凭据，保留原值不清理（避免销毁唯一副本）")
+            } else {
+                clearSession(origin)
+            }
         }
         return usable
     }
+
+    /**
+     * 「本 App 的系统账号消失」⇒ **全部 origin 登出**（design D11/D12）。
+     *
+     * 单一入口：与主动登出共用同一套清理语义（内存 cookie、账号库、私有存储全部 origin 与索引、登录态判据），
+     * 幂等；返回被清掉的 origin 集合作为日志/验收证据（验收不必再翻存储）。
+     */
+    /**
+     * @param clearedOrigins **清理前**读到的 origin 快照（默认现读）。
+     *
+     * 真机实测（2026-10-14）：`onAccountsUpdated` 回调发生在账号**已被平台删除之后**，
+     * 此时 `store.origins()`（读账号 authToken）必然为空 ⇒ 依赖它做日志证据会永远打印 `origins=[]`。
+     * 因此调用方应传入"上一次账号还在时读到的快照"（见 `SessionAccountsObserver.knownOrigins`）。
+     */
+    fun clearAllSessions(clearedOrigins: Set<String> = store.origins()): Set<String> {
+        cookieStore.removeAll()
+        store.clear()
+        clearLoginFlags()
+        return clearedOrigins
+    }
+
+    /** 账号还在时读一次当前全部 origin（供监听器维护"删除前快照"）。 */
+    fun currentOrigins(): Set<String> = store.origins()
 
     private fun hasLoginFlags(): Boolean =
         globalPrefs.getBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, false) ||
@@ -111,21 +140,28 @@ internal data class AccountKey(val name: String, val type: String)
  * 删除账号不会回调 authenticator，只能靠 `addOnAccountsUpdatedListener`（App 运行中）或启动核对（App 未运行）发现。
  * 监听回调给的是**全量**账号列表，因此这里做「上次已知的本 App origin − 当前本 App origin」的差集。
  */
-/** 当前列表里属于本 App accountType 的账号名（即 origin）。 */
-internal fun mineAccounts(current: Collection<AccountKey>, accountType: String): Set<String> =
+/**
+ * 本 App（按 `accountType`）的**账号标识**集合：账号名与账号类型都要匹配。
+ *
+ * 账号名（`Mana`）与凭据槽位键（origin）是两个命名空间，因此判定必须基于标识而不是账号名（design D11）；
+ * 同名的其它类型账号（例如别的 App）不会混进来。
+ */
+internal fun ourAccounts(current: Collection<AccountKey>, accountType: String): Set<AccountKey> =
     current.asSequence()
         .filter { it.type == accountType }
-        .map { it.name }
         .toSet()
 
 /**
- * 需要清理的 origin：上次已知、且本次已消失的本 App 账号。
+ * 「本 App 的账号标识消失」判定（design D11）：上次快照里有本 App 账号、本次一个都没有 ⇒ 视为用户删除了账号。
  *
- * 其它 accountType（其它 App/其它类型）的账号一律不参与判定，因此不会误伤。
+ * - 首次启动快照（`known` 为空）**不算删除**（否则启动即误清）；
+ * - 判定依据是账号标识（名 + 类型），MUST NOT 把账号名当 origin 使用；
+ * - 命中后由调用方走 [SessionLogout.clearAllSessions] 清理该账号下的全部 origin。
  */
-internal fun originsToClear(
-    knownMine: Set<String>,
+internal fun ownAccountDisappeared(
+    known: Collection<AccountKey>,
     current: Collection<AccountKey>,
     accountType: String
-): Set<String> = knownMine - mineAccounts(current, accountType)
+): Boolean =
+    ourAccounts(known, accountType).isNotEmpty() && ourAccounts(current, accountType).isEmpty()
 

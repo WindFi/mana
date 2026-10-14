@@ -40,6 +40,14 @@ interface SessionStore {
      * 注意：它只表示「本地有可用凭据」，不代表服务端仍认可（服务端失效只能由 401 暴露，本变更不处理）。
      */
     fun hasUsableCredential(origin: String): Boolean = read(origin).any { !it.hasExpired() }
+
+    /**
+     * 该 origin 是否「有原始数据、但一条 cookie 都解不出来」（design D13 结论 2）。
+     *
+     * 用于把「数据被读坏」与「本来就没数据」区分开：**前者不得在启动核对里被清掉**，
+     * 否则会销毁设备上唯一一份凭据（不可恢复）。默认 `false`（实现可选）。
+     */
+    fun hasUndecodableData(origin: String): Boolean = false
 }
 
 

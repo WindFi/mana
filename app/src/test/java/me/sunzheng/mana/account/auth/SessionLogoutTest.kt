@@ -175,6 +175,79 @@ class SessionLogoutTest {
     }
 
     @Test
+    fun `account name is not an origin so per-origin clearing leaves the real credential behind`() {
+        // 回归锁：把账号名（Mana）当 origin 传进来时，真实 origin 的凭据必须原样保留。
+        val fixture = Fixture()
+        fixture.loginWithRememberedCredential()
+
+        fixture.logout.clearSession("Mana")
+
+        assertTrue("真实 origin 的凭据不能被账号名清掉", fixture.store.contains(origin))
+        assertTrue(fixture.cookieStore.get(requestUri).isNotEmpty())
+    }
+
+    @Test
+    fun `clearAllSessions wipes memory, both backends and login flags`() {
+        val fixture = Fixture()
+        fixture.loginWithRememberedCredential()
+        fixture.store.write(origin, listOf(cookie("session", "v1")))
+
+        val cleared = fixture.logout.clearAllSessions()
+
+        assertEquals(setOf(origin), cleared)
+        assertTrue(fixture.store.read(origin).isEmpty())
+        assertTrue(fixture.cookieStore.get(requestUri).isEmpty())
+        assertFalse(fixture.hasLoginFlags())
+    }
+
+    @Test
+    fun `clearAllSessions reports the snapshot taken before the account disappeared`() {
+        // 真机实测：删除回调里账号已被平台删掉，此时读 origins() 必然为空 ⇒ 必须用删除前快照。
+        val fixture = Fixture()
+        fixture.store.write(origin, listOf(cookie("session", "v1")))
+        val snapshot = fixture.logout.currentOrigins()
+        fixture.store.clear() // 模拟"平台已经把账号删了"
+
+        assertEquals(setOf(origin), snapshot)
+        assertEquals(setOf(origin), fixture.logout.clearAllSessions(snapshot))
+        assertTrue(fixture.logout.clearAllSessions().isEmpty()) // 现读仍为空，佐证必须传快照
+    }
+
+    @Test
+    fun `clearAllSessions is safe and idempotent when nothing is stored`() {
+        val fixture = Fixture()
+
+        assertTrue(fixture.logout.clearAllSessions().isEmpty())
+        assertTrue(fixture.logout.clearAllSessions().isEmpty())
+        assertFalse(fixture.hasLoginFlags())
+    }
+
+    @Test
+    fun `startup check keeps an origin whose stored value cannot be decoded`() {
+        // design D13 结论 2：删除会销毁设备上唯一一份凭据，因此「键在、值解不出」必须保留原值。
+        val fixture = Fixture(FakeSessionStore(undecodableOrigins = setOf(origin)))
+        fixture.store.write(origin, listOf(cookie("session", "v1")))
+
+        assertFalse(fixture.logout.verifyOnStartup(origin))
+
+        assertTrue("解不出的原始数据必须保留，等待人工/后续版本处理", fixture.store.contains(origin))
+    }
+
+    @Test
+    fun `startup check still clears when there is no raw data at all`() {
+        // 与上一条对照：存储层没有任何原始数据（连键都没有）时，启动核对必须照旧清掉判据。
+        val fixture = Fixture()
+        fixture.prefs.edit()
+            .putBoolean(PreferenceManager.Global.BOOL_IS_REMEMBERD, true)
+            .apply()
+        assertTrue(fixture.hasLoginFlags())
+
+        assertFalse(fixture.logout.verifyOnStartup(origin))
+
+        assertFalse(fixture.hasLoginFlags())
+    }
+
+    @Test
     fun `login state predicate degrades to the legacy backend when the account store fails`() {
         val legacyStore = FakeSessionStore(mutableMapOf(origin to listOf(cookie("session", "v1"))))
         val accountStore = FakeSessionStore(readFailure = true, failWrite = true)

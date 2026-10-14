@@ -14,3 +14,7 @@ app/release/output-metadata.json
 .DS_Store
 *.aab
 /*.png
+
+# workdoc 是本地专用文档仓库（自带 .git，无 remote，永不推送/发布）
+# 父仓库不跟踪它，避免随代码一起进公开仓库；如需查看历史：git -C workdoc log
+/workdoc/
