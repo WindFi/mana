@@ -1,16 +1,23 @@
 name: Build Android APK
 
-# 触发条件：
-#   1) 推送版本 tag（vX.Y.Z）→ 用 tag 改版本号 → 构建 → 发布 Release → 回写 master
-#   2) 推送 master 分支        → 只做编译校验（不改版本号、不发布、不回写）
-# 注意：裸号 tag（如 2.4.7）与 release-* 之类的 tag 不再触发任何构建。
+# 触发条件（两个角色，各管一件事）：
+#   1) push master     → 只做编译校验：assembleDebug，不发布、不改版本号、不回写、不上传 APK
+#   2) push tag vX.Y.Z → 发布：用 tag 改版本号 → assembleRelease → 发 Release → 回写 master
+# 注意：裸号 tag（如 2.4.7）与 release-* 之类的 tag 不触发任何构建。
+#
+# 去重：一次 push 同时更新 master 和 tag（git push --follow-tags）会被 GitHub 按 ref 分别
+#       派发，产生两个 run —— 这是 GitHub 的行为，工作流侧改不掉。两个 run 都构建同一个
+#       commit 是纯浪费，所以分支 run 先确认「HEAD 已被 tag 覆盖」，是则整段跳过构建，
+#       该 commit 的构建与发布交给 tag run（发布构建本身就包含编译校验）。
+#       判定依据：分支与 tag 属于同一次 push 的 ref 事务，tag 在分支 run 判定时已落地；
+#       仍保留少量重试以容忍 git 后端一致性延迟。
 on:
   push:
     branches:
       - master
     tags:
       - 'v[0-9]*.[0-9]*.[0-9]*'
-# 同一 ref 的旧 run 自动取消；tag 与分支是不同的 ref，互不影响
+# 同一 ref 的旧 run 自动取消；分支与 tag 是不同 ref，互不影响
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
@@ -24,15 +31,46 @@ jobs:
       contents: write
     
     steps:
-      # 1. 检出代码（fetch-depth: 0 + fetch-tags 让第 3.5 步的 tag 判定看得到 tag）
+      # 1. 检出代码（fetch-depth: 0 让第 5.5 步能读到 origin/master 做版本号单调性校验）
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           fetch-tags: true
       
+      # 1.5. 判定本 run 是否要构建
+      #      tag run  → 构建 + 发布
+      #      分支 run → 仅当 HEAD 没被任何 tag 覆盖时做编译校验；
+      #                 --follow-tags 一次推 master+tag 时本 run 整段跳过，交给 tag run。
+      #      最多判定 3 次（间隔 10s），容忍远端 tag 的一致性延迟。
+      - name: Decide whether this run builds
+        id: guard
+        run: |
+          set -eu
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "🏷️ tag 推送（${GITHUB_REF_NAME}）：本 run 负责构建并发布。"
+            exit 0
+          fi
+          for attempt in 1 2 3; do
+            git fetch --tags --force origin '+refs/tags/*:refs/tags/*' >/dev/null 2>&1 || true
+            TAGGED=$(git tag --points-at HEAD | tr '\n' ' ')
+            if [ -n "$TAGGED" ]; then
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              echo "ℹ️ HEAD 已被 tag 覆盖（${TAGGED}），本次分支校验跳过；该 commit 的构建与发布由对应 tag run 负责。"
+              exit 0
+            fi
+            if [ "$attempt" -lt 3 ]; then
+              echo "…第 ${attempt} 次未发现覆盖 HEAD 的 tag，10s 后重试"
+              sleep 10
+            fi
+          done
+          echo "skip=false" >> "$GITHUB_OUTPUT"
+          echo "🧪 分支推送：本 run 只做编译校验（不发布、不改版本号、不回写）。"
+      
       # 2. 设置 JDK 17
       - name: Set up JDK 17
+        if: steps.guard.outputs.skip != 'true'
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
@@ -40,29 +78,16 @@ jobs:
       
       # 3. 安装 Gradle
       - name: Setup Gradle
+        if: steps.guard.outputs.skip != 'true'
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: '8.13'
       
-      # 3.5. 分支推送去重（尽力而为）：HEAD 已被 tag 覆盖时跳过构建，
-      #      避免「同一次 push 既推 master 又推 tag」跑两遍构建。
-      #      已知局限：若 GitHub 先派发 branch 事件、tag 事件后到，这里看不到 tag，仍会构建一次。
-      - name: Skip when HEAD is already tagged
-        id: guard
-        if: github.ref_type == 'branch'
-        run: |
-          set -eu
-          git fetch --tags --force origin '+refs/tags/*:refs/tags/*' >/dev/null 2>&1 || true
-          TAGGED=$(git tag --points-at HEAD | tr '\n' ' ')
-          if [ -n "$TAGGED" ]; then
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-            echo "ℹ️ HEAD 已被 tag 覆盖（$TAGGED），本次分支构建跳过，交由对应的 tag run 构建发布。"
-          else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
-          fi
-      
       # 4. 解码并配置签名密钥
+      #    分支校验走 assembleDebug，本不需要签名；但 release signingConfig 在配置阶段就会
+      #    求值，所以两个角色共用同一套准备步骤，避免 debug 构建因缺键而配置失败。
       - name: Decode keystore
+        if: steps.guard.outputs.skip != 'true'
         env:
           KEYSTORE_BASE64: ${{ secrets.KEY_OF_MANA }}
         run: |
@@ -121,6 +146,7 @@ jobs:
       #    注意：仓库里的 gradle.properties 被 .gitignore 忽略，CI 上不存在，
       #    而 release signingConfig 对所有 buildType 都会求值，所以这些键必须声明。
       - name: Create gradle.properties
+        if: steps.guard.outputs.skip != 'true'
         run: |
           # 启用 AndroidX 支持（safeargs 插件必需）
           echo "android.useAndroidX=true" >> gradle.properties
@@ -208,20 +234,21 @@ jobs:
             echo "apk_name=Mana-${VERSION_NAME}"
           } >> "$GITHUB_OUTPUT"
       
-      # 6. 构建：tag 推送是发布构建，分支推送只是编译校验（不发布、不回写）
-      - name: Build Release APK
+      # 6. 构建：tag run = 发布构建（签名 release APK）；分支 run = 编译校验（debug，不发布）
+      - name: Build
         if: steps.guard.outputs.skip != 'true'
         run: |
-          if [ "${{ github.ref_type }}" = "tag" ]; then
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
             echo "🧾 发布构建：${{ github.ref_name }}"
+            gradle assembleRelease --stacktrace
           else
-            echo "🧪 分支编译校验（不发布、不回写版本号）"
+            echo "🧪 分支编译校验：assembleDebug（不发布、不改版本号、不回写）"
+            gradle assembleDebug --stacktrace
           fi
-          gradle assembleRelease --stacktrace
       
-      # 7. 上传构建产物（APK）
+      # 7. 上传构建产物（只有发布构建才有产物；分支校验不产出可用包）
       - name: Upload APK artifact
-        if: steps.guard.outputs.skip != 'true'
+        if: steps.guard.outputs.skip != 'true' && github.ref_type == 'tag'
         uses: actions/upload-artifact@v4
         with:
           name: release-apk
@@ -285,10 +312,11 @@ jobs:
       - name: Build Summary
         if: steps.guard.outputs.skip != 'true'
         run: |
-          echo "✅ APK 构建成功！"
-          if [ "${{ github.ref_type }}" = "tag" ]; then
+          if [ "${GITHUB_REF_TYPE}" = "tag" ]; then
+            echo "✅ 发布构建成功！"
             echo "🎉 GitHub Release 已创建：${{ steps.version.outputs.apk_name }}（tag ${{ github.ref_name }}）"
+            ls -lh app/build/outputs/apk/release/
           else
-            echo "📝 提示：push 版本 tag（vX.Y.Z）才会改版本号并发布 Release"
+            echo "✅ 分支编译校验通过（assembleDebug）。"
+            echo "📝 提示：push 版本 tag（vX.Y.Z）才会改版本号、构建签名包并发布 Release。"
           fi
-          ls -lh app/build/outputs/apk/release/
