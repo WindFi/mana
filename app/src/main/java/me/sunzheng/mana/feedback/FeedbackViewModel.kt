@@ -3,18 +3,22 @@ package me.sunzheng.mana.feedback
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.liveData
+import dagger.hilt.android.lifecycle.HiltViewModel
 import me.sunzheng.mana.core.net.ApiResponse
 import me.sunzheng.mana.core.net.v2.ApiService
 import me.sunzheng.mana.core.net.v2.NetworkBoundResource
 import me.sunzheng.mana.home.bangumi.Response
 import me.sunzheng.mana.home.feedback.FeedbackRequestWrapper
 import javax.inject.Inject
+import javax.inject.Named
 
-class FeedbackViewModel : ViewModel() {
+@HiltViewModel
+class FeedbackViewModel @Inject constructor() : ViewModel() {
     @Inject
     lateinit var apiService: ApiService
 
-    @Inject()
+    @Named("userName")
+    @Inject
     lateinit var userName: String
     private var content: String? = null
     fun sendFeedback(message: String?) {
